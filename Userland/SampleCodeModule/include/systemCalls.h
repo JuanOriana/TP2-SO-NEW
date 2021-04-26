@@ -15,7 +15,7 @@ typedef enum
     WRITE = 3,
     GETCHAR = 4,
     CLEAR = 5,
-    LOAD_APP = 6,
+    CREATE_APP = 6,
     INFOREG = 7,
     MALLOC = 8,
     FREE = 9

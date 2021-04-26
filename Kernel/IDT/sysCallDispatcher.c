@@ -13,7 +13,7 @@
 #define SYS_WRITE_ID 3
 #define SYS_GETCHAR_ID 4
 #define SYS_CLEAR_ID 5
-#define SYS_LOAD_APP_ID 6
+#define SYS_INIT_PROC_ID 6
 #define SYS_INFOREG_ID 7
 #define SYS_MALLOC_ID 8
 #define SYS_FREE_ID 9
@@ -50,7 +50,7 @@ uint64_t sysCallDispatcher(t_registers *r)
                   clearScreen();
                   break;
 
-            case SYS_LOAD_APP_ID:
+            case SYS_INIT_PROC_ID:
                   return addProcess((void (*)(int, char **))r->rdi, (int)r->rsi, (char **)r->rdx);
                   break;
 
