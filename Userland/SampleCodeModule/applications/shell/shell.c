@@ -106,6 +106,7 @@ static void processCommand(t_shellData * shellData) {
                   return;
             }
       }
+      syscall(MALLOC,10,0,0,0,0,0);
       printStringLn("Invalid command");
 }
 

@@ -5,6 +5,7 @@
 #include <sysCallDispatcher.h>
 #include <taskManager.h>
 #include <videoDriver.h>
+#include <memoryManager.h>
 
 #define SYS_GETMEM_ID 0
 #define SYS_RTC_TIME_ID 1
@@ -14,11 +15,13 @@
 #define SYS_CLEAR_ID 5
 #define SYS_LOAD_APP_ID 6
 #define SYS_INFOREG_ID 7
+#define SYS_MALLOC_ID 8
+#define SYS_FREE_ID 9
 
-#define SYSCALLS 8
+#define SYSCALLS_QTY 10
 
 uint64_t sysCallDispatcher(t_registers *r) {
-      if (r->rax >= 0 && r->rax < SYSCALLS){
+      if (r->rax >= 0 && r->rax < SYSCALLS_QTY){
             switch (r->rax) {
                   case SYS_GETMEM_ID:
                         sys_getMem(r->rdi,(uint8_t*)r->rsi);
@@ -50,6 +53,12 @@ uint64_t sysCallDispatcher(t_registers *r) {
 
                   case SYS_INFOREG_ID:
                         return (uint64_t)getSnapshot();
+                        break;
+                  case SYS_MALLOC_ID:
+                        return (uint64_t)mallocCust(r->rsi);
+                        break;
+                  case SYS_FREE_ID:
+                        freeCust((void*)(r->rsi));
                         break;
             }
       }
