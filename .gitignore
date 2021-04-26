@@ -1,0 +1,22 @@
+#Binary Files
+*.bin
+*.sys
+
+#The images
+*.img
+*.qcow2
+*.vmdk
+
+#Object files
+*.o
+
+#Test
+PVS-Studio.log
+strace_out
+report.tasks
+PVS-Studio.lic
+30d59484437b42b
+
+#Misc
+.bash_history
+index.html
