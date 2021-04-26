@@ -3,7 +3,7 @@
 #include <lib.h>
 #include <moduleLoader.h>
 #include <memoryManager.h>
-#include <taskManager.h>
+#include <schedule.h>
 #include <stdint.h>
 #include <stringLib.h>
 #include <timerTick.h>
@@ -52,13 +52,8 @@ void *initializeKernelBinary()
 int main()
 {
       load_idt();
-
       initVideoDriver(BLACK, WHITE);
-      // printStringLn("Init video driver");
-
       memInit((char *)sampleCodeModuleHeapAddress, HEAP_MEMORY_SIZE);
-      // printStringLn("Init memory manager");
-
       initScheduler();
 
       char *argv[] = {"SampleCodeModule"};

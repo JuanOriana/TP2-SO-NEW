@@ -1,6 +1,6 @@
 #include <lib.h>
 #include <stringLib.h>
-#include <taskManager.h>
+#include <schedule.h>
 
 #define ZERO_EXCEPTION_ID 0
 #define INVALID_OPCODE_ID 6
@@ -15,7 +15,8 @@
 //                            "RAX: ", "RIP: ", "RSP: "};
 
 //Maneja la excepcion recibida y reinicia el proceso actual
-void exceptionDispatcher(int exception, void* stackframe) {
+void exceptionDispatcher(int exception, void *stackframe)
+{
       // putchar('\n');
       // switch (exception) {
       //       case ZERO_EXCEPTION_ID:

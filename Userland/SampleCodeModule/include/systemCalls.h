@@ -3,12 +3,12 @@
 
 //dataTypes
 #include <RTCTime.h>
-#include <taskManager.h>
 #include <colours.h>
 #include <cpuInfo.h>
 #include <stdint.h>
 
-typedef enum{
+typedef enum
+{
     GET_MEM = 0,
     RTC_TIME = 1,
     TEMP = 2,
@@ -19,7 +19,7 @@ typedef enum{
     INFOREG = 7,
     MALLOC = 8,
     FREE = 9
-}syscallID;
+} syscallID;
 
 uint64_t syscall(uint64_t rax, uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10, uint64_t r8, uint64_t r9);
 
