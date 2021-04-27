@@ -75,7 +75,6 @@ static int createPCB(t_PCB *process, char *name);
 static uint64_t getNewPid();
 static void wrapper(void (*entryPoint)(int, char **), int argc, char **argv);
 static void exit();
-static void killProcess(uint64_t pid);
 static void freeProcess(t_pNode *process);
 
 // http://datastructs.io/home/c/queue
@@ -261,21 +260,6 @@ static void freeProcess(t_pNode *process)
       freeCust((void *)process);
 }
 
-//Consider implementing findProcessByID to simplify many funcs
-static void killProcess(uint64_t pid)
-{
-      if (currentProcess->pcb.pid == pid)
-      {
-            currentProcess->state = KILLED;
-            return;
-      }
-      for (t_pNode *p = processes->first; p != NULL; p = p->next)
-      {
-            if (p->pcb.pid == pid)
-                  p->state = KILLED;
-      }
-}
-
 //Set as killed and move onto the next
 static void exit()
 {
@@ -288,4 +272,53 @@ static void wrapper(void (*entryPoint)(int, char **), int argc, char **argv)
 {
       entryPoint(argc, argv);
       exit();
+}
+
+static t_pNode *getProcessOfPID(uint64_t pid)
+{
+      if (currentProcess != NULL && currentProcess->pcb.pid == pid)
+      {
+            return currentProcess;
+      }
+
+      for (t_pNode *p = processes->first; p != NULL; p = p->next)
+      {
+            if (p->pcb.pid == pid)
+                  return p;
+      }
+
+      return NULL;
+}
+
+static uint64_t setNewState(uint64_t pid, t_state newState)
+{
+      t_pNode *process = getProcessOfPID(pid);
+
+      if (process == NULL || process->state == KILLED)
+            return -1;
+
+      process->state = newState;
+      return process->pcb.pid;
+}
+
+uint64_t killProcess(uint64_t pid)
+{
+      int aux = setNewState(pid, KILLED);
+      if (pid == currentProcess->pcb.pid)
+            callTimerTick();
+      return aux;
+}
+
+uint64_t blockProcess(uint64_t pid)
+{
+      int aux = setNewState(pid, BLOCKED);
+
+      if (pid == currentProcess->pcb.pid)
+            callTimerTick();
+      return aux;
+}
+
+uint64_t unblockProcess(uint64_t pid)
+{
+      return setNewState(pid, READY);
 }
