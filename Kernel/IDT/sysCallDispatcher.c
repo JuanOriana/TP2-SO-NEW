@@ -17,8 +17,11 @@
 #define SYS_INFOREG_ID 7
 #define SYS_MALLOC_ID 8
 #define SYS_FREE_ID 9
+#define SYS_KILL_ID 10
+#define SYS_BLOCK_ID 11
+#define SYS_UNLOCK_ID 12
 
-#define SYSCALLS_QTY 10
+#define SYSCALLS_QTY 13
 
 uint64_t sysCallDispatcher(t_registers *r)
 {
@@ -53,15 +56,23 @@ uint64_t sysCallDispatcher(t_registers *r)
             case SYS_INIT_PROC_ID:
                   return addProcess((void (*)(int, char **))r->rdi, (int)r->rsi, (char **)r->rdx);
                   break;
-
             case SYS_INFOREG_ID:
                   return (uint64_t)getSnapshot();
                   break;
             case SYS_MALLOC_ID:
-                  return (uint64_t)mallocCust(r->rsi);
+                  return (uint64_t)mallocCust(r->rdi);
                   break;
             case SYS_FREE_ID:
-                  freeCust((void *)(r->rsi));
+                  freeCust((void *)(r->rdi));
+                  break;
+            case SYS_KILL_ID:
+                  return killProcess(r->rdi);
+                  break;
+            case SYS_BLOCK_ID:
+                  return blockProcess(r->rdi);
+                  break;
+            case SYS_UNLOCK_ID:
+                  return unblockProcess(r->rdi);
                   break;
             }
       }

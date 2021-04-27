@@ -169,7 +169,7 @@ int addProcess(void (*entryPoint)(int, char **), int argc, char **argv)
       newProcess->state = READY;
       processQueue(newProcess);
 
-      return 1;
+      return newProcess->pcb.pid;
 }
 
 static int createPCB(t_PCB *process, char *name)
@@ -303,6 +303,7 @@ static uint64_t setNewState(uint64_t pid, t_state newState)
 
 uint64_t killProcess(uint64_t pid)
 {
+      
       int aux = setNewState(pid, KILLED);
       if (pid == currentProcess->pcb.pid)
             callTimerTick();

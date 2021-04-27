@@ -1,11 +1,13 @@
 
 #include <systemCalls.h>
 #include <shell.h>
+#include <processes.h>
+#include <stringLib.h>
 
 int main()
 {
 
       char *args[] = {"Shell"};
-      syscall(CREATE_PROC, (uint64_t)&runShell, 1, (uint64_t)args, 0, 0, 0);
+      int pid = createProcess(&runShell, 1, args);
       return 0;
 }
