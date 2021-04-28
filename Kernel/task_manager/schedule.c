@@ -323,3 +323,7 @@ uint64_t unblockProcess(uint64_t pid)
 {
       return setNewState(pid, READY);
 }
+
+int getCurrPID() {
+      return currentProcess ? currentProcess->pcb.pid : -1;
+}
