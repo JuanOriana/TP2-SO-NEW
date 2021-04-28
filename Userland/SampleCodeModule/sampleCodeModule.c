@@ -8,6 +8,7 @@ int main()
 {
 
       char *args[] = {"Shell"};
-      int pid = createProcess(&runShell, 1, args);
+      createProcess(&runShell, 1, args);
+
       return 0;
 }

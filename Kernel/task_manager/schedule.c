@@ -16,7 +16,7 @@ typedef enum
       READY,
       BLOCKED,
       KILLED
-} t_state;
+} State;
 
 // How to deal with fds? array? hmmm
 typedef struct
@@ -25,7 +25,7 @@ typedef struct
       char *name;
       void *rsp;
       void *rbp;
-} t_PCB;
+} PCB;
 
 typedef struct
 {
@@ -53,39 +53,39 @@ typedef struct
       uint64_t rsp;
       uint64_t ss;
       uint64_t base;
-} t_stackFrame;
+} StackFrame;
 
 // http://datastructs.io/home/c/queue
-typedef struct t_pNode
+typedef struct ProcessNode
 {
-      t_PCB pcb;
-      t_state state;
-      struct t_pNode *next;
-} t_pNode;
+      PCB pcb;
+      State state;
+      struct ProcessNode *next;
+} ProcessNode;
 
 typedef struct pList
 {
       uint32_t size;
-      t_pNode *first;
-      t_pNode *last;
-} t_pList;
+      ProcessNode *first;
+      ProcessNode *last;
+} ProcessList;
 
 static void setNewSF(void (*entryPoint)(int, char **), int argc, char **argv, void *rbp);
-static int createPCB(t_PCB *process, char *name);
+static int createPCB(PCB *process, char *name);
 static uint64_t getNewPid();
 static void wrapper(void (*entryPoint)(int, char **), int argc, char **argv);
 static void exit();
-static void freeProcess(t_pNode *process);
+static void freeProcess(ProcessNode *process);
 
 // http://datastructs.io/home/c/queue
-static void processQueue(t_pNode *newProcess);
-static t_pNode *processDequeue();
+static void processQueue(ProcessNode *newProcess);
+static ProcessNode *processDequeue();
 static int queueIsEmpty();
 
 static uint64_t newPidVal = 0;
-static t_pList *processes;
-static t_pNode *currentProcess;
-static t_pNode *idleProcess;
+static ProcessList *processes;
+static ProcessNode *currentProcess;
+static ProcessNode *idleProcess;
 
 static void haltFunc(int argc, char **argv)
 {
@@ -95,7 +95,7 @@ static void haltFunc(int argc, char **argv)
 
 void initScheduler()
 {
-      processes = mallocCust(sizeof(t_pList));
+      processes = mallocCust(sizeof(ProcessList));
       //Almost impossible, but it needs to be checked nonetheless
       if (processes == NULL)
       {
@@ -128,7 +128,6 @@ void *scheduler(void *oldRSP)
       }
       // If I still have something to process, do so (if I kill al processses int his loop it might bring trouble)
       // CONSIDER TRACKING READY PROCESSES ALSO
-      // NO BLOCKING HANDLING (it should requeue if dequeues a blocked one, maybe?)
       if (processes->size > 0)
       {
             currentProcess = processDequeue();
@@ -138,6 +137,10 @@ void *scheduler(void *oldRSP)
                   if (currentProcess->state == KILLED)
                   {
                         freeProcess(currentProcess);
+                  }
+                  if (currentProcess->state == BLOCKED)
+                  {
+                        processQueue(currentProcess);
                   }
                   currentProcess = processDequeue();
             }
@@ -154,7 +157,7 @@ int addProcess(void (*entryPoint)(int, char **), int argc, char **argv)
       if (entryPoint == NULL)
             return -1;
 
-      t_pNode *newProcess = mallocCust(sizeof(t_pNode));
+      ProcessNode *newProcess = mallocCust(sizeof(ProcessNode));
 
       if (newProcess == NULL)
             return -1;
@@ -172,7 +175,7 @@ int addProcess(void (*entryPoint)(int, char **), int argc, char **argv)
       return newProcess->pcb.pid;
 }
 
-static int createPCB(t_PCB *process, char *name)
+static int createPCB(PCB *process, char *name)
 {
       process->name = name;
       process->pid = getNewPid();
@@ -182,7 +185,7 @@ static int createPCB(t_PCB *process, char *name)
 
       // ALIGNMENT ??????
       process->rbp = (void *)((char *)process->rbp + STACK_SIZE - 1);
-      process->rsp = (void *)((t_stackFrame *)process->rbp - 1);
+      process->rsp = (void *)((StackFrame *)process->rbp - 1);
       return 0;
 }
 
@@ -190,7 +193,7 @@ static void setNewSF(void (*entryPoint)(int, char **), int argc, char **argv, vo
 {
       // Consider saving this data in some global variables, doesnt look quite right ATM
       //ALIGNMENT? Ask profs
-      t_stackFrame *frame = (t_stackFrame *)rbp - 1;
+      StackFrame *frame = (StackFrame *)rbp - 1;
       frame->gs = 0x001;
       frame->fs = 0x002;
       frame->r15 = 0x003;
@@ -221,7 +224,7 @@ static uint64_t getNewPid()
       return newPidVal++;
 }
 
-static void processQueue(t_pNode *newProcess)
+static void processQueue(ProcessNode *newProcess)
 {
       if (queueIsEmpty())
       {
@@ -237,12 +240,12 @@ static void processQueue(t_pNode *newProcess)
       processes->size++;
 }
 
-static t_pNode *processDequeue()
+static ProcessNode *processDequeue()
 {
       if (queueIsEmpty())
             return NULL;
 
-      t_pNode *p = processes->first;
+      ProcessNode *p = processes->first;
       processes->first = processes->first->next;
       processes->size--;
       return p;
@@ -253,7 +256,7 @@ static int queueIsEmpty()
       return processes->size == 0;
 }
 
-static void freeProcess(t_pNode *process)
+static void freeProcess(ProcessNode *process)
 {
       // Warning?
       freeCust((void *)((char *)process->pcb.rbp - STACK_SIZE + 1));
@@ -274,14 +277,14 @@ static void wrapper(void (*entryPoint)(int, char **), int argc, char **argv)
       exit();
 }
 
-static t_pNode *getProcessOfPID(uint64_t pid)
+static ProcessNode *getProcessOfPID(uint64_t pid)
 {
       if (currentProcess != NULL && currentProcess->pcb.pid == pid)
       {
             return currentProcess;
       }
 
-      for (t_pNode *p = processes->first; p != NULL; p = p->next)
+      for (ProcessNode *p = processes->first; p != NULL; p = p->next)
       {
             if (p->pcb.pid == pid)
                   return p;
@@ -290,9 +293,9 @@ static t_pNode *getProcessOfPID(uint64_t pid)
       return NULL;
 }
 
-static uint64_t setNewState(uint64_t pid, t_state newState)
+static uint64_t setNewState(uint64_t pid, State newState)
 {
-      t_pNode *process = getProcessOfPID(pid);
+      ProcessNode *process = getProcessOfPID(pid);
 
       if (process == NULL || process->state == KILLED)
             return -1;
@@ -303,7 +306,7 @@ static uint64_t setNewState(uint64_t pid, t_state newState)
 
 uint64_t killProcess(uint64_t pid)
 {
-      
+
       int aux = setNewState(pid, KILLED);
       if (pid == currentProcess->pcb.pid)
             callTimerTick();
@@ -324,6 +327,7 @@ uint64_t unblockProcess(uint64_t pid)
       return setNewState(pid, READY);
 }
 
-int getCurrPID() {
+int getCurrPID()
+{
       return currentProcess ? currentProcess->pcb.pid : -1;
 }
