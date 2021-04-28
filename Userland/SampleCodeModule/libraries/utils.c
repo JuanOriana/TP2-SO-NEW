@@ -145,7 +145,7 @@ char *strtok(char *string, char *result, const char delim)
             return 0;
       }
 
-      for (int i = 0; i < BUFFER_SIZE && result[i] != 0 &&; i++)
+      for (int i = 0; i < BUFFER_SIZE && result[i] != 0; i++)
       {
             result[i] = 0;
       }

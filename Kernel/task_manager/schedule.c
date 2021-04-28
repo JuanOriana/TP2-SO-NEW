@@ -342,18 +342,31 @@ char *stateToStr(State state)
       };
 }
 
+void printProcess(ProcessNode *process)
+{
+
+      if (process != NULL)
+      {
+            printInt(process->pcb.pid);
+            printString("     ");
+            printString(process->pcb.name);
+            printString("     ");
+            printString(stateToStr(process->state));
+            printStringLn("");
+      }
+}
+
 void processDisplay()
 {
       printStringLn("PID      NAME        STATE");
+
+      if (currentProcess != NULL)
+            printProcess(currentProcess);
+
       ProcessNode *curr = processes->first;
       while (curr)
       {
-            printInt(curr->pcb.pid);
-            printString("     ");
-            printString(curr->pcb.name);
-            printString("     ");
-            printString(stateToStr(curr->state));
-            printStringLn("");
+            printProcess(curr);
             curr = curr->next;
       }
 }
