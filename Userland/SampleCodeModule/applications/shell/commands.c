@@ -158,3 +158,7 @@ static void memToString(char* buffer, uint8_t* mem, int bytes) {
             }
       }
 }
+
+void ps() {
+      syscall(PS,0,0,0,0,0,0);
+}

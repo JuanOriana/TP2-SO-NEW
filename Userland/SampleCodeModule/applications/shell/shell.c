@@ -39,7 +39,8 @@ static void initShell(t_shellData* shellData) {
           {&changeUsername, "changeUsername", "changes the shell prompt username"},
           {&checkZeroException, "checkZeroException", "triggers a zero division exception"},
           {&checkInvalidOpcodeException, "checkInvalidOpcodeException", "triggers an invalid opcode exception"},
-          {&showArgs, "showArgs", "prints the arguments passed to this command"}};
+          {&showArgs, "showArgs", "prints the arguments passed to this command"},
+          {&ps, "ps", "displays information about a selection of the active processes"}};
 
       for (int i = 0; i < COMMANDS; i++) {
             shellData->commands[i].command = commandsData[i].command;
@@ -106,7 +107,6 @@ static void processCommand(t_shellData * shellData) {
                   return;
             }
       }
-      syscall(MALLOC,10,0,0,0,0,0);
       printStringLn("Invalid command");
 }
 

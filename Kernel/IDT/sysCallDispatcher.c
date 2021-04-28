@@ -20,9 +20,10 @@
 #define SYS_KILL_ID 10
 #define SYS_BLOCK_ID 11
 #define SYS_UNLOCK_ID 12
-#define SYS_GET_PID 13
+#define SYS_GET_PID_ID 13
+#define SYS_PS_ID 14
 
-#define SYSCALLS_QTY 14
+#define SYSCALLS_QTY 15
 
 uint64_t sysCallDispatcher(t_registers *r)
 {
@@ -75,8 +76,11 @@ uint64_t sysCallDispatcher(t_registers *r)
             case SYS_UNLOCK_ID:
                   return unblockProcess(r->rdi);
                   break;
-            case SYS_GET_PID:
+            case SYS_GET_PID_ID:
                   return getCurrPID();
+                  break;
+            case SYS_PS_ID:
+                  processDisplay();
                   break;
             }
       }

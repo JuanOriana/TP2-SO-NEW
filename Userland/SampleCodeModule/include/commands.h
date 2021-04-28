@@ -34,4 +34,6 @@ void checkInvalidOpcodeException(int argc, char **args, t_shellData * shellData)
 //shows arguments
 void showArgs(int argc, char **args, t_shellData * shellData);
 
+void ps(void);
+
 #endif

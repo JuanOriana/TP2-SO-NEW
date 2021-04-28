@@ -353,6 +353,7 @@ void printProcess(ProcessNode *process)
             printString("     ");
             printString(stateToStr(process->state));
             printStringLn("");
+            
       }
 }
 

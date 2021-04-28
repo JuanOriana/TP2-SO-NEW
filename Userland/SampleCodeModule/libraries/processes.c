@@ -20,7 +20,7 @@ int unlockProcess(uint64_t pid)
     return syscall(UNLOCK, pid, 0, 0, 0, 0, 0);
 }
 
-int getPID() 
+int getPID()
 {
     return syscall(GET_PID, 0, 0, 0, 0, 0, 0);
 }

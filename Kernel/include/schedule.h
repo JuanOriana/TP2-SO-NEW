@@ -13,5 +13,6 @@ uint64_t killProcess(uint64_t pid);
 uint64_t blockProcess(uint64_t pid);
 uint64_t unblockProcess(uint64_t pid);
 int getCurrPID();
+void processDisplay();
 
 #endif
