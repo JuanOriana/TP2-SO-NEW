@@ -4,11 +4,11 @@
 #include <buffer.h>
 #include <stdint.h>
 
-#define IS_LETTER(c) (c >= 'a' && c <= 'z' ? 1 : 0)
-#define IS_OPERAND(c) (c == '+' || c == '-' || c == '*' || c == '%' || c == '(' || c == ')' ? 1 : 0)
-#define IS_DIGIT(c) (c >= '0' && c <= '9' ? 1 : 0)
-#define ABS(c) (c >= 0 ? c : c * -1)
-#define MAX(a, b) (a > b ? a : b)
+#define IS_LETTER(c) ((c) >= 'a' && (c) <= 'z' ? 1 : 0)
+#define IS_OPERAND(c) ((c) == '+' || (c) == '-' || (c) == '*' || (c) == '%' || (c) == '(' || (c) == ')' ? 1 : 0)
+#define IS_DIGIT(c) ((c) >= '0' && (c) <= '9' ? 1 : 0)
+#define ABS(c) ((c) >= 0 ? (c) : (c) * -1)
+#define MAX(a, b) ((a) > (b) ? (a) : (b))
 
 uint32_t uintToBase(uint64_t value, char *buffer, uint32_t base);
 uint32_t uintToBaseWL(uint64_t value, char *buffer, uint32_t base, uint32_t lenght);

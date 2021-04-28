@@ -9,7 +9,7 @@
 //Schedueling part into two different files
 //But how to deal with crossed dependencies? (Process-> schedule, Schedule -> process)
 
-#define STACK_SIZE 4 * 1024
+#define STACK_SIZE (4 * 1024)
 
 typedef enum
 {
