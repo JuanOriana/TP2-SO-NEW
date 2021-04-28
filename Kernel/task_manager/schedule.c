@@ -327,6 +327,37 @@ uint64_t unblockProcess(uint64_t pid)
       return setNewState(pid, READY);
 }
 
+char *stateToStr(State state)
+{
+      switch (state)
+      {
+      case READY:
+            return "Ready";
+            break;
+      case BLOCKED:
+            return "Blocked";
+      default:
+            return "Awaiting death";
+            break;
+      };
+}
+
+void processDisplay()
+{
+      printStringLn("PID      NAME        STATE");
+      ProcessNode *curr = processes->first;
+      while (curr)
+      {
+            printInt(curr->pcb.pid);
+            printString("     ");
+            printString(curr->pcb.name);
+            printString("     ");
+            printString(stateToStr(curr->state));
+            printStringLn("");
+            curr = curr->next;
+      }
+}
+
 int getCurrPID()
 {
       return currentProcess ? currentProcess->pcb.pid : -1;
