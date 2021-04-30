@@ -2,14 +2,14 @@
 #include <videoDriver.h>
 #include <utils.h>
 
-void sys_write(char *string, uint8_t lenght, t_colour bgColour, t_colour fontColour)
+void sys_write(char *string, uint8_t length, t_colour bgColour, t_colour fontColour)
 {
-      if (lenght <= 0 || string == 0)
+      if (length <= 0 || string == 0)
       {
             return;
       }
 
-      for (int i = 0; i < lenght && string[i] != 0; i++)
+      for (int i = 0; i < length && string[i] != 0; i++)
       {
             if (string[i] == '\n')
             {
@@ -26,14 +26,14 @@ void sys_write(char *string, uint8_t lenght, t_colour bgColour, t_colour fontCol
       }
 }
 
-void sys_staticwrite(char *string, uint8_t lenght, t_colour bgColour, t_colour fontColour)
+void sys_staticwrite(char *string, uint8_t length, t_colour bgColour, t_colour fontColour)
 {
-      if (lenght <= 0 || string == 0 || bgColour < 0 || fontColour < 0)
+      if (length <= 0 || string == 0 || bgColour < 0 || fontColour < 0)
       {
             return;
       }
 
-      for (int i = 0; string[i] != 0 && i < lenght; i++)
+      for (int i = 0; i < length && string[i] != 0; i++)
       {
             printCharOnScreen(string[i], bgColour, fontColour, 0);
       }
@@ -67,7 +67,7 @@ void printHex(uint64_t num)
       printString(buffer);
 }
 
-void printHexWLC(uint64_t num, int lenght, t_colour bgColour, t_colour fontColour)
+void printHexWLC(uint64_t num, int length, t_colour bgColour, t_colour fontColour)
 {
       char buffer[10];
       uintToBaseWL(num, buffer, 16, 8);

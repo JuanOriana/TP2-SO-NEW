@@ -36,7 +36,7 @@ void memInit(char *memBase, unsigned long memSize)
 // Ref for malloc/free : The C Programming Language  - K&R
 void *mallocCust(unsigned long nbytes)
 {
-      if (nbytes <= 0)
+      if (nbytes == 0)
             return NULL;
 
       unsigned long nunits = (nbytes + sizeof(Header) - 1) / sizeof(Header) + 1; //Normalize to header units
