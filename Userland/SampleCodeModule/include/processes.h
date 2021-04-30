@@ -8,6 +8,7 @@ int createProcess(void (*entryPoint)(int, const char **), int argc, char **argv)
 int killProcess(uint64_t pid);
 int blockProcess(uint64_t pid);
 int unlockProcess(uint64_t pid);
+void nice(uint64_t pid, int priority);
 int getPID();
 
 #endif

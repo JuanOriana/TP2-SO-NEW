@@ -24,3 +24,8 @@ int getPID()
 {
     return syscall(GET_PID, 0, 0, 0, 0, 0, 0);
 }
+
+void nice(uint64_t pid, int priority)
+{
+    syscall(NICE, pid, priority, 0, 0, 0, 0);
+}

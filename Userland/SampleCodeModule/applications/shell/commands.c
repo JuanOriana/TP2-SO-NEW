@@ -159,6 +159,6 @@ static void memToString(char* buffer, uint8_t* mem, int bytes) {
       }
 }
 
-void ps() {
+void ps(int argc, char** args, t_shellData* shellData) {
       syscall(PS,0,0,0,0,0,0);
 }
