@@ -11,6 +11,7 @@
 
 #define STACK_SIZE (4 * 1024)
 #define INIT_PRIO 1
+#define CYCLE_CAP 40
 
 typedef enum
 {
@@ -409,4 +410,17 @@ void processDisplay()
 int getCurrPID()
 {
       return currentProcess ? currentProcess->pcb.pid : -1;
+}
+
+void setNewCycle(uint64_t pid, int priority)
+{
+      if (priority < 0)
+            priority = 0;
+      if (priority > CYCLE_CAP)
+            priority = CYCLE_CAP;
+
+      ProcessNode *p = getProcessOfPID(pid);
+
+      if (p != NULL)
+            p->pcb.priority = priority;
 }
