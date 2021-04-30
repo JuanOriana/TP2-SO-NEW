@@ -10,6 +10,7 @@
 //But how to deal with crossed dependencies? (Process-> schedule, Schedule -> process)
 
 #define STACK_SIZE (4 * 1024)
+#define INIT_PRIO 1
 
 typedef enum
 {
@@ -25,6 +26,7 @@ typedef struct
       char *name;
       void *rsp;
       void *rbp;
+      int priority;
 } PCB;
 
 typedef struct
@@ -66,6 +68,7 @@ typedef struct ProcessNode
 typedef struct pList
 {
       uint32_t size;
+      uint32_t readyProcessCount;
       ProcessNode *first;
       ProcessNode *last;
 } ProcessList;
@@ -85,6 +88,7 @@ static int queueIsEmpty();
 static uint64_t newPidVal = 0;
 static ProcessList *processes;
 static ProcessNode *currentProcess;
+static uint64_t cyclesLeft;
 static ProcessNode *idleProcess;
 
 static void haltFunc(int argc, char **argv)
@@ -104,6 +108,7 @@ void initScheduler()
       processes->first = NULL;
       processes->last = NULL;
       processes->size = 0;
+      processes->readyProcessCount = 0;
 
       //Create an idling process and store it in case no process is available
       // (Must be popped bcz of queue)
@@ -118,7 +123,16 @@ void *scheduler(void *oldRSP)
       // If killed free, else queue it to find it later.
       if (currentProcess)
       {
+            // If should continue, do so
+            if (currentProcess->state == READY && cyclesLeft > 0)
+            {
+                  cyclesLeft--;
+                  return oldRSP;
+            }
+
+            //ELse, save last state
             currentProcess->pcb.rsp = oldRSP;
+
             if (currentProcess->state == KILLED)
             {
                   freeProcess(currentProcess);
@@ -128,7 +142,7 @@ void *scheduler(void *oldRSP)
       }
       // If I still have something to process, do so (if I kill al processses int his loop it might bring trouble)
       // CONSIDER TRACKING READY PROCESSES ALSO
-      if (processes->size > 0)
+      if (processes->readyProcessCount > 0)
       {
             currentProcess = processDequeue();
             while (currentProcess->state != READY)
@@ -149,6 +163,8 @@ void *scheduler(void *oldRSP)
       else
             currentProcess = idleProcess;
 
+      // Asign new quantum, as we have changed our process
+      cyclesLeft = currentProcess->pcb.priority;
       return currentProcess->pcb.rsp;
 }
 
@@ -168,7 +184,9 @@ int addProcess(void (*entryPoint)(int, char **), int argc, char **argv)
             freeCust(newProcess);
             return -1;
       }
+
       setNewSF(entryPoint, argc, argv, newProcess->pcb.rbp);
+
       newProcess->state = READY;
       processQueue(newProcess);
 
@@ -180,6 +198,7 @@ static int createPCB(PCB *process, char *name)
       process->name = name;
       process->pid = getNewPid();
       process->rbp = mallocCust(STACK_SIZE);
+      process->priority = INIT_PRIO;
       if (process->rbp == NULL)
             return -1;
 
@@ -237,6 +256,10 @@ static void processQueue(ProcessNode *newProcess)
             newProcess->next = NULL;
             processes->last = newProcess;
       }
+
+      if (newProcess->state == READY)
+            processes->readyProcessCount++;
+
       processes->size++;
 }
 
@@ -247,7 +270,12 @@ static ProcessNode *processDequeue()
 
       ProcessNode *p = processes->first;
       processes->first = processes->first->next;
+
+      if (p->state == READY)
+            processes->readyProcessCount--;
+
       processes->size--;
+
       return p;
 }
 
@@ -300,7 +328,14 @@ static uint64_t setNewState(uint64_t pid, State newState)
       if (process == NULL || process->state == KILLED)
             return -1;
 
+      if (newState == READY && process->state != READY)
+            processes->readyProcessCount++;
+
+      else if (newState != READY && process->state == READY)
+            processes->readyProcessCount--;
+
       process->state = newState;
+
       return process->pcb.pid;
 }
 
@@ -348,12 +383,11 @@ void printProcess(ProcessNode *process)
       if (process != NULL)
       {
             printInt(process->pcb.pid);
-            printString("     ");
+            printString("        ");
             printString(process->pcb.name);
-            printString("     ");
+            printString("       ");
             printString(stateToStr(process->state));
             printStringLn("");
-            
       }
 }
 
