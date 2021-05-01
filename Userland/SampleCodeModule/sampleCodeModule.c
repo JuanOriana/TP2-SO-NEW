@@ -9,6 +9,6 @@ int main()
 
       char *args[] = {"Shell"};
       createProcess(&runShell, 1, args);
-
+      syscall(DUMP_MM, 0, 0, 0, 0, 0, 0);
       return 0;
 }
