@@ -22,8 +22,9 @@
 #define SYS_UNLOCK_ID 12
 #define SYS_GET_PID_ID 13
 #define SYS_PS_ID 14
+#define SYS_NICE_ID 15
 
-#define SYSCALLS_QTY 15
+#define SYSCALLS_QTY 16
 
 uint64_t sysCallDispatcher(t_registers *r)
 {
@@ -82,6 +83,8 @@ uint64_t sysCallDispatcher(t_registers *r)
             case SYS_PS_ID:
                   processDisplay();
                   break;
+            case SYS_NICE_ID:
+                  setNewCycle(r->rdi, r->rsi);
             }
       }
       return 0;
