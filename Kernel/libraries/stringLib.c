@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <stringLib.h>
 #include <videoDriver.h>
 #include <utils.h>
@@ -28,7 +30,7 @@ void sys_write(char *string, uint8_t length, t_colour bgColour, t_colour fontCol
 
 void sys_staticwrite(char *string, uint8_t length, t_colour bgColour, t_colour fontColour)
 {
-      if (length <= 0 || string == 0 || bgColour < 0 || fontColour < 0)
+      if (length <= 0 || string == 0)
       {
             return;
       }
