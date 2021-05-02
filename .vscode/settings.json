@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "processes.h": "c",
-        "stringlib.h": "c"
+        "stringlib.h": "c",
+        "shell.h": "c"
     }
 }
