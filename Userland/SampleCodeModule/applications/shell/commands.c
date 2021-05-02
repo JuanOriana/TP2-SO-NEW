@@ -164,3 +164,7 @@ static void memToString(char* buffer, uint8_t* mem, int bytes) {
 void ps(int argc, char** args, t_shellData* shellData) {
       syscall(PS,0,0,0,0,0,0);
 }
+
+void mem() {
+      syscall(DUMP_MM,0,0,0,0,0,0);
+}

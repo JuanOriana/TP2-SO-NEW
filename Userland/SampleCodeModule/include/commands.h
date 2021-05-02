@@ -36,4 +36,6 @@ void showArgs(int argc, char **args, t_shellData * shellData);
 
 void ps(int argc, char **args,t_shellData* shellData);
 
+void mem();
+
 #endif

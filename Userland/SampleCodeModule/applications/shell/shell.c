@@ -45,7 +45,9 @@ static void initShell(t_shellData *shellData)
           {&checkZeroException, "checkZeroException", "triggers a zero division exception"},
           {&checkInvalidOpcodeException, "checkInvalidOpcodeException", "triggers an invalid opcode exception"},
           {&showArgs, "showArgs", "prints the arguments passed to this command"},
-          {&ps, "ps", "displays information about a selection of the active processes"}};
+          {&ps, "ps", "displays information about a selection of the active processes"},
+          {&mem, "mem", "prints the current state of memory"}
+          };
 
       for (int i = 0; i < COMMANDS; i++)
       {
