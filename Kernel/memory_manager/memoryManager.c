@@ -4,6 +4,7 @@
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 
 #include "memoryManager.h"
+#include "stringLib.h"
 
 #define NULL 0
 
@@ -119,9 +120,9 @@ void freeCust(void *freeMem)
       freep = p;
 }
 
-void dumpMM(long *baseRet, long *freeMem, long *totalMem)
+void dumpMM()
 {
-      *baseRet = (long)base;
-      *freeMem = (long)freeUnits * sizeof(Header);
-      *totalMem = (long)totalUnits * sizeof(Header);
+      print("Base: %d\n", (uint64_t) base);
+      print("Total memory: %d\n", totalUnits * sizeof(Header));
+      print("Free memory: %d\n", freeUnits * sizeof(Header));
 }

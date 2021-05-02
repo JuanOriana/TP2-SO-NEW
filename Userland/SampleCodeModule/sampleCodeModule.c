@@ -8,7 +8,7 @@
 
 int main()
 {
-      char *args[] = {"Shell"};
-      createProcess(&runShell, 1, args);
+
+      runShell();
       return 0;
 }

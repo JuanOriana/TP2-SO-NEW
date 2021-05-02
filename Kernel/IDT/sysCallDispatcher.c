@@ -25,8 +25,9 @@
 #define SYS_GET_PID_ID 13
 #define SYS_PS_ID 14
 #define SYS_NICE_ID 15
+#define SYS_DUMP_MM_ID 16
 
-#define SYSCALLS_QTY 16
+#define SYSCALLS_QTY 17
 
 uint64_t sysCallDispatcher(t_registers *r)
 {
@@ -87,6 +88,10 @@ uint64_t sysCallDispatcher(t_registers *r)
                   break;
             case SYS_NICE_ID:
                   setNewCycle(r->rdi, r->rsi);
+                  break;
+            case SYS_DUMP_MM_ID:
+                  dumpMM();
+                  break;
             }
       }
       return 0;

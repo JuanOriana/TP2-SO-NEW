@@ -58,7 +58,7 @@ int main()
       memInit((char *)sampleCodeModuleHeapAddress, HEAP_MEMORY_SIZE);
       initScheduler();
 
-      char *argv[] = {"SampleCodeModule"};
+      char *argv[] = {"Shell"};
       addProcess(sampleCodeModuleAddress, 1, argv);
       _hlt();
 
