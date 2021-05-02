@@ -30,6 +30,7 @@ typedef struct
       void *rsp;
       void *rbp;
       int priority;
+      char fg;
 } PCB;
 
 typedef struct
@@ -191,6 +192,7 @@ int addProcess(void (*entryPoint)(int, char **), int argc, char **argv)
       setNewSF(entryPoint, argc, argv, newProcess->pcb.rbp);
 
       newProcess->state = READY;
+      newProcess->pcb.fg = 1;
       processQueue(newProcess);
 
       return newProcess->pcb.pid;
@@ -390,13 +392,19 @@ void printProcess(ProcessNode *process)
             printString(process->pcb.name);
             printString("       ");
             printString(stateToStr(process->state));
+            printString("      ");
+            printInt(process->pcb.rsp);
+            printString("     ");
+            printInt(process->pcb.rbp);
+            printString("       ");
+            printInt((int)process->pcb.fg);
             printStringLn("");
       }
 }
 
 void processDisplay()
 {
-      printStringLn("PID      NAME        STATE");
+      printStringLn("PID      NAME        STATE      RSP          RBP          FG");
 
       if (currentProcess != NULL)
             printProcess(currentProcess);
