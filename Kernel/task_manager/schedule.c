@@ -19,7 +19,7 @@ int argsCopy(char **buffer, char **argv, int argc)
 {
       for (int i = 0; i < argc; i++)
       {
-            buffer[i] = mallocCust(sizeof(char) * (strlen(buffer[i]) + 1));
+            buffer[i] = mallocCust(sizeof(char) * (strlen(argv[i]) + 1));
             strcpy(buffer[i], argv[i]);
       }
       return 1;
@@ -189,10 +189,10 @@ int addProcess(void (*entryPoint)(int, char **), int argc, char **argv)
 
       ProcessNode *newProcess = mallocCust(sizeof(ProcessNode));
 
-      // char **argvAux = mallocCust(sizeof(char *) * argc);
-      // if (argvAux == 0)
-      //       return 0;
-      // argsCopy(argvAux, argv, argc);
+      char **argvAux = mallocCust(sizeof(char *) * argc);
+      if (argvAux == 0)
+            return 0;
+      argsCopy(argvAux, argv, argc);
 
       if (newProcess == NULL)
             return -1;
@@ -204,7 +204,7 @@ int addProcess(void (*entryPoint)(int, char **), int argc, char **argv)
             return -1;
       }
 
-      setNewSF(entryPoint, argc, argv, newProcess->pcb.rbp);
+      setNewSF(entryPoint, argc, argvAux, newProcess->pcb.rbp);
 
       newProcess->state = READY;
       newProcess->pcb.fg = 1;
@@ -322,6 +322,10 @@ static void exit()
 static void wrapper(void (*entryPoint)(int, char **), int argc, char **argv)
 {
       entryPoint(argc, argv);
+      for (int i = 0; i < argc; i++)
+            freeCust(argv[i]);
+      freeCust(argv);
+
       exit();
 }
 

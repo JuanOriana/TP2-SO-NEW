@@ -14,7 +14,8 @@ void process1(int argc, const char *argv[])
 {
     while (1)
     {
-        printInt(1);
+        printInt(getPID());
+        printStringLn("");
     }
 }
 
