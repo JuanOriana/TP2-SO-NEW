@@ -60,12 +60,6 @@ static List *base;
 static uint64_t maxMemSize;
 static uint8_t levels;
 
-/*
- * This is the maximum address that has ever been used by the allocator. It's
- * used to know when to call "brk" to request more memory from the kernel.
- */
-static uint8_t *max_ptr;
-
 void initMemBuddy(void *memBase, uint64_t totalSize)
 {
     if (memBase == NULL)
