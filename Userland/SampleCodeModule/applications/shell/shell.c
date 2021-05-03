@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <shell.h>
 #include <commands.h>
 #include <keys.h>
@@ -53,9 +55,9 @@ static void initShell(t_shellData *shellData)
             shellData->commands[i].name = commandsData[i].name;
             shellData->commands[i].description = commandsData[i].description;
       }
-
+      char username[20] = "USER";
       cleanBuffer(&shellData->buffer);
-      strcpy("USER", shellData->username);
+      strcpy(username, shellData->username);
       shellText(shellData);
 }
 
