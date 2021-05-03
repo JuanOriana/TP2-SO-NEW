@@ -189,10 +189,10 @@ int addProcess(void (*entryPoint)(int, char **), int argc, char **argv)
 
       ProcessNode *newProcess = mallocCust(sizeof(ProcessNode));
 
-      char **argvAux = mallocCust(sizeof(char *) * argc);
-      if (argvAux == 0)
-            return 0;
-      argsCopy(argvAux, argv, argc);
+      // char **argvAux = mallocCust(sizeof(char *) * argc);
+      // if (argvAux == 0)
+      //       return 0;
+      // argsCopy(argvAux, argv, argc);
 
       if (newProcess == NULL)
             return -1;
@@ -345,12 +345,8 @@ static uint64_t setNewState(uint64_t pid, State newState)
 {
       ProcessNode *process = getProcessOfPID(pid);
 
-      if (process == NULL)
+      if (process == NULL || process->state == KILLED)
             return -1;
-      if (process->state == KILLED)
-      {
-            return process->pcb.pid;
-      }
 
       if (newState == READY && process->state != READY)
             processes->readyProcessCount++;

@@ -14,7 +14,7 @@ void process1(int argc, const char *argv[])
 {
     while (1)
     {
-        printStringWC("A", BLACK, RED);
+        printInt(1);
     }
 }
 
@@ -45,14 +45,13 @@ void test_processes()
     {
 
         //Create MAX_PROCESSES processes
-        char buf[3] = {0};
         for (rq = 0; rq < MAX_PROCESSES; rq++)
         {
-            char *argv[] = {"Proceso Dummy", itoa(rq,buf,10)};
-            p_rqs[rq].pid = createProcess(&process1, 2, argv); //TODO: Port this call as required
+            char *argv[] = {"Proceso Dummy"};
+            p_rqs[rq].pid = createProcess(&process1, 1, argv); //TODO: Port this call as required
 
             if (p_rqs[rq].pid == -1)
-            {                                              //TODO: Port this as required
+            {                                            //TODO: Port this as required
                 printStringLn("Error creating process"); //TODO: Port this as required
                 return;
             }
@@ -75,7 +74,7 @@ void test_processes()
                     if (p_rqs[rq].state == RUNNING || p_rqs[rq].state == BLOCKED)
                     {
                         if (killProcess(p_rqs[rq].pid) == -1)
-                        {                                             //TODO: Port this as required
+                        {                                           //TODO: Port this as required
                             printStringLn("Error killing process"); // TODO: Port this as required
                             return;
                         }
@@ -88,7 +87,7 @@ void test_processes()
                     if (p_rqs[rq].state == RUNNING)
                     {
                         if (blockProcess(p_rqs[rq].pid) == -1)
-                        {                                              // TODO: Port this as required
+                        {                                            // TODO: Port this as required
                             printStringLn("Error blocking process"); //  TODO: Port this as required
                             return;
                         }
@@ -103,7 +102,7 @@ void test_processes()
                 if (p_rqs[rq].state == BLOCKED && GetUniform(2) % 2)
                 {
                     if (unblockProcess(p_rqs[rq].pid) == -1)
-                    {                                                //TODO: Port this as required
+                    {                                              //TODO: Port this as required
                         printStringLn("Error unblocking process"); // TODO: Port this as required
                         return;
                     }
