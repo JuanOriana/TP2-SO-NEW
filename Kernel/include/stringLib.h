@@ -18,5 +18,6 @@ void putcharWC(char c, t_colour bgColour, t_colour fontColour);
 void staticputchar(char c);
 int strlen(char* str);
 int print(char const *fmt, ...);
+void strcpy(char* str1, char* str2);
 
 #endif

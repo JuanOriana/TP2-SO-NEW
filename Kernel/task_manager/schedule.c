@@ -15,6 +15,16 @@
 #define INIT_PRIO 1
 #define CYCLE_CAP 40
 
+int argsCopy(char **buffer, char **argv, int argc)
+{
+      for (int i = 0; i < argc; i++)
+      {
+            buffer[i] = mallocCust(sizeof(char) * (strlen(buffer[i]) + 1));
+            strcpy(buffer[i], argv[i]);
+      }
+      return 1;
+}
+
 typedef enum
 {
       READY,
@@ -179,6 +189,11 @@ int addProcess(void (*entryPoint)(int, char **), int argc, char **argv)
 
       ProcessNode *newProcess = mallocCust(sizeof(ProcessNode));
 
+      char **argvAux = mallocCust(sizeof(char *) * argc);
+      if (argvAux == 0)
+            return 0;
+      argsCopy(argvAux, argv, argc);
+
       if (newProcess == NULL)
             return -1;
 
@@ -330,8 +345,12 @@ static uint64_t setNewState(uint64_t pid, State newState)
 {
       ProcessNode *process = getProcessOfPID(pid);
 
-      if (process == NULL || process->state == KILLED)
+      if (process == NULL)
             return -1;
+      if (process->state == KILLED)
+      {
+            return process->pcb.pid;
+      }
 
       if (newState == READY && process->state != READY)
             processes->readyProcessCount++;
@@ -346,7 +365,6 @@ static uint64_t setNewState(uint64_t pid, State newState)
 
 uint64_t killProcess(uint64_t pid)
 {
-
       int aux = setNewState(pid, KILLED);
       if (pid == currentProcess->pcb.pid)
             callTimerTick();
