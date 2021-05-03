@@ -10,6 +10,7 @@ SOURCES_MEMORY_MANAGER=$(wildcard memory_manager/*.c)
 SOURCES_TASK_MANAGER=$(wildcard task_manager/*.c)
 
 
+
 OBJECTS=$(SOURCES:.c=.o)
 OBJECTS_ASM=$(SOURCES_ASM:.asm=.o)
 OBJECTS_IDT=$(SOURCES_IDT:.c=.o)

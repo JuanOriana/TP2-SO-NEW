@@ -5,9 +5,10 @@
 #include <shell.h>
 #include <processes.h>
 #include <stringLib.h>
+#include <test_util.h>
 
 int main()
 {
-      runShell();
+      test_processes();
       return 0;
 }

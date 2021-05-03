@@ -17,7 +17,7 @@ int blockProcess(uint64_t pid)
     return syscall(BLOCK, pid, 0, 0, 0, 0, 0);
 }
 
-int unlockProcess(uint64_t pid)
+int unblockProcess(uint64_t pid)
 {
     return syscall(UNLOCK, pid, 0, 0, 0, 0, 0);
 }

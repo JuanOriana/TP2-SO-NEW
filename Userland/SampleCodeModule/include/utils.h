@@ -27,5 +27,6 @@ void strToDouble(char *numStr, int *error, double *result);
 void doubleToString(char *res, double total, int afterpoint);
 void reverse(char *str, int len);
 int intToStr(int x, char str[], int d);
+char *itoa(int value, char *buffer, int base);
 
 #endif
