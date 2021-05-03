@@ -44,11 +44,12 @@ void test_processes()
     while (1)
     {
 
+        char buf[10] = {0};
         //Create MAX_PROCESSES processes
         for (rq = 0; rq < MAX_PROCESSES; rq++)
         {
-            char* buf[10] = {0};
-            char *argv[] = {"Proceso Dummy",itoa(rq,buf,10)};
+
+            char *argv[] = {"Proceso Dummy", itoa(rq, buf, 10)};
             p_rqs[rq].pid = createProcess(&process1, 2, argv); //TODO: Port this call as required
 
             if (p_rqs[rq].pid == -1)

@@ -9,6 +9,6 @@
 
 int main()
 {
-      test_processes();
+      test_prio();
       return 0;
 }

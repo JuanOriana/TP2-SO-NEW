@@ -21,7 +21,7 @@ typedef enum
     FREE = 9,
     KILL = 10,
     BLOCK = 11,
-    UNLOCK = 12,
+    UNBLOCK = 12,
     GET_PID = 13,
     PS = 14,
     NICE = 15,
