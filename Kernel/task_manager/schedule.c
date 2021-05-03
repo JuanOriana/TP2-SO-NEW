@@ -20,7 +20,7 @@ int argsCopy(char **buffer, char **argv, int argc)
       for (int i = 0; i < argc; i++)
       {
             buffer[i] = mallocCust(sizeof(char) * (strlen(argv[i]) + 1));
-            strcpy(buffer[i], argv[i]);
+            strcpy(argv[i],buffer[i]);
       }
       return 1;
 }

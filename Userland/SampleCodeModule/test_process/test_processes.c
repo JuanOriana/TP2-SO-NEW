@@ -14,8 +14,7 @@ void process1(int argc, const char *argv[])
 {
     while (1)
     {
-        printInt(getPID());
-        printStringLn("");
+        printStringLn(argv[1]);
     }
 }
 
@@ -48,8 +47,9 @@ void test_processes()
         //Create MAX_PROCESSES processes
         for (rq = 0; rq < MAX_PROCESSES; rq++)
         {
-            char *argv[] = {"Proceso Dummy"};
-            p_rqs[rq].pid = createProcess(&process1, 1, argv); //TODO: Port this call as required
+            char* buf[10] = {0};
+            char *argv[] = {"Proceso Dummy",itoa(rq,buf,10)};
+            p_rqs[rq].pid = createProcess(&process1, 2, argv); //TODO: Port this call as required
 
             if (p_rqs[rq].pid == -1)
             {                                            //TODO: Port this as required
