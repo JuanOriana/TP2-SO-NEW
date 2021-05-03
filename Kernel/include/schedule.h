@@ -1,5 +1,5 @@
-#ifndef TASK_MANAGER_H
-#define TASK_MANAGER_H
+#ifndef SCHEDULE_H
+#define SCHEDULE_H
 
 #define MAX_PROCESSES 2
 

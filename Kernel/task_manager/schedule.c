@@ -393,9 +393,9 @@ void printProcess(ProcessNode *process)
             printString("       ");
             printString(stateToStr(process->state));
             printString("      ");
-            printInt(process->pcb.rsp);
+            printInt((uint64_t)process->pcb.rsp);
             printString("     ");
-            printInt(process->pcb.rbp);
+            printInt((uint64_t)process->pcb.rbp);
             printString("       ");
             printInt((int)process->pcb.fg);
             printStringLn("");
