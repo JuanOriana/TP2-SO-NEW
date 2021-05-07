@@ -3,7 +3,7 @@
 
 #include <buffer.h>
 
-#define COMMANDS 12
+#define COMMANDS 14
 #define MAX_ARGS 4
 
 typedef struct t_command t_command;

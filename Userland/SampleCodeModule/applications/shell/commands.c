@@ -7,6 +7,7 @@
 #include <stringLib.h>
 #include <systemCalls.h>
 #include <utils.h>
+#include <test_util.h>
 
 static void memToString(char* buffer, uint8_t* mem, int bytes);
 
@@ -165,6 +166,14 @@ void ps(int argc, char** args, t_shellData* shellData) {
       syscall(PS,0,0,0,0,0,0);
 }
 
-void mem() {
+void mem(int argc, char** args, t_shellData* shellData) {
       syscall(DUMP_MM,0,0,0,0,0,0);
+}
+
+void testPriority(int argc, char** args, t_shellData* shellData){
+      test_prio();
+}
+
+void testScheduler(int argc, char** args, t_shellData* shellData){
+      test_processes();
 }

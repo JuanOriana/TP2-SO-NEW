@@ -46,7 +46,9 @@ static void initShell(t_shellData *shellData)
           {&checkInvalidOpcodeException, "checkInvalidOpcodeException", "triggers an invalid opcode exception"},
           {&showArgs, "showArgs", "prints the arguments passed to this command"},
           {&ps, "ps", "displays information about a selection of the active processes"},
-          {&mem, "mem", "prints the current state of memory"}
+          {&mem, "mem", "prints the current state of memory"},
+          {&testPriority,"priotest","tests the implementation of the priority manager in the system"},
+          {&testScheduler,"schedtest","tests the implementation of the scheduler in the system"}
           };
 
       for (int i = 0; i < COMMANDS; i++)

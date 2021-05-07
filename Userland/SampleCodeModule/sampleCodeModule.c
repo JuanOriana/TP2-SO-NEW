@@ -9,6 +9,6 @@
 
 int main()
 {
-      test_prio();
+      runShell();
       return 0;
 }
