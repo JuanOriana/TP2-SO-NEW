@@ -44,4 +44,12 @@ void mem();
 
 void loopCommand(int argc, char **args, t_shellData *shellData);
 
+void kill(int argc, char** args, t_shellData *shellData);
+
+void niceProcess(int argc, char** args, t_shellData* shellData);
+
+void block(int argc, char** args, t_shellData* shellData);
+
+void unblock(int argc, char** args, t_shellData* shellData);
+
 #endif

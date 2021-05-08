@@ -204,7 +204,7 @@ void mem(int argc, char** args, t_shellData* shellData) {
 
 void loopCommand(int argc, char **args, t_shellData *shellData)
 {
-      char *argv[] = {"Loop"};
+      char **argv = {"Loop"};
       createProcess(&loop, 1, argv, 0);
       return;
 }
@@ -215,4 +215,45 @@ void testPriority(int argc, char** args, t_shellData* shellData){
 
 void testScheduler(int argc, char** args, t_shellData* shellData){
       test_processes();
+}
+
+void kill(int argc, char** args, t_shellData* shellData){
+      int error;
+      if(argc != 2){
+            print("Error: Invalid ammount of arguments.\n");
+            return;
+      }
+      killProcess(strToInt(args[1], &error));
+}
+
+void niceProcess(int argc, char** args, t_shellData* shellData) {
+      int e1, e2;
+      if(argc != 3){
+            print("Error: Invalid ammount of arguments.\n");
+            return;
+      }
+      int pid = strToInt(args[1], &e1);
+      int priority = strToInt(args[2], &e2);
+      if (e1 == 1|| e2 == 1){
+            print("Error\n");
+      }
+      nice(pid, priority);
+}
+
+void block(int argc, char** args, t_shellData* shellData) {
+      int error;
+      if(argc != 2){
+            print("Error: Invalid ammount of arguments.\n");
+            return;
+      }
+      blockProcess(strToInt(args[1], &error));
+}
+
+void unblock(int argc, char** args, t_shellData* shellData) {
+      int error;
+      if(argc != 2){
+            print("Error: Invalid ammount of arguments.\n");
+            return;
+      }
+      unblockProcess(strToInt(args[1], &error));
 }
