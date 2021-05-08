@@ -52,7 +52,7 @@ void test_processes()
         {
 
             char *argv[] = {"Proceso Dummy", itoa(rq, buf, 10)};
-            p_rqs[rq].pid = createProcess(&process1, 2, argv); //TODO: Port this call as required
+            p_rqs[rq].pid = createProcess(&process1, 2, argv,1); //TODO: Port this call as required
 
             if (p_rqs[rq].pid == -1)
             {                                            //TODO: Port this as required

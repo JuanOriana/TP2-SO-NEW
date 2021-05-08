@@ -48,8 +48,9 @@ static void initShell(t_shellData *shellData)
           {&ps, "ps", "displays information about a selection of the active processes"},
           {&mem, "mem", "prints the current state of memory"},
           {&testPriority,"priotest","tests the implementation of the priority manager in the system"},
-          {&testScheduler,"schedtest","tests the implementation of the scheduler in the system"}
-          };
+          {&testScheduler,"schedtest","tests the implementation of the scheduler in the system"},
+          {&loopCommand, "loop", "loops and prints his pid endlessly"},
+      };
 
       for (int i = 0; i < COMMANDS; i++)
       {

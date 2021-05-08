@@ -13,6 +13,7 @@
 
 #define STACK_SIZE (4 * 1024)
 #define INIT_PRIO 1
+#define INIT_PRIO_AUG 2
 #define CYCLE_CAP 40
 
 int argsCopy(char **buffer, char **argv, int argc)
@@ -20,7 +21,7 @@ int argsCopy(char **buffer, char **argv, int argc)
       for (int i = 0; i < argc; i++)
       {
             buffer[i] = mallocCust(sizeof(char) * (strlen(argv[i]) + 1));
-            strcpy(argv[i],buffer[i]);
+            strcpy(argv[i], buffer[i]);
       }
       return 1;
 }
@@ -36,11 +37,12 @@ typedef enum
 typedef struct
 {
       uint64_t pid;
-      char *name;
+      uint64_t ppid;
+      int fg;
+      char name[30];
       void *rsp;
       void *rbp;
       int priority;
-      char fg;
 } PCB;
 
 typedef struct
@@ -88,11 +90,12 @@ typedef struct pList
 } ProcessList;
 
 static void setNewSF(void (*entryPoint)(int, char **), int argc, char **argv, void *rbp);
-static int createPCB(PCB *process, char *name);
+static int createPCB(PCB *process, char *name, int fg);
 static uint64_t getNewPid();
 static void wrapper(void (*entryPoint)(int, char **), int argc, char **argv);
 static void exit();
 static void freeProcess(ProcessNode *process);
+static ProcessNode *getProcessOfPID(uint64_t pid);
 
 // http://datastructs.io/home/c/queue
 static void processQueue(ProcessNode *newProcess);
@@ -127,7 +130,7 @@ void initScheduler()
       //Create an idling process and store it in case no process is available
       // (Must be popped bcz of queue)
       char *argv[] = {"Halt Process"};
-      addProcess(&haltFunc, 1, argv);
+      addProcess(&haltFunc, 1, argv, 0);
       idleProcess = processDequeue();
 }
 
@@ -149,6 +152,12 @@ void *scheduler(void *oldRSP)
 
             if (currentProcess->state == KILLED)
             {
+                  ProcessNode *parent = getProcessOfPID(currentProcess->pcb.ppid);
+                  //Free parents awaiting
+                  if (parent != NULL && currentProcess->pcb.fg && parent->state == BLOCKED)
+                  {
+                        unblockProcess(parent->pcb.pid);
+                  }
                   freeProcess(currentProcess);
             }
             else
@@ -182,43 +191,49 @@ void *scheduler(void *oldRSP)
       return currentProcess->pcb.rsp;
 }
 
-int addProcess(void (*entryPoint)(int, char **), int argc, char **argv)
+int addProcess(void (*entryPoint)(int, char **), int argc, char **argv, int fg)
 {
       if (entryPoint == NULL)
             return -1;
 
       ProcessNode *newProcess = mallocCust(sizeof(ProcessNode));
 
-      char **argvAux = mallocCust(sizeof(char *) * argc);
-      if (argvAux == 0)
-            return 0;
-      argsCopy(argvAux, argv, argc);
-
       if (newProcess == NULL)
             return -1;
 
       //What if createPCB and setNewSft where in another file? Consider
-      if (createPCB(&newProcess->pcb, argv[0]) == -1)
+      if (createPCB(&newProcess->pcb, argv[0], fg) == -1)
       {
             freeCust(newProcess);
             return -1;
       }
 
+      char **argvAux = mallocCust(sizeof(char *) * argc);
+      if (argvAux == 0)
+            return -1;
+      argsCopy(argvAux, argv, argc);
+
       setNewSF(entryPoint, argc, argvAux, newProcess->pcb.rbp);
 
       newProcess->state = READY;
-      newProcess->pcb.fg = 1;
       processQueue(newProcess);
 
       return newProcess->pcb.pid;
 }
 
-static int createPCB(PCB *process, char *name)
+static int createPCB(PCB *process, char *name, int fg)
 {
-      process->name = name;
+      strcpy(process->name, name);
       process->pid = getNewPid();
+      //currentProcess running is his parent
+      process->ppid = currentProcess == NULL ? 0 : currentProcess->pcb.pid;
+      if (fg > 1 || fg < 0)
+            return -1;
+      // If i have a parent and he is not in the foreground, then i can not be in the foreground either
+      process->fg = currentProcess == NULL ? fg : (currentProcess->pcb.fg ? fg : 0);
       process->rbp = mallocCust(STACK_SIZE);
-      process->priority = INIT_PRIO;
+      process->priority = process->fg ? INIT_PRIO_AUG : INIT_PRIO;
+
       if (process->rbp == NULL)
             return -1;
 
@@ -451,4 +466,13 @@ void setNewCycle(uint64_t pid, int priority)
 
       if (p != NULL)
             p->pcb.priority = priority;
+}
+
+void killFgProcess()
+{
+      if (currentProcess != NULL && currentProcess->pcb.fg && currentProcess->state == READY)
+      {
+            killProcess(currentProcess->pcb.pid);
+            return;
+      }
 }
