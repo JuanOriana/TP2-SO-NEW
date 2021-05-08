@@ -18,5 +18,6 @@ char getchar();
 void deletechar();
 int strlen(char* str);
 void strcopy(char* str1, char* str2);
+int print(char const *fmt, ...);
 
 #endif

@@ -12,7 +12,7 @@ void endless_looP()
         ;
 }
 
-void process1(int argc, const char *argv[])
+void process1(int argc, char *argv[])
 {
     while (1)
     {

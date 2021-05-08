@@ -50,6 +50,10 @@ static void initShell(t_shellData *shellData)
           {&testPriority,"priotest","tests the implementation of the priority manager in the system"},
           {&testScheduler,"schedtest","tests the implementation of the scheduler in the system"},
           {&loopCommand, "loop", "loops and prints his pid endlessly"},
+          {&kill, "kill", "kills process"},
+          {&niceProcess, "nice", "changes process priority"},
+          {&block, "block", "blocks process"},
+          {&unblock, "unblock", "unblocks process"}
       };
 
       for (int i = 0; i < COMMANDS; i++)
