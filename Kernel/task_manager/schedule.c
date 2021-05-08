@@ -216,7 +216,6 @@ int addProcess(void (*entryPoint)(int, char **), int argc, char **argv, int fg)
       setNewSF(entryPoint, argc, argvAux, newProcess->pcb.rbp);
 
       newProcess->state = READY;
-      newProcess->pcb.fg = 1;
       processQueue(newProcess);
 
       return newProcess->pcb.pid;
