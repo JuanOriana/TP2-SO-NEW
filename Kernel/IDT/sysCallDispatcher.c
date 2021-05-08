@@ -60,7 +60,7 @@ uint64_t sysCallDispatcher(t_registers *r)
                   break;
 
             case SYS_INIT_PROC_ID:
-                  return addProcess((void (*)(int, char **))r->rdi, (int)r->rsi, (char **)r->rdx);
+                  return addProcess((void (*)(int, char **))r->rdi, (int)r->rsi, (char **)r->rdx, (int)r->r10);
                   break;
             case SYS_INFOREG_ID:
                   return (uint64_t)getSnapshot();
