@@ -8,6 +8,7 @@
 #include <schedule.h>
 #include <videoDriver.h>
 #include <memoryManager.h>
+#include <timerTick.h>
 
 #define SYS_GETMEM_ID 0
 #define SYS_RTC_TIME_ID 1
@@ -26,8 +27,9 @@
 #define SYS_PS_ID 14
 #define SYS_NICE_ID 15
 #define SYS_DUMP_MM_ID 16
+#define SYS_TICKS_ELAPSED_ID 17
 
-#define SYSCALLS_QTY 17
+#define SYSCALLS_QTY 18
 
 uint64_t sysCallDispatcher(t_registers *r)
 {
@@ -91,6 +93,9 @@ uint64_t sysCallDispatcher(t_registers *r)
                   break;
             case SYS_DUMP_MM_ID:
                   dumpMM();
+                  break;
+            case SYS_TICKS_ELAPSED_ID:
+                  return ticksElapsed();
                   break;
             }
       }

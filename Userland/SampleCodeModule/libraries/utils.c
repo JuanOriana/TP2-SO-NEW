@@ -3,6 +3,7 @@
 #include <buffer.h>
 #include <stringLib.h>
 #include <utils.h>
+#include <systemCalls.h>
 
 //sacada de nvconsole
 uint32_t uintToBase(uint64_t value, char *buffer, uint32_t base)
@@ -417,7 +418,8 @@ int intToStr(int x, char str[], int d)
       return i;
 }
 
-char *itoa(int value, char *buffer, int base) {
+char *itoa(int value, char *buffer, int base)
+{
       // invalid input
       if (base < 2 || base > 32)
             return buffer;
@@ -426,7 +428,8 @@ char *itoa(int value, char *buffer, int base) {
       int n = ABS(value);
 
       int i = 0;
-      while (n) {
+      while (n)
+      {
             int r = n % base;
 
             if (r >= 10)
@@ -447,9 +450,21 @@ char *itoa(int value, char *buffer, int base) {
       if (value < 0 && base == 10)
             buffer[i++] = '-';
 
-      buffer[i] = '\0';  // null terminate string
+      buffer[i] = '\0'; // null terminate string
 
       // reverse the string and return it
       reverse(buffer, i - 1);
       return buffer;
+}
+
+int ticksElapsed()
+{
+      return syscall(TICKS_ELAPSED, 0, 0, 0, 0, 0, 0);
+}
+
+void waitCycles(int cycles)
+{
+      int goal = ticksElapsed() + cycles;
+      while (ticksElapsed() <= goal)
+            ;
 }
