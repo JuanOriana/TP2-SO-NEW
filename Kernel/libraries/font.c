@@ -6,7 +6,7 @@
 
 #include <font.h>
 
-static char __font_bitmap__[] = {
+static unsigned char __font_bitmap__[] = {
     //  32 $20 'space'
     //	width 8, bbx 0, bby -4, bbw 8, bbh 16
     ________,
@@ -1719,5 +1719,5 @@ static char __font_bitmap__[] = {
     ________};
 
 char* getCharMap(int c) {
-      return (__font_bitmap__ + (c - ' ') * CHAR_HEIGHT);
+      return ((char*)__font_bitmap__ + (c - ' ') * CHAR_HEIGHT);
 }

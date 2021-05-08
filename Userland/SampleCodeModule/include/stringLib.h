@@ -17,6 +17,6 @@ void staticputchar(char c);
 char getchar();
 void deletechar();
 int strlen(char* str);
-void strcpy(char* str1, char* str2);
+void strcopy(char* str1, char* str2);
 
 #endif

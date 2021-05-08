@@ -57,9 +57,9 @@ static void initShell(t_shellData *shellData)
             shellData->commands[i].name = commandsData[i].name;
             shellData->commands[i].description = commandsData[i].description;
       }
-      char username[20] = "USER";
+      char* username = "USER";
       cleanBuffer(&shellData->buffer);
-      strcpy(username, shellData->username);
+      strcopy(username, shellData->username);
       shellText(shellData);
 }
 
@@ -136,7 +136,7 @@ static void shellText(t_shellData *shellData)
       printStringWC(" $ > ", BLACK, LIGHT_BLUE);
 }
 
-//muestra la informacion recoletada sobre los registros obtenidos al haber presionado ctrl + s
+//muestra la informacion recolectada sobre los registros obtenidos al haber presionado ctrl + s
 void inforeg(int argc, char **args, t_shellData *shellData)
 {
       if (argc != 0)
@@ -166,7 +166,7 @@ void changeUsername(int argc, char **argv, t_shellData *shellData)
             return;
       }
       cleanString(shellData->username);
-      strcpy(argv[0], shellData->username);
+      strcopy(argv[0], shellData->username);
 }
 
 //muestra la lista de comandos con sus descripciones

@@ -1,8 +1,11 @@
-#include <processes.h>
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+
 #include <stdint.h>
 #include <stringLib.h>
 #include <utils.h>
 #include <test_util.h>
+#include <processes.h>
 
 #define MINOR_WAIT 1000000 // TODO: To prevent a process from flooding the screen
 #define WAIT 10000000      // TODO: Long enough to see theese processes beeing run at least twice
@@ -15,7 +18,7 @@ void bussy_wait(uint64_t n)
     ;
 }
 
-void endless_loop(int argc, char* argv[])
+void endless_loop(int argc,const  char* argv[])
 {
   uint64_t pid = getPID();
 
