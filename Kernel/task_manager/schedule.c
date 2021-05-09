@@ -223,7 +223,7 @@ int addProcess(void (*entryPoint)(int, char **), int argc, char **argv, int fg)
 
 static int createPCB(PCB *process, char *name, int fg)
 {
-      strcpy(process->name, name);
+      strcpy(name,process->name);
       process->pid = getNewPid();
       //currentProcess running is his parent
       process->ppid = currentProcess == NULL ? 0 : currentProcess->pcb.pid;
