@@ -123,7 +123,7 @@ void initScheduler()
             return;
       }
       processes->first = NULL;
-      processes->last = NULL;
+      processes->last = processes->first;
       processes->size = 0;
       processes->readyProcessCount = 0;
 
@@ -150,7 +150,7 @@ void *scheduler(void *oldRSP)
             //ELse, save last state
             currentProcess->pcb.rsp = oldRSP;
 
-            if (currentProcess->state == KILLED)
+            if (currentProcess->pcb.pid != idleProcess->pcb.pid && currentProcess->state == KILLED)
             {
                   ProcessNode *parent = getProcessOfPID(currentProcess->pcb.ppid);
                   //Free parents awaiting
@@ -165,7 +165,7 @@ void *scheduler(void *oldRSP)
       }
       // If I still have something to process, do so (if I kill al processses int his loop it might bring trouble)
       // CONSIDER TRACKING READY PROCESSES ALSO
-      if (processes->readyProcessCount > 0)
+      if (processes->size > 0)
       {
             currentProcess = processDequeue();
             while (currentProcess->state != READY)
@@ -184,7 +184,9 @@ void *scheduler(void *oldRSP)
       }
       // Just idle if no processes are available
       else
+      {
             currentProcess = idleProcess;
+      }
 
       // Asign new quantum, as we have changed our process
       cyclesLeft = currentProcess->pcb.priority;
@@ -223,7 +225,7 @@ int addProcess(void (*entryPoint)(int, char **), int argc, char **argv, int fg)
 
 static int createPCB(PCB *process, char *name, int fg)
 {
-      strcpy(name,process->name);
+      strcpy(name, process->name);
       process->pid = getNewPid();
       //currentProcess running is his parent
       process->ppid = currentProcess == NULL ? 0 : currentProcess->pcb.pid;
@@ -293,7 +295,9 @@ static void processQueue(ProcessNode *newProcess)
       }
 
       if (newProcess->state == READY)
+      {
             processes->readyProcessCount++;
+      }
 
       processes->size++;
 }
@@ -305,11 +309,12 @@ static ProcessNode *processDequeue()
 
       ProcessNode *p = processes->first;
       processes->first = processes->first->next;
+      processes->size--;
 
       if (p->state == READY)
+      {
             processes->readyProcessCount--;
-
-      processes->size--;
+      }
 
       return p;
 }
@@ -381,8 +386,10 @@ static uint64_t setNewState(uint64_t pid, State newState)
 uint64_t killProcess(uint64_t pid)
 {
       int aux = setNewState(pid, KILLED);
+
       if (pid == currentProcess->pcb.pid)
             callTimerTick();
+
       return aux;
 }
 
@@ -457,6 +464,7 @@ int getCurrPID()
 
 void setNewCycle(uint64_t pid, int priority)
 {
+
       if (priority < 0)
             priority = 0;
       if (priority > CYCLE_CAP)
