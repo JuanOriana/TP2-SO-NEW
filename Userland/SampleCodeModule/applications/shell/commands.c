@@ -14,7 +14,7 @@
 static void memToString(char *buffer, uint8_t *mem, int bytes);
 
 //devuelve el tiempo acutal del sistema
-void time(int argc, char **args, t_shellData *shellData)
+void time(int argc, char **args)
 {
       if (argc != 0)
       {
@@ -45,7 +45,7 @@ void time(int argc, char **args, t_shellData *shellData)
 }
 
 //devuelve el modelo y vendedor del cpu
-void cpuInfo(int argc, char **args, t_shellData *shellData)
+void cpuInfo(int argc, char **args)
 {
       if (argc != 0)
       {
@@ -66,7 +66,7 @@ void cpuInfo(int argc, char **args, t_shellData *shellData)
 }
 
 //Hace un dump de 32 bytes de memria a partir de la direccion pedida
-void printmem(int argc, char **args, t_shellData *shellData)
+void printmem(int argc, char **args)
 {
       if (argc != 1)
       {
@@ -121,7 +121,7 @@ void printmem(int argc, char **args, t_shellData *shellData)
 }
 
 //Imprime la temperatura actual del cpu
-void cpuTemp(int argc, char **args, t_shellData *shellData)
+void cpuTemp(int argc, char **args)
 {
       if (argc != 0)
       {
@@ -136,7 +136,7 @@ void cpuTemp(int argc, char **args, t_shellData *shellData)
 }
 
 //causa una excepcion de dividir por cero
-void checkZeroException(int argc, char **args, t_shellData *shellData)
+void checkZeroException(int argc, char **args)
 {
       if (argc != 0)
       {
@@ -152,7 +152,7 @@ void checkZeroException(int argc, char **args, t_shellData *shellData)
 }
 
 //causa una excepcion de tipo invalid opcode
-void checkInvalidOpcodeException(int argc, char **args, t_shellData *shellData)
+void checkInvalidOpcodeException(int argc, char **args)
 {
       if (argc != 0)
       {
@@ -164,7 +164,7 @@ void checkInvalidOpcodeException(int argc, char **args, t_shellData *shellData)
 }
 
 //Muestra los argumentos pasados al comando
-void showArgs(int argc, char **args, t_shellData *shellData)
+void showArgs(int argc, char **args)
 {
       for (int i = 0; i < argc && i < MAX_ARGS; i++)
       {
@@ -192,66 +192,77 @@ static void memToString(char *buffer, uint8_t *mem, int bytes)
       }
 }
 
-void ps(int argc, char **args, t_shellData *shellData)
+void ps(int argc, char **args)
 {
       syscall(PS, 0, 0, 0, 0, 0, 0);
 }
 
-
-void mem(int argc, char** args, t_shellData* shellData) {
-      syscall(DUMP_MM,0,0,0,0,0,0);
+void mem(int argc, char **args)
+{
+      syscall(DUMP_MM, 0, 0, 0, 0, 0, 0);
 }
 
-void loopCommand(int argc, char **args, t_shellData *shellData)
+void loopCommand(int argc, char **args)
 {
       char **argv = {"Loop"};
       createProcess(&loop, 1, argv, 0);
       return;
 }
 
-void testPriority(int argc, char** args, t_shellData* shellData){
+void testPriority(int argc, char **args)
+{
       test_prio();
 }
 
-void testScheduler(int argc, char** args, t_shellData* shellData){
+void testScheduler(int argc, char **args)
+{
       test_processes();
 }
 
-void kill(int argc, char** args, t_shellData* shellData){
+void kill(int argc, char **args)
+{
       int error;
-      if(argc != 2){
+      if (argc != 2)
+      {
             print("Error: Invalid ammount of arguments.\n");
             return;
       }
       killProcess(strToInt(args[1], &error));
 }
 
-void niceProcess(int argc, char** args, t_shellData* shellData) {
+void niceProcess(int argc, char **args)
+{
       int e1, e2;
-      if(argc != 3){
+      if (argc != 3)
+      {
             print("Error: Invalid ammount of arguments.\n");
             return;
       }
       int pid = strToInt(args[1], &e1);
       int priority = strToInt(args[2], &e2);
-      if (e1 == 1|| e2 == 1){
+      if (e1 == 1 || e2 == 1)
+      {
             print("Error\n");
       }
       nice(pid, priority);
 }
 
-void block(int argc, char** args, t_shellData* shellData) {
+void block(int argc, char **args)
+{
       int error;
-      if(argc != 2){
+      if (argc != 2)
+      {
             print("Error: Invalid ammount of arguments.\n");
             return;
       }
       blockProcess(strToInt(args[1], &error));
 }
 
-void unblock(int argc, char** args, t_shellData* shellData) {
+void unblock(int argc, char **args)
+{
       int error;
-      if(argc != 2){
+      if (argc != 2)
+      {
             print("Error: Invalid ammount of arguments.\n");
             return;
       }
