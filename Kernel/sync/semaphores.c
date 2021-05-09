@@ -1,4 +1,6 @@
 #include <memoryManager.h>
+#include <processes.h>
+#include <lib.h>
 
 #define MAX_BLOCKED_PIDS 10
 #define NULL 0
@@ -10,6 +12,7 @@ typedef struct
     int listeners;
     int blockedPIDs[MAX_BLOCKED_PIDS];
     int blockedPIDsSize;
+    int mutex;
     Semaphore *next;
 
 } Semaphore;
@@ -18,9 +21,9 @@ Semaphore *semaphores = NULL;
 
 Semaphore *sOpen(int id, unsigned int initValue);
 
-int sWait(int id);
+int sWait(Semaphore *sem);
 
-int sPost(int id);
+int sPost(Semaphore *sem);
 
 int sClose(int id);
 
@@ -66,4 +69,27 @@ Semaphore *findSem(int id)
         sem = sem->next;
     }
     return NULL;
+}
+
+int sWait(Semaphore *sem)
+{
+    if (!findSem(sem->id))
+        return 1;
+    acquire(&sem->mutex);
+    if (sem->value > 0)
+        sem->value--;
+    else
+    {
+        int currPid = getPID();
+        sem->blockedPIDs[sem->blockedPIDsSize++] = currPid;
+        blockProcess(currPid);
+        sem->value--;
+    }
+    release(&sem->mutex);
+    return 0;
+}
+
+int sPost(Semaphore *sem)
+{
+    
 }

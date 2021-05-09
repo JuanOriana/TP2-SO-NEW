@@ -2,6 +2,7 @@ GLOBAL cpuVendor
 GLOBAL cpuModel
 GLOBAL cpuTemp
 GLOBAL sys_getMem
+GLOBAL _xchg
 
 GLOBAL updateSnapshot
 GLOBAL getSnapshot
@@ -172,3 +173,8 @@ getBSDTimeInfo:
 callTimerTick:
 	int 20h
 	ret
+
+_xchg:
+    mov rax, rsi
+    xchg [rdi], eax
+    ret

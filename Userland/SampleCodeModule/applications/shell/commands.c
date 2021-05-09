@@ -204,7 +204,7 @@ void mem(int argc, char** args, t_shellData* shellData) {
 
 void loopCommand(int argc, char **args, t_shellData *shellData)
 {
-      char **argv = {"Loop"};
+      char* argv[] = {"Loop"};
       createProcess(&loop, 1, argv, 0);
       return;
 }

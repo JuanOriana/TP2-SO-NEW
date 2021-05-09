@@ -11,6 +11,9 @@ uint64_t cpuModel();
 int cpuTemp();
 void sys_getMem(uint64_t memDir, uint8_t* memData);
 uint8_t getBSDTimeInfo(uint8_t info);
+void _xchg(int *mutex, int value);
+void acquire(int *mutex);
+void release(int *mutex);
 
 void callTimerTick ();
 
