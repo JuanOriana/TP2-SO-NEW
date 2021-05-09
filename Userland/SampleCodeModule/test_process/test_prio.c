@@ -17,7 +17,7 @@ void bussy_wait(uint64_t n)
         ;
 }
 
-void endless_loop(int argc, const char *argv[])
+void endless_loop(int argc, char *argv[])
 {
     uint64_t pid = getPID();
 

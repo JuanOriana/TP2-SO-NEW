@@ -2,7 +2,7 @@
 #include "stringLib.h"
 #include "processes.h"
 
-void loop(int argc, const char **args)
+void loop(int argc, char **args)
 {
     if (argc != 1)
     {

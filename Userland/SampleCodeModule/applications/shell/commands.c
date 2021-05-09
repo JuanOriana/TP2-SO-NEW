@@ -204,9 +204,8 @@ void mem(int argc, char **args)
 
 void loopCommand(int argc, char **args)
 {
-      char processName[30];
-      strcopy("Loop",processName);
-      char *argv[] = {processName};
+
+      char* argv[] = {"Loop"};
       createProcess(&loop, 1, argv, 0);
       return;
 }

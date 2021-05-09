@@ -1,1 +1,1 @@
-void loop(int argc, const char **args);
+void loop(int argc, char **args);
