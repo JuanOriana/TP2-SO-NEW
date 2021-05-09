@@ -31,5 +31,6 @@ void reverse(char *str, int len);
 int intToStr(int x, char str[], int d);
 char *itoa(int value, char *buffer, int base);
 void waitCycles(int cycles);
+int tokenizeBuffer(char token, char **dest, char *source, int max);
 
 #endif

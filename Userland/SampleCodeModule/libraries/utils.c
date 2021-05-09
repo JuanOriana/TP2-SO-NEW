@@ -468,3 +468,27 @@ void waitCycles(int cycles)
       while (ticksElapsed() <= goal)
             ;
 }
+
+int tokenizeBuffer(char token, char **dest, char *source, int max)
+{
+      int index = 0;
+
+      if (*source != token && *source != '\0')
+            dest[index++] = source;
+
+      while (*source != '\0')
+      {
+            if (*source == token)
+            {
+                  *source = 0;
+                  if (*(source + 1) != token && (*(source + 1) != '\0'))
+                  {
+                        if (index >= max)
+                              return index;
+                        dest[index++] = source + 1;
+                  }
+            }
+            source++;
+      }
+      return index;
+}
