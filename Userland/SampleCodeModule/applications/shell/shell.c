@@ -11,6 +11,7 @@
 #include <utils.h>
 #include <loop.h>
 #include <processes.h>
+#include <loop.h>
 
 static void initShell(t_shellData *shellData);
 static void shellText(t_shellData *shellData);
@@ -52,7 +53,7 @@ static void initShell(t_shellData *shellData)
           {&mem, "mem", "prints the current state of memory"},
           {&testPriority, "priotest", "tests the implementation of the priority manager in the system"},
           {&testScheduler, "schedtest", "tests the implementation of the scheduler in the system"},
-          {&loopCommand, "loop", "loops and prints his pid endlessly"},
+          {&loop, "loop", "loops and prints his pid endlessly"},
           {&kill, "kill", "kills process"},
           {&niceProcess, "nice", "changes process priority"},
           {&block, "block", "blocks process"},
@@ -69,7 +70,6 @@ static void initShell(t_shellData *shellData)
       strcopy(username, shellData->username);
       shellText(shellData);
 }
-
 
 //procesa el caracter recibido actua segun el mismo
 static void processChar(char c, t_shellData *shellData)
@@ -136,7 +136,7 @@ static void processCommand(t_shellData *shellData)
             printStringLn("Invalid command");
             return;
       }
-     createProcess(shellData->commands[idx].command, argc, argv, fg);
+      createProcess(shellData->commands[idx].command, argc, argv, fg);
 }
 
 //muestra en pantalla el texto de la shell
