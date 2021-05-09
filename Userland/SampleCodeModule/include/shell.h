@@ -11,7 +11,7 @@ typedef struct t_shellData t_shellData;
 
 typedef struct t_command
 {
-      void (*command)(int, char **, t_shellData *shelldData);
+      void (*command)(int, char **);
       char *name;
       char *description;
 } t_command;

@@ -50,8 +50,9 @@ void test_processes()
         //Create MAX_PROCESSES processes
         for (rq = 0; rq < MAX_PROCESSES; rq++)
         {
-
-            char *argv[] = {"Proceso Dummy", itoa(rq, buf, 10)};
+            char processName[30];
+            strcopy("Proceso Dummy",processName);
+            char *argv[] = {processName, itoa(rq, buf, 10)};
             p_rqs[rq].pid = createProcess(&process1, 2, argv,1); //TODO: Port this call as required
 
             if (p_rqs[rq].pid == -1)

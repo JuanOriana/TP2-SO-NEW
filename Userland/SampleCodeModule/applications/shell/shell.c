@@ -10,6 +10,7 @@
 #include <systemCalls.h>
 #include <utils.h>
 #include <loop.h>
+#include <processes.h>
 
 static void initShell(t_shellData *shellData);
 static void shellText(t_shellData *shellData);
@@ -68,6 +69,7 @@ static void initShell(t_shellData *shellData)
       strcopy(username, shellData->username);
       shellText(shellData);
 }
+
 
 //procesa el caracter recibido actua segun el mismo
 static void processChar(char c, t_shellData *shellData)
@@ -134,8 +136,7 @@ static void processCommand(t_shellData *shellData)
             printStringLn("Invalid command");
             return;
       }
-
-      createProcess(shellData->commands[idx].command, argc, argv, fg);
+     createProcess(shellData->commands[idx].command, argc, argv, fg);
 }
 
 //muestra en pantalla el texto de la shell
