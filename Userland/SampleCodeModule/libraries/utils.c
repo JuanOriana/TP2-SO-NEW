@@ -417,7 +417,7 @@ void doubleToString(char *res, double total, int afterpoint)
 // https://www.geeksforgeeks.org/convert-floating-point-number-string/
 void reverse(char *str, int len)
 {
-      int i = 0, j = len - 1, temp;
+      int i = 0, j = len, temp;
       while (i < j)
       {
             temp = str[i];
