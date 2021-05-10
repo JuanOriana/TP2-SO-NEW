@@ -2,6 +2,7 @@
     "files.associations": {
         "processes.h": "c",
         "stringlib.h": "c",
-        "utils.h": "c"
+        "utils.h": "c",
+        "test_util.h": "c"
     }
 }
