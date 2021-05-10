@@ -22,7 +22,6 @@ void inc(int argc, char *argv[])
   int flag = strToInt(argv[1], 0);
   int64_t value = strToInt(argv[2], 0);
   int N = strToInt(argv[3], 0);
-  print("El fucking flag vale :%d\n",flag);
   Semaphore *sem;
 
   if (flag == 1 && (sem = sOpen(SEM_ID, 1)) == 0)
@@ -30,18 +29,21 @@ void inc(int argc, char *argv[])
     print("ERROR OPENING SEM\n");
     return;
   }
-
+  print("opening\n");
   for (i = 0; i < N; i++)
   {
     if (flag == 1 && sWait(sem) != 0)
       print("Error waiting sem\n");
+    print("waiting\n");
     slowInc(&global, value);
     if (flag == 1 && sPost(sem) != 0)
       print("Error posting sem\n");
+    print("posting\n");
   }
 
   if (flag == 1 && sClose(sem) != 0)
     print("Error closing sem\n");
+  print("closing\n");
 
   print("Final value: %d\n", global);
 }
@@ -57,9 +59,9 @@ void testSync(int argc, char *argv[])
   for (i = 0; i < TOTAL_PAIR_PROCESSES; i++)
   {
     char *argv1[4] = {"inc", "1", "1", "100000"};
-    createProcess(&inc, 4, argv1, 1);
+    createProcess(&inc, 4, argv1, 0);
     char *argv2[4] = {"inc", "1", "-1", "100000"};
-    createProcess(&inc, 4, argv2, 1);
+    createProcess(&inc, 4, argv2, 0);
   }
 }
 
@@ -73,9 +75,9 @@ void testNoSync(int argc, char *argv[])
 
   for (i = 0; i < TOTAL_PAIR_PROCESSES; i++)
   {
-    char *argv1[4] = {"inc", "0", "1", "1000000"};
+    char *argv1[4] = {"inc", "0", "1", "10"};
     createProcess(&inc, 4, argv1, 1);
-    char *argv2[4] = {"inc", "0", "-1", "1000000"};
+    char *argv2[4] = {"inc", "0", "-1", "10"};
     createProcess(&inc, 4, argv2, 1);
   }
 }

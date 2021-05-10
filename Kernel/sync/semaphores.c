@@ -13,27 +13,31 @@ Semaphore *sOpen(int id, unsigned int initValue)
 {
     Semaphore *sem = findSem(id);
     if (sem == NULL)
-        sem = mallocCust(sizeof(Semaphore));
-    if (sem == NULL)
-        return NULL;
-    sem->value = initValue;
-    sem->listeners = 0;
-    sem->blockedPIDsSize = 0;
-    sem->id = id;
-    sem->next = NULL;
-
-    Semaphore *lastSem = semaphores;
-    if (lastSem == NULL)
-        semaphores = lastSem = sem;
-    else
     {
-        while (lastSem->next != NULL)
-            lastSem = lastSem->next;
-        lastSem->next = sem;
+        sem = mallocCust(sizeof(Semaphore));
+        if (sem == NULL)
+        {
+            return NULL;
+        }
+        sem->value = initValue;
+        sem->listeners = 0;
+        sem->blockedPIDsSize = 0;
+        sem->id = id;
+        sem->next = NULL;
+        sem->mutex = 0;
+
+        Semaphore *lastSem = semaphores;
+        if (lastSem == NULL)
+            semaphores = lastSem = sem;
+        else
+        {
+            while (lastSem->next != NULL)
+                lastSem = lastSem->next;
+            lastSem->next = sem;
+        }
     }
 
     sem->listeners++;
-
     return sem;
 }
 
@@ -53,8 +57,10 @@ int sWait(Semaphore *sem)
 {
     if (!findSem(sem->id))
         return 1;
+
     acquire(&sem->mutex);
-    if (sem->value > 0){
+    if (sem->value > 0)
+    {
         sem->value--;
         release(&(sem->mutex));
         return 0;
@@ -80,8 +86,8 @@ int sPost(Semaphore *sem)
         int nextPid = sem->blockedPIDs[0];
         for (int i = 0; i < sem->blockedPIDsSize - 1; i++)
             sem->blockedPIDs[i] = sem->blockedPIDs[i + 1];
-        unblockProcess(nextPid);
         sem->blockedPIDsSize--;
+        unblockProcess(nextPid);
     }
     release(&sem->mutex);
     return 0;
@@ -91,16 +97,27 @@ int sClose(Semaphore *sem)
 {
     if (!findSem(sem->id))
         return 1;
+    sem->listeners--;
+    if (sem->listeners > 0)
+        return 0;
     Semaphore *aux = semaphores;
-    //What if there are some processes using this sem?
-    while (aux->next != sem)
-        aux = aux->next;
-    aux->next = sem->next;
+    if (aux == sem)
+    {
+        semaphores = aux->next;
+    }
+    else
+    {
+        while (aux->next != sem)
+        {
+            aux = aux->next;
+        }
+        aux->next = sem->next;
+    }
     freeCust(sem);
     return 0;
 }
 
-void sStatus() 
+void sStatus()
 {
     print("Active semaphores:\n");
     Semaphore *sem = semaphores;
@@ -118,9 +135,10 @@ void sStatus()
     }
 }
 
-static void dumpBlockedPIDs(int *blockedPIDs, int blockedPIDsSize) 
+static void dumpBlockedPIDs(int *blockedPIDs, int blockedPIDsSize)
 {
-    for (int i = 0; i < blockedPIDsSize; i++) {
+    for (int i = 0; i < blockedPIDsSize; i++)
+    {
         print("         PID: %d\n", blockedPIDs[i]);
     }
 }
