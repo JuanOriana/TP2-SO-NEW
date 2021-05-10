@@ -62,7 +62,9 @@ static void initShell(t_shellData *shellData)
           {&kill, "kill", "kills process"},
           {&niceProcess, "nice", "changes process priority"},
           {&block, "block", "blocks process"},
-          {&unblock, "unblock", "unblocks process"}};
+          {&unblock, "unblock", "unblocks process"},
+          {&sem, "sem", "prints current state of active semaphores"}
+      };
 
       for (int i = 0; i < COMMANDS; i++)
       {

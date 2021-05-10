@@ -17,5 +17,5 @@ int sPost(Semaphore *sem)
 
 int sClose(Semaphore *sem)
 {
-   return  syscall(SEM_CLOSE, (uint64_t)sem, 0, 0, 0, 0, 0);
+   return syscall(SEM_CLOSE, (uint64_t)sem, 0, 0, 0, 0, 0);
 }
