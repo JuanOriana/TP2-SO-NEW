@@ -12,6 +12,7 @@
 #include <loop.h>
 #include <processes.h>
 #include <loop.h>
+#include <testMem.h>
 
 static void initShell(t_shellData *shellData);
 static void shellText(t_shellData *shellData);
@@ -53,6 +54,7 @@ static void initShell(t_shellData *shellData)
           {&mem, "mem", "prints the current state of memory"},
           {&testPriority, "priotest", "tests the implementation of the priority manager in the system"},
           {&testScheduler, "schedtest", "tests the implementation of the scheduler in the system"},
+          {&testMem, "memtest", "tests the implementation of the memory manager in the system"},
           {&loop, "loop", "loops and prints his pid endlessly"},
           {&kill, "kill", "kills process"},
           {&niceProcess, "nice", "changes process priority"},
@@ -184,7 +186,7 @@ void help(int argc, char **args)
 {
       if (argc != 1)
       {
-            printStringLn("Invalid ammount of arguments.");
+            printStringLn("Invalid amount of arguments.");
             putchar('\n');
             return;
       }

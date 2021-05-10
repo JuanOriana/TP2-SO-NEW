@@ -492,3 +492,15 @@ int tokenizeBuffer(char token, char **dest, char *source, int max)
       }
       return index;
 }
+
+void *memoryset(void *b, int c, int len)
+{
+      unsigned char *p = b;
+      while (len > 0)
+      {
+            *p = c;
+            p++;
+            len--;
+      }
+      return (b);
+}

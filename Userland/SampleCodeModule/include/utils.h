@@ -23,6 +23,7 @@ int ticksElapsed();
 void cleanBuffer(t_buffer *buffer);
 void cleanString(char *str);
 void *memcpy(void *destination, const void *source, uint64_t length);
+void *memoryset(void *b, int c, int len);
 void strToDouble(char *numStr, int *error, double *result);
 void doubleToString(char *res, double total, int afterpoint);
 void reverse(char *str, int len);
