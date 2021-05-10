@@ -52,14 +52,16 @@ int sWait(Semaphore *sem)
     if (!findSem(sem->id))
         return 1;
     acquire(&sem->mutex);
-    if (sem->value > 0)
+    if (sem->value > 0){
         sem->value--;
+        release(&sem->mutex);
+        return 0;
+    }
     else
     {
         int currPid = getCurrPID();
         sem->blockedPIDs[sem->blockedPIDsSize++] = currPid;
         blockProcess(currPid);
-        sem->value--;
     }
     release(&sem->mutex);
     return 0;
@@ -77,6 +79,7 @@ int sPost(Semaphore *sem)
         for (int i = 0; i < sem->blockedPIDsSize - 1; i++)
             sem->blockedPIDs[i] = sem->blockedPIDs[i + 1];
         unblockProcess(nextPid);
+        sem->value--;
     }
     release(&sem->mutex);
     return 0;

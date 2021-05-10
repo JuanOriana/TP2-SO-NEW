@@ -13,6 +13,7 @@
 #include <processes.h>
 #include <loop.h>
 #include <testMem.h>
+#include <testSync.h>
 
 static void initShell(t_shellData *shellData);
 static void shellText(t_shellData *shellData);
@@ -55,6 +56,8 @@ static void initShell(t_shellData *shellData)
           {&testPriority, "priotest", "tests the implementation of the priority manager in the system"},
           {&testScheduler, "schedtest", "tests the implementation of the scheduler in the system"},
           {&testMem, "memtest", "tests the implementation of the memory manager in the system"},
+          {&testSync, "synctest", "tests the implementation of the sync manager in the system"},
+          {&testNoSync, "nosynctest", "tests the implementation of the sync manager (withour sem usage) in the system"},
           {&loop, "loop", "loops and prints his pid endlessly"},
           {&kill, "kill", "kills process"},
           {&niceProcess, "nice", "changes process priority"},

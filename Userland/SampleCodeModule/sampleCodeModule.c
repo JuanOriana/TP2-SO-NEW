@@ -6,10 +6,10 @@
 #include <processes.h>
 #include <stringLib.h>
 #include <test_util.h>
+#include <testSync.h>
 
 int main()
 {
-
       runShell();
       return 0;
 }
