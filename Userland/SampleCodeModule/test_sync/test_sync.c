@@ -2,7 +2,7 @@
 #include <systemCalls.h>
 
 #define TOTAL_PAIR_PROCESSES 2
-#define SEM_ID 101
+#define SEM_ID "sem"
 
 int64_t global; //shared memory
 

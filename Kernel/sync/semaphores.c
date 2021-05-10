@@ -3,7 +3,6 @@
 #include <lib.h>
 #include <semaphores.h>
 
-
 Semaphore *sOpen(int id, unsigned int initValue)
 {
     Semaphore *sem = findSem(id);
@@ -74,8 +73,8 @@ int sPost(Semaphore *sem)
         for (int i = 0; i < sem->blockedPIDsSize - 1; i++)
             sem->blockedPIDs[i] = sem->blockedPIDs[i + 1];
         unblockProcess(nextPid);
-        release(&sem->mutex);
     }
+    release(&sem->mutex);
     return 0;
 }
 
@@ -85,7 +84,7 @@ int sClose(Semaphore *sem)
         return 1;
     Semaphore *aux = semaphores;
     //What if there are some processes using this sem?
-    while(aux->next != sem)
+    while (aux->next != sem)
         aux = aux->next;
     aux->next = sem->next;
     freeCust(sem);
