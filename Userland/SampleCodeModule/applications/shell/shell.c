@@ -149,7 +149,7 @@ static void shellText(t_shellData *shellData)
 //muestra la informacion recolectada sobre los registros obtenidos al haber presionado ctrl + s
 void inforeg(int argc, char **args)
 {
-      if (argc != 0)
+      if (argc != 1)
       {
             printStringLn("Invalid ammount of arguments.");
             putchar('\n');
@@ -169,14 +169,14 @@ void inforeg(int argc, char **args)
 //cambia el nombre del usuario mostrado en la shell
 void changeUsername(int argc, char **argv)
 {
-      if (argc != 1)
+      if (argc != 2)
       {
             printStringLn("Invalid ammount of arguments.");
             putchar('\n');
             return;
       }
       cleanString(shell.username);
-      strcopy(argv[0], shell.username);
+      strcopy(argv[1], shell.username);
 }
 
 //muestra la lista de comandos con sus descripciones
