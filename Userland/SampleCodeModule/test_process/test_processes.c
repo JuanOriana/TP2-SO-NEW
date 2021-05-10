@@ -12,11 +12,20 @@ void endless_looP()
         ;
 }
 
+#define WAIT 10000000 // TODO: Long enough to see theese processes beeing run at least twice
+
+void bussy_wait2(uint64_t n)
+{
+    uint64_t i;
+    for (i = 0; i < n; i++)
+        ;
+}
+
 void process1(int argc, char *argv[])
 {
     while (1)
     {
-        printString(argv[1]);
+        // printString(argv[1]);
     }
 }
 
@@ -85,6 +94,7 @@ void test_processes()
                         }
                         p_rqs[rq].state = KILLED;
                         alive--;
+                        bussy_wait2(WAIT);
                     }
                     break;
 
