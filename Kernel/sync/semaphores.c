@@ -25,7 +25,7 @@ int sWait(Semaphore *sem);
 
 int sPost(Semaphore *sem);
 
-int sClose(int id);
+int sClose(Semaphore *sem);
 
 void sStatus(void *buffer, int *qty);
 
@@ -91,5 +91,30 @@ int sWait(Semaphore *sem)
 
 int sPost(Semaphore *sem)
 {
-    
+    if (!findSem(sem->id))
+        return 1;
+    acquire(&sem->mutex);
+    sem->value++;
+    if (sem->blockedPIDsSize > 0)
+    {
+        int nextPid = sem->blockedPIDs[0];
+        for (int i = 0; i < sem->blockedPIDsSize - 1; i++)
+            sem->blockedPIDs[i] = sem->blockedPIDs[i + 1];
+        unblockProcess(nextPid);
+        release(&sem->mutex);
+    }
+    return 0;
+}
+
+int sClose(Semaphore *sem)
+{
+    if (!findSem(sem->id))
+        return 1;
+    Semaphore *aux = semaphores;
+    //What if there are some processes using this sem?
+    while(aux->next != sem)
+        aux = aux->next;
+    aux->next = sem->next;
+    freeCust(sem);
+    return 0;
 }
