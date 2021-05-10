@@ -25,5 +25,4 @@ int sPost(Semaphore *sem);
 
 int sClose(Semaphore *sem);
 
-
 #endif

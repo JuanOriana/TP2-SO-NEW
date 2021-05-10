@@ -52,4 +52,6 @@ void block(int argc, char **args);
 
 void unblock(int argc, char **args);
 
+void sem(int argc, char **args);
+
 #endif

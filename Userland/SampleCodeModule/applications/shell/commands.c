@@ -10,6 +10,7 @@
 #include <utils.h>
 #include <test_util.h>
 #include <loop.h>
+#include <semLib.h>
 
 static void memToString(char *buffer, uint8_t *mem, int bytes);
 
@@ -228,7 +229,9 @@ void kill(int argc, char **args)
             print("Error: Invalid ammount of arguments.\n");
             return;
       }
-      killProcess(strToInt(args[1], &error));
+      int pid = strToInt(args[1], &error);
+      if (error) print("Error\n");
+      killProcess(pid);
 }
 
 void niceProcess(int argc, char **args)
@@ -256,7 +259,9 @@ void block(int argc, char **args)
             print("Error: Invalid ammount of arguments.\n");
             return;
       }
-      blockProcess(strToInt(args[1], &error));
+      int pid = strToInt(args[1], &error);
+      if (error) print("Error\n");
+      blockProcess(pid);
 }
 
 void unblock(int argc, char **args)
@@ -267,5 +272,12 @@ void unblock(int argc, char **args)
             print("Error: Invalid ammount of arguments.\n");
             return;
       }
-      unblockProcess(strToInt(args[1], &error));
+      int pid = strToInt(args[1], &error);
+      if (error) print("Error\n");
+      unblockProcess(pid);
+}
+
+void sem(int argc, char **args) 
+{
+      syscall(DUMP_SEM, 0, 0, 0, 0, 0, 0);
 }

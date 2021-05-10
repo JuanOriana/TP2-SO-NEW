@@ -25,7 +25,7 @@ int sClose(Semaphore *sem);
 
 Semaphore *findSem(int id);
 
-void sStatus(void *buffer, int *qty);
+void sStatus();
 
 void getBlockedProc(char *buffer, int id);
 

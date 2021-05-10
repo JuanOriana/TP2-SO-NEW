@@ -2,10 +2,12 @@
 #include <lib.h>
 #include <semaphores.h>
 #include <schedule.h>
+#include <stringLib.h>
 
 #define NULL 0
 Semaphore *semaphores = NULL;
 
+static void dumpBlockedPIDs(int *blockedPIDs, int blockedPIDsSize);
 
 Semaphore *sOpen(int id, unsigned int initValue)
 {
@@ -96,4 +98,29 @@ int sClose(Semaphore *sem)
     aux->next = sem->next;
     freeCust(sem);
     return 0;
+}
+
+void sStatus() 
+{
+    print("Active semaphores:\n");
+    Semaphore *sem = semaphores;
+    int i = 1;
+    while (sem)
+    {
+        print("Semaphore %d\n", i);
+        print("     Index: %d\n", sem->id);
+        print("     Value: %d", sem->value);
+        print("     Number of attached processes: %d\n", sem->listeners);
+        print("     Number of blocked processes: %d\n", sem->blockedPIDsSize);
+        print("     Blocked processes:\n");
+        dumpBlockedPIDs(sem->blockedPIDs, sem->blockedPIDsSize);
+        sem = sem->next;
+    }
+}
+
+static void dumpBlockedPIDs(int *blockedPIDs, int blockedPIDsSize) 
+{
+    for (int i = 0; i < blockedPIDsSize; i++) {
+        print("         PID: %d\n", blockedPIDs[i]);
+    }
 }
