@@ -1,35 +1,13 @@
 #include <memoryManager.h>
-#include <processes.h>
 #include <lib.h>
+#include <semaphores.h>
+#include <schedule.h>
+#include <stringLib.h>
 
-#define MAX_BLOCKED_PIDS 10
 #define NULL 0
-
-typedef struct
-{
-    int id;
-    int value;
-    int listeners;
-    int blockedPIDs[MAX_BLOCKED_PIDS];
-    int blockedPIDsSize;
-    int mutex;
-    Semaphore *next;
-
-} Semaphore;
-
 Semaphore *semaphores = NULL;
 
-Semaphore *sOpen(int id, unsigned int initValue);
-
-int sWait(Semaphore *sem);
-
-int sPost(Semaphore *sem);
-
-int sClose(int id);
-
-void sStatus(void *buffer, int *qty);
-
-void getBlockedProc(char *buffer, int id);
+static void dumpBlockedPIDs(int *blockedPIDs, int blockedPIDsSize);
 
 Semaphore *sOpen(int id, unsigned int initValue)
 {
@@ -76,14 +54,16 @@ int sWait(Semaphore *sem)
     if (!findSem(sem->id))
         return 1;
     acquire(&sem->mutex);
-    if (sem->value > 0)
+    if (sem->value > 0){
         sem->value--;
+        release(&(sem->mutex));
+        return 0;
+    }
     else
     {
-        int currPid = getPID();
+        int currPid = getCurrPID();
         sem->blockedPIDs[sem->blockedPIDsSize++] = currPid;
         blockProcess(currPid);
-        sem->value--;
     }
     release(&sem->mutex);
     return 0;
@@ -91,5 +71,56 @@ int sWait(Semaphore *sem)
 
 int sPost(Semaphore *sem)
 {
-    
+    if (!findSem(sem->id))
+        return 1;
+    acquire(&sem->mutex);
+    sem->value++;
+    if (sem->blockedPIDsSize > 0)
+    {
+        int nextPid = sem->blockedPIDs[0];
+        for (int i = 0; i < sem->blockedPIDsSize - 1; i++)
+            sem->blockedPIDs[i] = sem->blockedPIDs[i + 1];
+        unblockProcess(nextPid);
+        sem->blockedPIDsSize--;
+    }
+    release(&sem->mutex);
+    return 0;
+}
+
+int sClose(Semaphore *sem)
+{
+    if (!findSem(sem->id))
+        return 1;
+    Semaphore *aux = semaphores;
+    //What if there are some processes using this sem?
+    while (aux->next != sem)
+        aux = aux->next;
+    aux->next = sem->next;
+    freeCust(sem);
+    return 0;
+}
+
+void sStatus() 
+{
+    print("Active semaphores:\n");
+    Semaphore *sem = semaphores;
+    int i = 1;
+    while (sem)
+    {
+        print("Semaphore %d\n", i++);
+        print("     Index: %d\n", sem->id);
+        print("     Value: %d\n", sem->value);
+        print("     Number of attached processes: %d\n", sem->listeners);
+        print("     Number of blocked processes: %d\n", sem->blockedPIDsSize);
+        print("     Blocked processes:\n");
+        dumpBlockedPIDs(sem->blockedPIDs, sem->blockedPIDsSize);
+        sem = sem->next;
+    }
+}
+
+static void dumpBlockedPIDs(int *blockedPIDs, int blockedPIDsSize) 
+{
+    for (int i = 0; i < blockedPIDsSize; i++) {
+        print("         PID: %d\n", blockedPIDs[i]);
+    }
 }

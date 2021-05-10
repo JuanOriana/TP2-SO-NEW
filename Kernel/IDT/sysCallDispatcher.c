@@ -9,6 +9,7 @@
 #include <videoDriver.h>
 #include <memoryManager.h>
 #include <timerTick.h>
+#include <semaphores.h>
 
 #define SYS_GETMEM_ID 0
 #define SYS_RTC_TIME_ID 1
@@ -28,8 +29,14 @@
 #define SYS_NICE_ID 15
 #define SYS_DUMP_MM_ID 16
 #define SYS_TICKS_ELAPSED_ID 17
+#define SYS_SEM_OPEN_ID 18
+#define SYS_SEM_POST_ID 19
+#define SYS_SEM_WAIT_ID 20
+#define SYS_SEM_CLOSE_ID 21
+#define SYS_YIELD_ID 22
+#define SYS_DUMP_SEM 23
 
-#define SYSCALLS_QTY 18
+#define SYSCALLS_QTY 24
 
 uint64_t sysCallDispatcher(t_registers *r)
 {
@@ -96,6 +103,24 @@ uint64_t sysCallDispatcher(t_registers *r)
                   break;
             case SYS_TICKS_ELAPSED_ID:
                   return ticksElapsed();
+                  break;
+            case SYS_SEM_OPEN_ID:
+                  return (uint64_t)sOpen(r->rdi, r->rsi);
+                  break;
+            case SYS_SEM_POST_ID:
+                  return sPost((Semaphore *)r->rdi);
+                  break;
+            case SYS_SEM_WAIT_ID:
+                  return sWait((Semaphore *)r->rdi);
+                  break;
+            case SYS_SEM_CLOSE_ID:
+                  return sClose((Semaphore *)r->rdi);
+                  break;
+            case SYS_YIELD_ID:
+                  yield();
+                  break;
+            case SYS_DUMP_SEM:
+                  sStatus();
                   break;
             }
       }

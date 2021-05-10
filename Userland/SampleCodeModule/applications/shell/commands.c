@@ -10,13 +10,14 @@
 #include <utils.h>
 #include <test_util.h>
 #include <loop.h>
+#include <semLib.h>
 
 static void memToString(char *buffer, uint8_t *mem, int bytes);
 
 //devuelve el tiempo acutal del sistema
 void time(int argc, char **args)
 {
-      if (argc != 0)
+      if (argc != 1)
       {
             printStringLn("Invalid ammount of arguments.");
             putchar('\n');
@@ -47,7 +48,7 @@ void time(int argc, char **args)
 //devuelve el modelo y vendedor del cpu
 void cpuInfo(int argc, char **args)
 {
-      if (argc != 0)
+      if (argc != 1)
       {
             printStringLn("Invalid ammount of arguments.");
             putchar('\n');
@@ -68,7 +69,7 @@ void cpuInfo(int argc, char **args)
 //Hace un dump de 32 bytes de memria a partir de la direccion pedida
 void printmem(int argc, char **args)
 {
-      if (argc != 1)
+      if (argc != 2)
       {
             printStringLn("Invalid ammount of arguments.");
             putchar('\n');
@@ -76,7 +77,7 @@ void printmem(int argc, char **args)
       }
 
       int error = 0;
-      uint64_t memDir = strToHex(args[0], &error);
+      uint64_t memDir = strToHex(args[1], &error);
       if (error)
       {
             printStringLn("Invalid argument for function printmem (must be a hex value).");
@@ -123,7 +124,7 @@ void printmem(int argc, char **args)
 //Imprime la temperatura actual del cpu
 void cpuTemp(int argc, char **args)
 {
-      if (argc != 0)
+      if (argc != 1)
       {
             printStringLn("Invalid ammount of arguments.");
             putchar('\n');
@@ -138,7 +139,7 @@ void cpuTemp(int argc, char **args)
 //causa una excepcion de dividir por cero
 void checkZeroException(int argc, char **args)
 {
-      if (argc != 0)
+      if (argc != 1)
       {
             printStringLn("Invalid ammount of arguments.");
             putchar('\n');
@@ -154,7 +155,7 @@ void checkZeroException(int argc, char **args)
 //causa una excepcion de tipo invalid opcode
 void checkInvalidOpcodeException(int argc, char **args)
 {
-      if (argc != 0)
+      if (argc != 1)
       {
             printStringLn("Invalid ammount of arguments.");
             putchar('\n');
@@ -228,7 +229,9 @@ void kill(int argc, char **args)
             print("Error: Invalid ammount of arguments.\n");
             return;
       }
-      killProcess(strToInt(args[1], &error));
+      int pid = strToInt(args[1], &error);
+      if (error) print("Error\n");
+      killProcess(pid);
 }
 
 void niceProcess(int argc, char **args)
@@ -256,7 +259,9 @@ void block(int argc, char **args)
             print("Error: Invalid ammount of arguments.\n");
             return;
       }
-      blockProcess(strToInt(args[1], &error));
+      int pid = strToInt(args[1], &error);
+      if (error) print("Error\n");
+      blockProcess(pid);
 }
 
 void unblock(int argc, char **args)
@@ -267,5 +272,12 @@ void unblock(int argc, char **args)
             print("Error: Invalid ammount of arguments.\n");
             return;
       }
-      unblockProcess(strToInt(args[1], &error));
+      int pid = strToInt(args[1], &error);
+      if (error) print("Error\n");
+      unblockProcess(pid);
+}
+
+void sem(int argc, char **args) 
+{
+      syscall(DUMP_SEM, 0, 0, 0, 0, 0, 0);
 }

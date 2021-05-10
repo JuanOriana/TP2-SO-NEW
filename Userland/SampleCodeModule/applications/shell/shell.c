@@ -12,6 +12,8 @@
 #include <loop.h>
 #include <processes.h>
 #include <loop.h>
+#include <testMem.h>
+#include <testSync.h>
 
 static void initShell(t_shellData *shellData);
 static void shellText(t_shellData *shellData);
@@ -53,11 +55,16 @@ static void initShell(t_shellData *shellData)
           {&mem, "mem", "prints the current state of memory"},
           {&testPriority, "priotest", "tests the implementation of the priority manager in the system"},
           {&testScheduler, "schedtest", "tests the implementation of the scheduler in the system"},
+          {&testMem, "memtest", "tests the implementation of the memory manager in the system"},
+          {&testSync, "synctest", "tests the implementation of the sync manager in the system"},
+          {&testNoSync, "nosynctest", "tests the implementation of the sync manager (withour sem usage) in the system"},
           {&loop, "loop", "loops and prints his pid endlessly"},
           {&kill, "kill", "kills process"},
           {&niceProcess, "nice", "changes process priority"},
           {&block, "block", "blocks process"},
-          {&unblock, "unblock", "unblocks process"}};
+          {&unblock, "unblock", "unblocks process"},
+          {&sem, "sem", "prints current state of active semaphores"}
+      };
 
       for (int i = 0; i < COMMANDS; i++)
       {
@@ -149,7 +156,7 @@ static void shellText(t_shellData *shellData)
 //muestra la informacion recolectada sobre los registros obtenidos al haber presionado ctrl + s
 void inforeg(int argc, char **args)
 {
-      if (argc != 0)
+      if (argc != 1)
       {
             printStringLn("Invalid ammount of arguments.");
             putchar('\n');
@@ -169,14 +176,14 @@ void inforeg(int argc, char **args)
 //cambia el nombre del usuario mostrado en la shell
 void changeUsername(int argc, char **argv)
 {
-      if (argc != 1)
+      if (argc != 2)
       {
             printStringLn("Invalid ammount of arguments.");
             putchar('\n');
             return;
       }
       cleanString(shell.username);
-      strcopy(argv[0], shell.username);
+      strcopy(argv[1], shell.username);
 }
 
 //muestra la lista de comandos con sus descripciones
@@ -184,7 +191,7 @@ void help(int argc, char **args)
 {
       if (argc != 1)
       {
-            printStringLn("Invalid ammount of arguments.");
+            printStringLn("Invalid amount of arguments.");
             putchar('\n');
             return;
       }

@@ -492,3 +492,8 @@ void killFgProcess()
             return;
       }
 }
+
+void yield(){
+      cyclesLeft = 0;
+      callTimerTick();
+}

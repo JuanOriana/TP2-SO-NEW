@@ -31,3 +31,8 @@ void nice(uint64_t pid, int priority)
 {
     syscall(NICE, pid, priority, 0, 0, 0, 0);
 }
+
+void yield()
+{
+    syscall(YIELD, 0, 0, 0, 0, 0, 0);
+}
