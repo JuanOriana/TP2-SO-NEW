@@ -367,6 +367,10 @@ static ProcessNode *getProcessOfPID(uint64_t pid)
 
 static uint64_t setNewState(uint64_t pid, State newState)
 {
+      if (pid <= 1)
+      {
+            return -1;
+      }
       ProcessNode *process = getProcessOfPID(pid);
 
       if (process == NULL || process->state == KILLED)
@@ -385,6 +389,10 @@ static uint64_t setNewState(uint64_t pid, State newState)
 
 uint64_t killProcess(uint64_t pid)
 {
+      if (pid <= 1)
+      {
+            return -1;
+      }
       int aux = setNewState(pid, KILLED);
 
       if (pid == currentProcess->pcb.pid)
