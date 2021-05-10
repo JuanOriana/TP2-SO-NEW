@@ -23,7 +23,7 @@ void endless_loop(int argc, char *argv[])
 
     while (1)
     {
-        printStringWC(argv[1], BLACK, BLUE);
+        printStringWC(argv[1], BLACK, BLACK);
         printInt(pid);
         bussy_wait(MINOR_WAIT);
     }
@@ -40,7 +40,7 @@ void test_prio()
     for (i = 0; i < TOTAL_PROCESSES; i++)
     {
         char *argv[] = {"Proceso Dummy", itoa(i, buf, 10)};
-        pids[i] = createProcess(&endless_loop, 2, argv,1);
+        pids[i] = createProcess(&endless_loop, 2, argv, 1);
     }
 
     bussy_wait(WAIT);
@@ -64,6 +64,8 @@ void test_prio()
     }
 
     bussy_wait(WAIT);
+    bussy_wait(WAIT);
+    bussy_wait(WAIT);
     printStringLn("");
     printStringLn("BLOCKING...");
 
@@ -76,13 +78,13 @@ void test_prio()
         switch (i % 3)
         {
         case 0:
-            nice(pids[i], 2); //medium priority
+            nice(pids[i], 20); //medium priority
             break;
         case 1:
-            nice(pids[i], 2); //medium priority
+            nice(pids[i], 20); //medium priority
             break;
         case 2:
-            nice(pids[i], 2); //medium priority
+            nice(pids[i], 20); //medium priority
             break;
         }
     }
@@ -92,6 +94,8 @@ void test_prio()
     for (i = 0; i < TOTAL_PROCESSES; i++)
         unblockProcess(pids[i]);
 
+    bussy_wait(WAIT);
+    bussy_wait(WAIT);
     bussy_wait(WAIT);
     printStringLn("");
     printStringLn("KILLING...");
