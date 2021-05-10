@@ -1,8 +1,11 @@
 #include <processes.h>
 #include <systemCalls.h>
+#include <semLib.h>
+#include <stringLib.h>
+#include <utils.h>
 
 #define TOTAL_PAIR_PROCESSES 2
-#define SEM_ID "sem"
+#define SEM_ID 101
 
 int64_t global; //shared memory
 
@@ -13,30 +16,34 @@ void slowInc(int64_t *p, int64_t inc)
   yield();
   *p = aux;
 }
-
-void inc(uint64_t sem, int64_t value, uint64_t N)
+//uint64_t sem, int64_t value, uint64_t N
+void inc(int argc, char* argv[])
 {
   uint64_t i;
+  int flag = strToInt(argv[1],0);
+  int value = strToInt(argv[2],0);
+  int N = strToInt(argv[3],0);
+  Semaphore* sem = sOpen(SEM_ID,value);
 
-  if (sem && !syscall(SEM_OPEN, SEM_ID, 1, 0, 0, 0, 0))
+  if (flag && !sem)
   {
-    printf("ERROR OPENING SEM\n");
+    print("ERROR OPENING SEM\n");
     return;
   }
 
   for (i = 0; i < N; i++)
   {
-    if (sem)
-      my_sem_wait(SEM_ID);
+    if (flag)
+      sWait(sem);
     slowInc(&global, value);
-    if (sem)
-      my_sem_post(SEM_ID);
+    if (flag)
+      sPost(sem);
   }
 
-  if (sem)
-    my_sem_close(SEM_ID);
+  if (flag)
+    sClose(sem);
 
-  printf("Final value: %d\n", global);
+  print("Final value: %d\n", global);
 }
 
 void test_sync()
@@ -45,12 +52,14 @@ void test_sync()
 
   global = 0;
 
-  printf("CREATING PROCESSES...(WITH SEM)\n");
+  print("CREATING PROCESSES...(WITH SEM)\n");
 
   for (i = 0; i < TOTAL_PAIR_PROCESSES; i++)
   {
-    my_create_process("inc", 1, 1, 1000000);
-    my_create_process("inc", 1, -1, 1000000);
+     char *argv1[4] = {"inc","1","1","1000000"};
+    createProcess(&inc,3,argv1,1);
+    char* argv2[4] = {"inc","1","-1","1000000"};
+    createProcess(&inc, 3, argv2, 1);
   }
 }
 
@@ -60,17 +69,13 @@ void test_no_sync()
 
   global = 0;
 
-  printf("CREATING PROCESSES...(WITHOUT SEM)\n");
+  print("CREATING PROCESSES...(WITHOUT SEM)\n");
 
   for (i = 0; i < TOTAL_PAIR_PROCESSES; i++)
   {
-    my_create_process("inc", 0, 1, 1000000);
-    my_create_process("inc", 0, -1, 1000000);
+    char *argv1[4] = {"inc","0","1","1000000"};
+    createProcess(&inc,3,argv1,1);
+    char* argv2[4] = {"inc","0","-1","1000000"};
+    createProcess(&inc, 3, argv2, 1);
   }
-}
-
-int main()
-{
-  test_sync();
-  return 0;
 }

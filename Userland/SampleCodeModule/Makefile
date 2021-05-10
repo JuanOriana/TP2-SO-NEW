@@ -8,6 +8,7 @@ SOURCES_LIBRARIES=$(wildcard libraries/*.c)
 SOURCES_APPLICATIONS=$(wildcard applications/*.c applications/shell/*.c applications/calculator/*.c)
 SOURCES_TEST_PROC=$(wildcard test_process/*.c)
 SOURCES_TEST_MM=$(wildcard test_memory/*.c)
+SOURCES_TEST_SYNC=$(wildcard test_sync/*.c)
 
 
 
@@ -17,12 +18,13 @@ OBJECTS_LIBRARIES=$(SOURCES_LIBRARIES:.c=.o)
 OBJECTS_APPLICATIONS=$(SOURCES_APPLICATIONS:.c=.o)
 OBJECTS_TEST_PROC=$(SOURCES_TEST_PROC:.c=.o)
 OBJECTS_TEST_MM=$(SOURCES_TEST_MM:.c=.o)
+OBJECTS_TEST_SYNC=$(SOURCES_TEST_SYNC:.c=.o)
 
 
 
 all: $(MODULE)
 
-$(MODULE): $(OBJECTS) $(OBJECTS_ASM) $(OBJECTS_LIBRARIES) $(OBJECTS_APPLICATIONS)  $(OBJECTS_TEST_PROC) $(OBJECTS_TEST_MM)
+$(MODULE): $(OBJECTS) $(OBJECTS_ASM) $(OBJECTS_LIBRARIES) $(OBJECTS_APPLICATIONS)  $(OBJECTS_TEST_PROC) $(OBJECTS_TEST_MM) $(OBJECTS_TEST_SYNC)
 	$(LD) $(LDFLAGS) -T sampleCodeModule.ld -o ../$(MODULE) $^
 
 %.o: %.c
