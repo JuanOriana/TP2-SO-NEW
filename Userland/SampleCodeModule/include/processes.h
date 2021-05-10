@@ -10,5 +10,6 @@ int blockProcess(uint64_t pid);
 int unblockProcess(uint64_t pid);
 void nice(uint64_t pid, int priority);
 int getPID();
+void yield();
 
 #endif

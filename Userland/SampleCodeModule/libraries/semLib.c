@@ -2,20 +2,20 @@
 
 Semaphore *sOpen(int id, unsigned int value)
 {
-    syscall(SEM_OPEN, id, value, 0, 0, 0, 0);
+   return (Semaphore *)syscall(SEM_OPEN, id, value, 0, 0, 0, 0);
 }
 
 int sWait(Semaphore *sem)
 {
-    syscall(SEM_WAIT, sem, 0, 0, 0, 0, 0);
+    return syscall(SEM_WAIT, (uint64_t)sem, 0, 0, 0, 0, 0);
 }
 
 int sPost(Semaphore *sem)
 {
-    syscall(SEM_POST, sem, 0, 0, 0, 0, 0);
+    return syscall(SEM_POST, (uint64_t)sem, 0, 0, 0, 0, 0);
 }
 
 int sClose(Semaphore *sem)
 {
-    syscall(SEM_CLOSE, sem, 0, 0, 0, 0, 0);
+   return  syscall(SEM_CLOSE, (uint64_t)sem, 0, 0, 0, 0, 0);
 }

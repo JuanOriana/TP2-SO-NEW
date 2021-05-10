@@ -1,7 +1,11 @@
 #include <memoryManager.h>
-#include <processes.h>
 #include <lib.h>
 #include <semaphores.h>
+#include <schedule.h>
+
+#define NULL 0
+Semaphore *semaphores = NULL;
+
 
 Semaphore *sOpen(int id, unsigned int initValue)
 {
@@ -52,7 +56,7 @@ int sWait(Semaphore *sem)
         sem->value--;
     else
     {
-        int currPid = getPID();
+        int currPid = getCurrPID();
         sem->blockedPIDs[sem->blockedPIDsSize++] = currPid;
         blockProcess(currPid);
         sem->value--;

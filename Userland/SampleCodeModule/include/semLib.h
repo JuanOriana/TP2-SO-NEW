@@ -4,9 +4,8 @@
 #include <systemCalls.h>
 
 #define MAX_BLOCKED_PIDS 10
-#define NULL 0
 
-typedef struct
+typedef struct Semaphore
 {
     int id;
     int value;
@@ -14,7 +13,7 @@ typedef struct
     int blockedPIDs[MAX_BLOCKED_PIDS];
     int blockedPIDsSize;
     int mutex;
-    Semaphore *next;
+    struct Semaphore *next;
 
 } Semaphore;
 

@@ -33,8 +33,9 @@
 #define SYS_SEM_POST_ID 19
 #define SYS_SEM_WAIT_ID 20
 #define SYS_SEM_CLOSE_ID 21
+#define SYS_YIELD_ID 22
 
-#define SYSCALLS_QTY 22
+#define SYSCALLS_QTY 23
 
 uint64_t sysCallDispatcher(t_registers *r)
 {
@@ -103,16 +104,19 @@ uint64_t sysCallDispatcher(t_registers *r)
                   return ticksElapsed();
                   break;
             case SYS_SEM_OPEN_ID:
-                  return sOpen(r->rdi, r->rsi);
+                  return (uint64_t)sOpen(r->rdi, r->rsi);
                   break;
             case SYS_SEM_POST_ID:
-                  return sPost(r->rdi);
+                  return sPost((Semaphore *)r->rdi);
                   break;
             case SYS_SEM_WAIT_ID:
-                  return sWait(r->rdi);
+                  return sWait((Semaphore *)r->rdi);
                   break;
             case SYS_SEM_CLOSE_ID:
-                  return sClose(r->rdi);
+                  return sClose((Semaphore *)r->rdi);
+                  break;
+            case SYS_YIELD_ID:
+                  yield();
                   break;
             }
       }
