@@ -5,6 +5,7 @@
         "utils.h": "c",
         "test_util.h": "c",
         "syscall.h": "c",
-        "lib.h": "c"
+        "lib.h": "c",
+        "semaphore.h": "c"
     }
 }
