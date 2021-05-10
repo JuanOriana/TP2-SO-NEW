@@ -180,25 +180,58 @@ char *strtok(char *string, char *result, const char delim)
       return result;
 }
 
-uint64_t strToInt(char *str, int *error)
+int64_t strToInt(char *str, int *error)
 {
-      uint64_t num = 0;
-      *error = 0;
-      for (int i = 0; str[i] != 0; i++)
+      int number = 0;
+      int mult = 1;
+      int n = strlen(str);
+      n = (int)n < 0 ? -n : n; /* quick absolute value check  */
+      /* for each character in array */
+      while (n--)
       {
-            if (IS_DIGIT(str[i]))
+            /* if not digit or '-', check if number > 0, break or continue */
+            if ((str[n] < '0' || str[n] > '9') && str[n] != '-')
             {
-                  num *= 10;
-                  num += str[i] - '0';
+                  if (number)
+                        break;
+                  else
+                        continue;
+            }
+
+            if (str[n] == '-')
+            { /* if '-' if number, negate, break */
+                  if (number)
+                  {
+                        number = -number;
+                        break;
+                  }
             }
             else
-            {
-                  *error = 1;
-                  return -1;
+            { /* convert digit to numeric value   */
+                  number += (str[n] - '0') * mult;
+                  mult *= 10;
             }
       }
-      return num;
+
+      return number;
 }
+
+// int main(int argc, const char** args) {
+//   if(argc <= 1) return 0;
+
+//   const char* input = args[1];
+//   int total = 0;
+//   int len = strlen(input);
+
+//   for(int i = len-1; i+1 > 0; i--) {
+//     int power = len - i - 1;
+//     total += pow(10, power) * intFromAscii(input[i]);
+//   }
+
+//   if(input[0] == '-') total = total * -1;
+
+//   return total;
+// }
 
 uint8_t stringcmp(char *str1, char *str2)
 {

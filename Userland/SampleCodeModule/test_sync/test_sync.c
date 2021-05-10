@@ -21,8 +21,10 @@ void inc(int argc, char *argv[])
 {
   uint64_t i;
   int flag = strToInt(argv[1], 0);
-  int value = strToInt(argv[2], 0);
-  print("El valor es %d",value);
+  int64_t value = strToInt(argv[2], 0);
+  printString("Valor: ");
+  print("positivo: %d negativo: %d",1,value);
+  printStringLn("");
   int N = strToInt(argv[3], 0);
   Semaphore *sem = sOpen(SEM_ID, 1);
 
@@ -74,7 +76,7 @@ void testNoSync(int argc, char *argv[])
 
   for (i = 0; i < TOTAL_PAIR_PROCESSES; i++)
   {
-    char *argv1[4] = {"inc", "0", "1", "10000"};
+    char *argv1[4] = {"inc", "0", "-1", "10000"};
     createProcess(&inc, 4, argv1, 1);
     printStringLn("SECOND PROCESS");
     char *argv2[4] = {"inc", "0", "-1", "10000"};
