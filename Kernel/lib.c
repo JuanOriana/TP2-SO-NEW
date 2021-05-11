@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <syscall.h>
 #include <lib.h>
+#include <stringLib.h>
 
 void *memset(void *destination, int32_t c, uint64_t length)
 {

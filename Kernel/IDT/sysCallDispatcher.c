@@ -105,16 +105,16 @@ uint64_t sysCallDispatcher(t_registers *r)
                   return ticksElapsed();
                   break;
             case SYS_SEM_OPEN_ID:
-                  return (uint64_t)sOpen(r->rdi, r->rsi);
+                  return sOpen(r->rdi, r->rsi);
                   break;
             case SYS_SEM_POST_ID:
-                  return sPost((Semaphore *)r->rdi);
+                  return sPost(r->rdi);
                   break;
             case SYS_SEM_WAIT_ID:
-                  return sWait((Semaphore *)r->rdi);
+                  return sWait(r->rdi);
                   break;
             case SYS_SEM_CLOSE_ID:
-                  return sClose((Semaphore *)r->rdi);
+                  return sClose(r->rdi);
                   break;
             case SYS_YIELD_ID:
                   yield();

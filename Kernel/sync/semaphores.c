@@ -9,16 +9,15 @@ Semaphore *semaphores = NULL;
 
 static void dumpBlockedPIDs(int *blockedPIDs, int blockedPIDsSize);
 
-Semaphore *sOpen(int id, unsigned int initValue)
+uint64_t sOpen(uint64_t id, uint64_t initValue)
 {
     Semaphore *sem = findSem(id);
     if (sem == NULL)
     {
         sem = mallocCust(sizeof(Semaphore));
         if (sem == NULL)
-        {
-            return NULL;
-        }
+            return -1;
+
         sem->value = initValue;
         sem->listeners = 0;
         sem->blockedPIDsSize = 0;
@@ -38,10 +37,10 @@ Semaphore *sOpen(int id, unsigned int initValue)
     }
 
     sem->listeners++;
-    return sem;
+    return id;
 }
 
-Semaphore *findSem(int id)
+Semaphore *findSem(uint64_t id)
 {
     Semaphore *sem = semaphores;
     while (sem)
@@ -53,12 +52,13 @@ Semaphore *findSem(int id)
     return NULL;
 }
 
-int sWait(Semaphore *sem)
+int sWait(uint64_t id)
 {
-    if (!findSem(sem->id))
+    Semaphore *sem = findSem(id);
+    if (sem == NULL)
         return 1;
 
-    acquire(&sem->mutex);
+    acquire(&(sem->mutex));
     if (sem->value > 0)
     {
         sem->value--;
@@ -69,18 +69,19 @@ int sWait(Semaphore *sem)
     {
         int currPid = getCurrPID();
         sem->blockedPIDs[sem->blockedPIDsSize++] = currPid;
+        release(&(sem->mutex));
         blockProcess(currPid);
     }
-    release(&sem->mutex);
+
     return 0;
 }
 
-int sPost(Semaphore *sem)
+int sPost(uint64_t id)
 {
-    if (!findSem(sem->id))
+    Semaphore *sem = findSem(id);
+    if (sem == NULL)
         return 1;
-    acquire(&sem->mutex);
-    sem->value++;
+    acquire(&(sem->mutex));
     if (sem->blockedPIDsSize > 0)
     {
         int nextPid = sem->blockedPIDs[0];
@@ -88,13 +89,18 @@ int sPost(Semaphore *sem)
             sem->blockedPIDs[i] = sem->blockedPIDs[i + 1];
         sem->blockedPIDsSize--;
         unblockProcess(nextPid);
+
     }
-    release(&sem->mutex);
+    else sem->value++;
+    release(&(sem->mutex));
     return 0;
 }
 
-int sClose(Semaphore *sem)
+int sClose(uint64_t id)
 {
+    Semaphore *sem = findSem(id);
+    if (sem == NULL)
+        return 1;
     if (!findSem(sem->id))
         return 1;
     sem->listeners--;

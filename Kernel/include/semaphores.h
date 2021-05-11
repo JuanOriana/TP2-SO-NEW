@@ -15,15 +15,15 @@ typedef struct Semaphore
 
 } Semaphore;
 
-Semaphore *sOpen(int id, unsigned int initValue);
+uint64_t sOpen(uint64_t id, uint64_t initValue);
 
-int sWait(Semaphore *sem);
+int sWait(uint64_t id);
 
-int sPost(Semaphore *sem);
+int sPost(uint64_t id);
 
-int sClose(Semaphore *sem);
+int sClose(uint64_t id);
 
-Semaphore *findSem(int id);
+Semaphore *findSem(uint64_t id);
 
 void sStatus();
 

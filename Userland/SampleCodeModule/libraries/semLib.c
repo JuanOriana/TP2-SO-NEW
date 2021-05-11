@@ -1,21 +1,21 @@
 #include <semLib.h>
 
-Semaphore *sOpen(int id, unsigned int value)
+uint64_t sOpen(uint64_t id, uint64_t value)
 {
-   return (Semaphore *)syscall(SEM_OPEN, id, value, 0, 0, 0, 0);
+   return syscall(SEM_OPEN, id, value, 0, 0, 0, 0);
 }
 
-int sWait(Semaphore *sem)
+int sWait(uint64_t id)
 {
-    return syscall(SEM_WAIT, (uint64_t)sem, 0, 0, 0, 0, 0);
+    return syscall(SEM_WAIT, id, 0, 0, 0, 0, 0);
 }
 
-int sPost(Semaphore *sem)
+int sPost(uint64_t id)
 {
-    return syscall(SEM_POST, (uint64_t)sem, 0, 0, 0, 0, 0);
+    return syscall(SEM_POST, id, 0, 0, 0, 0, 0);
 }
 
-int sClose(Semaphore *sem)
+int sClose(uint64_t id)
 {
-   return syscall(SEM_CLOSE, (uint64_t)sem, 0, 0, 0, 0, 0);
+   return syscall(SEM_CLOSE, id, 0, 0, 0, 0, 0);
 }
