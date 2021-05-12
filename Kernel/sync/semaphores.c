@@ -27,7 +27,7 @@ uint64_t sOpen(uint64_t id, uint64_t initValue)
 
         Semaphore *lastSem = semaphores;
         if (lastSem == NULL)
-            semaphores = lastSem = sem;
+            semaphores = sem;
         else
         {
             while (lastSem->next != NULL)
@@ -89,9 +89,11 @@ int sPost(uint64_t id)
             sem->blockedPIDs[i] = sem->blockedPIDs[i + 1];
         sem->blockedPIDsSize--;
         unblockProcess(nextPid);
-
+        release(&(sem->mutex));
+        return 0;
     }
-    else sem->value++;
+    else
+        sem->value++;
     release(&(sem->mutex));
     return 0;
 }
@@ -101,22 +103,16 @@ int sClose(uint64_t id)
     Semaphore *sem = findSem(id);
     if (sem == NULL)
         return 1;
-    if (!findSem(sem->id))
-        return 1;
     sem->listeners--;
     if (sem->listeners > 0)
         return 0;
     Semaphore *aux = semaphores;
     if (aux == sem)
-    {
         semaphores = aux->next;
-    }
     else
     {
         while (aux->next != sem)
-        {
             aux = aux->next;
-        }
         aux->next = sem->next;
     }
     freeCust(sem);

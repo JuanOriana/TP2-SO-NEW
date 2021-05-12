@@ -24,14 +24,14 @@ void inc(int argc, char *argv[])
   int64_t value = strToInt(argv[2], 0);
   int N = strToInt(argv[3], 0);
 
-  if (flag && !sOpen(SEM_ID,1))
+  if (flag && sOpen(SEM_ID,1) == -1)
   {
     print("ERROR OPENING SEM\n");
     return;
   }
   for (i = 0; i < N; i++)
   {
-    if (flag == 1 && sWait(SEM_ID) != 0)
+    if (flag && sWait(SEM_ID) != 0)
       print("Error waiting sem\n");
     slowInc(&global, value);
     if (flag && sPost(SEM_ID) != 0)
@@ -40,7 +40,6 @@ void inc(int argc, char *argv[])
 
   if (flag && sClose(SEM_ID) != 0)
     print("Error closing sem\n");
-  print("closing\n");
 
   print("Final value: %d\n", global);
 }
@@ -56,9 +55,9 @@ void testSync(int argc, char *argv[])
   for (i = 0; i < TOTAL_PAIR_PROCESSES; i++)
   {
     char *argv1[4] = {"inc", "1", "1", "100"};
-    createProcess(&inc, 4, argv1, 1);
+    createProcess(&inc, 4, argv1, 0);
     char *argv2[4] = {"inc", "1", "-1", "100"};
-    createProcess(&inc, 4, argv2, 1);
+    createProcess(&inc, 4, argv2, 0);
   }
 }
 
@@ -73,8 +72,8 @@ void testNoSync(int argc, char *argv[])
   for (i = 0; i < TOTAL_PAIR_PROCESSES; i++)
   {
     char *argv1[4] = {"inc", "0", "1", "100"};
-    createProcess(&inc, 4, argv1, 1);
+    createProcess(&inc, 4, argv1, 0);
     char *argv2[4] = {"inc", "0", "-1", "100"};
-    createProcess(&inc, 4, argv2, 1);
+    createProcess(&inc, 4, argv2, 0);
   }
 }
