@@ -206,7 +206,7 @@ void mem(int argc, char **args)
 void loopCommand(int argc, char **args)
 {
 
-      char* argv[] = {"Loop"};
+      char *argv[] = {"Loop"};
       createProcess(&loop, 1, argv, 0);
       return;
 }
@@ -230,7 +230,9 @@ void kill(int argc, char **args)
             return;
       }
       int pid = strToInt(args[1], &error);
-      if (error) print("Error\n");
+      print("%d", pid);
+      if (error)
+            print("Error\n");
       killProcess(pid);
 }
 
@@ -260,7 +262,8 @@ void block(int argc, char **args)
             return;
       }
       int pid = strToInt(args[1], &error);
-      if (error) print("Error\n");
+      if (error)
+            print("Error\n");
       blockProcess(pid);
 }
 
@@ -273,11 +276,12 @@ void unblock(int argc, char **args)
             return;
       }
       int pid = strToInt(args[1], &error);
-      if (error) print("Error\n");
+      if (error)
+            print("Error\n");
       unblockProcess(pid);
 }
 
-void sem(int argc, char **args) 
+void sem(int argc, char **args)
 {
       syscall(DUMP_SEM, 0, 0, 0, 0, 0, 0);
 }
