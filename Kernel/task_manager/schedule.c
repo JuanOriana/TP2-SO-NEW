@@ -219,6 +219,8 @@ int addProcess(void (*entryPoint)(int, char **), int argc, char **argv, int fg)
 
       newProcess->state = READY;
       processQueue(newProcess);
+      if (newProcess->pcb.fg && newProcess->pcb.ppid)
+            blockProcess(newProcess->pcb.ppid);
 
       return newProcess->pcb.pid;
 }
@@ -367,10 +369,7 @@ static ProcessNode *getProcessOfPID(uint64_t pid)
 
 static uint64_t setNewState(uint64_t pid, State newState)
 {
-      if (pid <= 1)
-      {
-            return -1;
-      }
+
       ProcessNode *process = getProcessOfPID(pid);
 
       if (process == NULL || process->state == KILLED)
@@ -493,7 +492,8 @@ void killFgProcess()
       }
 }
 
-void yield(){
+void yield()
+{
       cyclesLeft = 0;
       callTimerTick();
 }
