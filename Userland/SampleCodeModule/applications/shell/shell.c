@@ -63,8 +63,7 @@ static void initShell(t_shellData *shellData)
           {&niceProcess, "nice", "changes process priority"},
           {&block, "block", "blocks process"},
           {&unblock, "unblock", "unblocks process"},
-          {&sem, "sem", "prints current state of active semaphores"}
-      };
+          {&sem, "sem", "prints current state of active semaphores"}};
 
       for (int i = 0; i < COMMANDS; i++)
       {
@@ -143,7 +142,7 @@ static void processCommand(t_shellData *shellData)
             printStringLn("Invalid command");
             return;
       }
-      createProcess(shellData->commands[idx].command, argc, argv, fg);
+      createProcess(shellData->commands[idx].command, argc, argv, fg, 0);
 }
 
 //muestra en pantalla el texto de la shell

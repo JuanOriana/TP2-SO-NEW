@@ -39,6 +39,7 @@ typedef struct
       uint64_t pid;
       uint64_t ppid;
       int fg;
+      int fd[2];
       char name[30];
       void *rsp;
       void *rbp;
@@ -90,7 +91,7 @@ typedef struct pList
 } ProcessList;
 
 static void setNewSF(void (*entryPoint)(int, char **), int argc, char **argv, void *rbp);
-static int createPCB(PCB *process, char *name, int fg);
+static int createPCB(PCB *process, char *name, int fg, int *fd);
 static uint64_t getNewPid();
 static void wrapper(void (*entryPoint)(int, char **), int argc, char **argv);
 static void exit();
@@ -130,7 +131,7 @@ void initScheduler()
       //Create an idling process and store it in case no process is available
       // (Must be popped bcz of queue)
       char *argv[] = {"Halt Process"};
-      addProcess(&haltFunc, 1, argv, 0);
+      addProcess(&haltFunc, 1, argv, 0, 0);
       idleProcess = processDequeue();
 }
 
@@ -193,7 +194,7 @@ void *scheduler(void *oldRSP)
       return currentProcess->pcb.rsp;
 }
 
-int addProcess(void (*entryPoint)(int, char **), int argc, char **argv, int fg)
+int addProcess(void (*entryPoint)(int, char **), int argc, char **argv, int fg, int *fd)
 {
       if (entryPoint == NULL)
             return -1;
@@ -204,7 +205,7 @@ int addProcess(void (*entryPoint)(int, char **), int argc, char **argv, int fg)
             return -1;
 
       //What if createPCB and setNewSft where in another file? Consider
-      if (createPCB(&newProcess->pcb, argv[0], fg) == -1)
+      if (createPCB(&newProcess->pcb, argv[0], fg, fd) == -1)
       {
             freeCust(newProcess);
             return -1;
@@ -225,7 +226,7 @@ int addProcess(void (*entryPoint)(int, char **), int argc, char **argv, int fg)
       return newProcess->pcb.pid;
 }
 
-static int createPCB(PCB *process, char *name, int fg)
+static int createPCB(PCB *process, char *name, int fg, int *fd)
 {
       strcpy(name, process->name);
       process->pid = getNewPid();
@@ -237,6 +238,8 @@ static int createPCB(PCB *process, char *name, int fg)
       process->fg = currentProcess == NULL ? fg : (currentProcess->pcb.fg ? fg : 0);
       process->rbp = mallocCust(STACK_SIZE);
       process->priority = process->fg ? INIT_PRIO_AUG : INIT_PRIO;
+      process->fd[0] = fd ? fd[0] : 0;
+      process->fd[1] = fd ? fd[1] : 1;
 
       if (process->rbp == NULL)
             return -1;

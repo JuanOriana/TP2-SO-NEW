@@ -2,9 +2,9 @@
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <processes.h>
 
-int createProcess(void (*entryPoint)(int, char **), int argc, char **argv, int fg)
+int createProcess(void (*entryPoint)(int, char **), int argc, char **argv, int fg, int *fd)
 {
-    return syscall(CREATE_PROC, (uint64_t)entryPoint, argc, (uint64_t)argv, (int)fg, 0, 0);
+    return syscall(CREATE_PROC, (uint64_t)entryPoint, argc, (uint64_t)argv, (int)fg, (uint64_t)fd, 0);
 }
 
 int killProcess(uint64_t pid)

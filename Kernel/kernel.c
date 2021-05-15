@@ -59,7 +59,7 @@ int main()
       initScheduler();
 
       char *argv[] = {"Shell"};
-      addProcess(sampleCodeModuleAddress, 1, argv, 1);
+      addProcess(sampleCodeModuleAddress, 1, argv, 1, 0);
       _hlt();
 
       printStringLn("RIP");
