@@ -40,7 +40,7 @@ void test_prio()
     for (i = 0; i < TOTAL_PROCESSES; i++)
     {
         char *argv[] = {"Proceso Dummy", itoa(i, buf, 10)};
-        pids[i] = createProcess(&endless_loop, 2, argv, 1, 0);
+        pids[i] = createProcess(&endless_loop, 2, argv, 0, 0);
     }
 
     bussy_wait(WAIT);

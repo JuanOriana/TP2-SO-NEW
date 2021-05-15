@@ -223,61 +223,46 @@ void testScheduler(int argc, char **args)
 
 void kill(int argc, char **args)
 {
-      int error;
       if (argc != 2)
       {
             print("Error: Invalid ammount of arguments.\n");
             return;
       }
-      int pid = strToInt(args[1], &error);
-      print("%d", pid);
-      if (error)
-            print("Error\n");
+      int pid = strToInt(args[1]);
       killProcess(pid);
 }
 
 void niceProcess(int argc, char **args)
 {
-      int e1, e2;
       if (argc != 3)
       {
             print("Error: Invalid ammount of arguments.\n");
             return;
       }
-      int pid = strToInt(args[1], &e1);
-      int priority = strToInt(args[2], &e2);
-      if (e1 == 1 || e2 == 1)
-      {
-            print("Error\n");
-      }
+      int pid = strToInt(args[1]);
+      int priority = strToInt(args[2]);
       nice(pid, priority);
 }
 
 void block(int argc, char **args)
 {
-      int error;
       if (argc != 2)
       {
             print("Error: Invalid ammount of arguments.\n");
             return;
       }
-      int pid = strToInt(args[1], &error);
-      if (error)
-            print("Error\n");
+      int pid = strToInt(args[1]);
       blockProcess(pid);
 }
 
 void unblock(int argc, char **args)
 {
-      int error;
       if (argc != 2)
       {
             print("Error: Invalid ammount of arguments.\n");
             return;
       }
-      int pid = strToInt(args[1], &error);
-      if (error)
-            print("Error\n");
+      int pid = strToInt(args[1]);
       unblockProcess(pid);
 }
 
