@@ -4,14 +4,14 @@
 #include <keyboardDriver.h>
 #include <pipes.h>
 
-void pathPrint(char *string, uint8_t length, t_colour bgColour, t_colour fontColour)
+void pathPrint(char *str, uint8_t length, t_colour bgColour, t_colour fontColour)
 {
     int outFd = currentWritesTo();
 
     if (outFd == 1)
-        sys_write(string, length, bgColour, fontColour);
+        sys_write(str, length, bgColour, fontColour);
     else
-        print("Writing string %s into fd %d\n", string, outFd);
+        pWrite(outFd, str);
 }
 
 int pathGetChar()
@@ -25,5 +25,5 @@ int pathGetChar()
         else
             return -1;
     }
-    return 'P';
+    return pRead(inFd);
 }

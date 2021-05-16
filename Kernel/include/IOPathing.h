@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <colours.h>
 
-void pathPrint(char *string, uint8_t length, t_colour bgColour, t_colour fontColour);
+void pathPrint(char *str, uint8_t length, t_colour bgColour, t_colour fontColour);
 int pathGetChar();
 
 #endif
