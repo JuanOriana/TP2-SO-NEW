@@ -316,13 +316,22 @@ void filter(int argc, char **args)
             print("Error: Invalid ammount of arguments.\n");
             return;
       }
+      char buffer[BUFFER_SIZE] = {0};
 
       int c;
+      int i;
       while ((c = getchar()) != EOF)
       {
-            if (!check_vowel(c))
+            cleanBuffer(buffer);
+            i = 0;
+            while (c != '\n')
+            {
                   putchar(c);
-      }
+                  if (!check_vowel(c))
+                        buffer[i++] = c;
+                  c = getchar();
+            }
 
-      print("\n");
+            print(" %s\n", buffer);
+      }
 }
