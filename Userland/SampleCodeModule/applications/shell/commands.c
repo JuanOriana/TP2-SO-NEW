@@ -281,10 +281,22 @@ void cat(int argc, char **args)
             return;
       }
 
+      char buffer[BUFFER_SIZE] = {0};
+
       int c;
+      int i;
       while ((c = getchar()) != EOF)
       {
-            putchar(c);
+            cleanString(buffer);
+            i = 0;
+            while (c != '\n')
+            {
+                  putchar(c);
+                  buffer[i++] = c;
+                  c = getchar();
+            }
+
+            print("\n%s\n", buffer);
       }
 }
 
@@ -300,7 +312,7 @@ void wc(int argc, char **args)
       int c;
       int count = 1;
 
-      while ((c = getchar()) != EOF)
+      while ((c = getchar()))
       {
             putchar(c);
             if ((char)c == '\n')
@@ -322,7 +334,7 @@ void filter(int argc, char **args)
       int i;
       while ((c = getchar()) != EOF)
       {
-            cleanBuffer(buffer);
+            cleanString(buffer);
             i = 0;
             while (c != '\n')
             {
@@ -332,6 +344,6 @@ void filter(int argc, char **args)
                   c = getchar();
             }
 
-            print(" %s\n", buffer);
+            print("\n%s\n", buffer);
       }
 }
