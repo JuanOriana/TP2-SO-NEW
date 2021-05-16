@@ -25,7 +25,6 @@ typedef struct
 typedef struct Pipe
 {
     Pipe pipes[PIPE_COUNT];
-    int arrLock;
 } PipeArray;
 
 long semId = 420;
@@ -36,21 +35,8 @@ static int getPipeIdx(int pipeId);
 static int getFreePipe();
 static int newPipe(int pipeId);
 
-int initPipes()
-{
-    //Init lock for PipeArray
-    if ((pipesArray.arrLock = sOpen(semId++, 1)) == -1)
-    {
-        print("Error initing pipes\n");
-        return -1;
-    }
-    return 0;
-}
-
 int pOpen(int pipeId)
 {
-    sWait(pipesArray.arrLock);
-
     int pipeIndex = getPipeIdx(pipeId);
 
     if (pipeIndex == -1)
@@ -58,14 +44,11 @@ int pOpen(int pipeId)
         pipeIndex = newPipe(pipeId);
         if (pipeIndex == -1)
         {
-            sPost(pipesArray.arrLock);
             return -1;
         }
     }
 
     pipesArray.pipes[pipeIndex].totalProcesses++;
-
-    sPost(pipesArray.arrLock);
 
     return pipeId;
 }
@@ -77,8 +60,6 @@ int pClose(int pipeId)
     if (pipeIndex == -1)
         return -1;
 
-    sWait(pipesArray.arrLock);
-
     Pipe *pipe = &pipesArray.pipes[pipeIndex];
 
     pipe->totalProcesses--;
@@ -86,15 +67,12 @@ int pClose(int pipeId)
     //Depleted pipe?
     if (pipe->totalProcesses > 0)
     {
-        sPost(pipesArray.arrLock);
         return 1;
     }
 
     sClose(pipe->lockR);
     sClose(pipe->lockW);
     pipe->state = EMPTY;
-
-    sPost(pipesArray.arrLock);
 
     return 1;
 }
