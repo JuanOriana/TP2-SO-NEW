@@ -25,12 +25,11 @@ static Header *base;
 static Header *freep = NULL;
 
 unsigned long totalUnits;
-unsigned long freeUnits;
 
 void memInit(char *memBase, unsigned long memSize)
 {
       // Initially its all a very large block
-      freeUnits = totalUnits = (memSize + sizeof(Header) - 1) / sizeof(Header) + 1;
+      totalUnits = (memSize + sizeof(Header) - 1) / sizeof(Header) + 1;
       freep = base = (Header *)memBase;
       freep->s.size = totalUnits;
       freep->s.ptr = freep;
@@ -43,9 +42,6 @@ void *mallocCust(unsigned long nbytes)
             return NULL;
 
       unsigned long nunits = (nbytes + sizeof(Header) - 1) / sizeof(Header) + 1; //Normalize to header units
-
-      if (nunits > freeUnits)
-            return NULL;
 
       Header *p, *prevp;
       prevp = freep;
@@ -63,7 +59,6 @@ void *mallocCust(unsigned long nbytes)
                         p->s.size = nunits;
                   }
                   freep = prevp;
-                  freeUnits -= nunits;
                   return (void *)(p + 1); //Return new memspace WITHOUT header
             }
             if (p == freep) // No block found, need more space
@@ -116,13 +111,28 @@ void freeCust(void *freeMem)
       else
             p->s.ptr = freeBlock;
 
-      freeUnits += freeBlock->s.size;
       freep = p;
 }
 
 void dumpMM()
 {
-      print("Base: %d\n", (uint64_t) base);
+      long long idx = 1;
+      Header *original, *p;
+      original = p = freep;
+      int flag = 1;
+
+      print("Free List MM dump\n");
       print("Total memory: %d\n", totalUnits * sizeof(Header));
-      print("Free memory: %d\n", freeUnits * sizeof(Header));
+      if (freep == NULL)
+            print("    No free blocks\n");
+
+      while (p != original || flag)
+      {
+            flag = 0;
+            print("    Block number %d\n", idx);
+            print("        Base: %x\n", (uint64_t)p);
+            print("        Free blocks: %d\n", p->s.size);
+            p = p->s.ptr;
+            idx++;
+      }
 }
