@@ -22,7 +22,7 @@ static void updateSnapshot(uint64_t *rsp);
 
 static char pressCodes[KEYS][2] =
     {{0, 0}, {0, 0}, {'1', '!'}, {'2', '@'}, {'3', '#'}, {'4', '$'}, {'5', '%'}, {'6', '^'}, {'7', '&'}, {'8', '*'}, {'9', '('}, {'0', ')'}, {'-', '_'}, {'=', '+'}, {'\b', '\b'}, {'\t', '\t'}, {'q', 'Q'}, {'w', 'W'}, {'e', 'E'}, {'r', 'R'}, {'t', 'T'}, {'y', 'Y'}, {'u', 'U'}, {'i', 'I'}, {'o', 'O'}, {'p', 'P'}, {'[', '{'}, {']', '}'}, {'\n', '\n'}, {0, 0}, {'a', 'A'}, {'s', 'S'}, {'d', 'D'}, {'f', 'F'}, {'g', 'G'}, {'h', 'H'}, {'j', 'J'}, {'k', 'K'}, {'l', 'L'}, {';', ':'}, {'\'', '\"'}, {'`', '~'}, {0, 0}, {'\\', '|'}, {'z', 'Z'}, {'x', 'X'}, {'c', 'C'}, {'v', 'V'}, {'b', 'B'}, {'n', 'N'}, {'m', 'M'}, {',', '<'}, {'.', '>'}, {'/', '?'}, {0, 0}, {0, 0}, {0, 0}, {' ', ' '}, {0, 0}};
-
+int EOF = -1;
 static uint8_t scanCode, currentAction, specialChars = 0, capsLock = 0, l_ctrl = 0;
 static char bufferSpace[MAX_SIZE] = {0};
 static t_queue buffer = {bufferSpace, 0, -1, 0, MAX_SIZE, sizeof(char)};
@@ -70,6 +70,10 @@ void keyboardHandler(uint64_t rsp)
                                           else if (pressCodes[scanCode][0] == 'c')
                                           {
                                                 killFgProcess();
+                                          }
+                                          else if (pressCodes[scanCode][0] == 'c')
+                                          {
+                                                queueInsert(currentBuffer, &EOF);
                                           }
                                     }
                                     else

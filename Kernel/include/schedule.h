@@ -20,5 +20,6 @@ void yield();
 int currentReadsFrom();
 int currentWritesTo();
 int currentProcessFg();
+void waitForPid(uint64_t pid);
 
 #endif

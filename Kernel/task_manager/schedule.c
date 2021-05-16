@@ -526,3 +526,14 @@ int currentProcessFg()
       }
       return -1;
 }
+
+void waitForPid(uint64_t pid)
+{
+      ProcessNode *process = getProcessOfPID(pid);
+      if (process)
+      {
+            // Is fg = 1 needed? its seems like its the only way 4 it to work
+            process->pcb.fg = 1;
+            blockProcess(currentProcess->pcb.pid);
+      }
+}

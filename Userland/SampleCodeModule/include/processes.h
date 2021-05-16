@@ -11,5 +11,6 @@ int unblockProcess(uint64_t pid);
 void nice(uint64_t pid, int priority);
 int getPID();
 void yield();
+void wait(uint64_t pid);
 
 #endif

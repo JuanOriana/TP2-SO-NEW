@@ -41,8 +41,9 @@
 #define SYS_PIPE_READ_ID 25
 #define SYS_PIPE_WRITE_ID 26
 #define SYS_PIPE_CLOSE_ID 27
+#define SYS_WAIT_ID 28
 
-#define SYSCALLS_QTY 28
+#define SYSCALLS_QTY 29
 
 uint64_t sysCallDispatcher(t_registers *r)
 {
@@ -139,6 +140,9 @@ uint64_t sysCallDispatcher(t_registers *r)
                   break;
             case SYS_PIPE_CLOSE_ID:
                   return pClose(r->rdi);
+                  break;
+            case SYS_WAIT_ID:
+                  waitForPid(r->rdi);
                   break;
             }
       }

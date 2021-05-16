@@ -32,7 +32,12 @@ void nice(uint64_t pid, int priority)
     syscall(NICE, pid, priority, 0, 0, 0, 0);
 }
 
-void yield()
+void yield(uint64_t pid)
 {
     syscall(YIELD, 0, 0, 0, 0, 0, 0);
+}
+
+void wait(uint64_t pid)
+{
+    syscall(WAIT, pid, 0, 0, 0, 0, 0);
 }

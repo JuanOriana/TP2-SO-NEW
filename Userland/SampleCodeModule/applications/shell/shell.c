@@ -14,17 +14,23 @@
 #include <loop.h>
 #include <testMem.h>
 #include <testSync.h>
+#include <pipeLib.h>
 
 static void initShell(t_shellData *shellData);
 static void shellText(t_shellData *shellData);
 static void processCommand(t_shellData *shellData);
 static void processChar(char c, t_shellData *shellData);
+static int findPipe(int argc, char **argv);
+static int runPipe(int pipeIndex, char **argv, int argc, int fg);
+static int getCommandIdx(char *name);
 
 static t_shellData shell;
 
 static char *regNames[] = {"R15: ", "R14: ", "R13: ", "R12: ", "R11: ", "R10: ", "R9: ",
                            "R8: ", "RSI: ", "RDI: ", "RBP: ", "RDX: ", "RCX: ", "RBX: ",
                            "RAX: ", "RIP: ", "RSP: "};
+
+int shellPipeId = 42;
 
 void runShell()
 {
@@ -125,21 +131,31 @@ static void processCommand(t_shellData *shellData)
       int fg = 1;
       argc = tokenizeBuffer(' ', argv, shellData->buffer.buffer, MAX_ARGS);
 
+      int pipeIdx = findPipe(argc, argv);
+
+      if (pipeIdx == 0 || pipeIdx == argc - 1)
+      {
+            print("Pipe should be between two commands\n");
+      }
+
+      if (pipeIdx != -1)
+      {
+            if (runPipe(pipeIdx, argv, argc, fg) == -1)
+            {
+                  print("One of the pipe commands was not valid \n");
+                  return;
+            }
+            return;
+      }
+
       if (argv[argc - 1][0] == '&')
       {
             fg = 0;
             argc--;
       }
 
-      int idx = -1;
+      int idx = getCommandIdx(argv[0]);
 
-      for (int i = 0; i < COMMANDS; i++)
-      {
-            if (stringcmp(shellData->commands[i].name, argv[0]) == 0)
-            {
-                  idx = i;
-            }
-      }
       if (idx == -1)
       {
             printStringLn("Invalid command");
@@ -207,4 +223,87 @@ void help(int argc, char **args)
             printStringLn(shell.commands[i].description);
       }
       putchar('\n');
+}
+
+static int findPipe(int argc, char **argv)
+{
+      for (int i = 0; i < argc; i++)
+      {
+            if (stringcmp(argv[i], "|") == 0)
+            {
+                  return i;
+            }
+      }
+      return -1;
+}
+
+static int runPipe(int pipeIndex, char **argv, int argc, int fg)
+{
+      char *currentArgv[MAX_ARGS];
+      int currentArgc = 0;
+      int fd[2];
+      uint32_t pids[2];
+
+      for (int i = pipeIndex + 1, j = 0; i < argc; i++, j++)
+      {
+            currentArgv[j] = argv[i];
+            currentArgc++;
+      }
+
+      int commandIdx = getCommandIdx(currentArgv[0]);
+
+      if (commandIdx == -1)
+            return -1;
+
+      int pipe = pOpen(shellPipeId++);
+
+      if (pipe == -1)
+      {
+            print("Error creating pipe");
+            return -1;
+      }
+
+      fd[0] = pipe; //fd[0]: in, fd[1]: out
+      fd[1] = 1;
+
+      pids[0] = createProcess(shell.commands[commandIdx].command, currentArgc, currentArgv, 0, fd);
+
+      currentArgc = 0;
+
+      for (int i = 0; i < pipeIndex; i++)
+      {
+            currentArgv[i] = argv[i];
+            currentArgc++;
+      }
+
+      commandIdx = getCommandIdx(currentArgv[0]);
+
+      if (commandIdx == -1)
+            return -1;
+
+      fd[0] = 0;
+      fd[1] = pipe;
+
+      pids[1] = createProcess(shell.commands[commandIdx].command, currentArgc, currentArgv, fg, fd);
+
+      int a = -1;
+      if (fg == 0)
+            wait(pids[1]);
+      pWrite(shellPipeId - 1, (char *)&a);
+      wait(pids[0]);
+      pClose(shellPipeId - 1);
+
+      return 1;
+}
+
+static int getCommandIdx(char *name)
+{
+      for (int i = 0; i < COMMANDS; i++)
+      {
+            if (stringcmp(shell.commands[i].name, name) == 0)
+            {
+                  return i;
+            }
+      }
+      return -1;
 }

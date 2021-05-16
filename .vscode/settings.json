@@ -10,6 +10,10 @@
         "semaphores.h": "c",
         "pipes.h": "c",
         "memorymanager.h": "c",
-        "keyboarddriver.h": "c"
+        "keyboarddriver.h": "c",
+        "schedule.h": "c",
+        "stdint.h": "c",
+        "systemcalls.h": "c",
+        "staticqueue.h": "c"
     }
 }
