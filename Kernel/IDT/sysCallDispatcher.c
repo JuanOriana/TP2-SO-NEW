@@ -11,6 +11,7 @@
 #include <timerTick.h>
 #include <semaphores.h>
 #include <pipes.h>
+#include <IOPathing.h>
 
 #define SYS_GETMEM_ID 0
 #define SYS_RTC_TIME_ID 1
@@ -62,11 +63,11 @@ uint64_t sysCallDispatcher(t_registers *r)
                   break;
 
             case SYS_WRITE_ID:
-                  sys_write((char *)(r->rdi), (uint8_t)(r->rsi), (t_colour)(r->rdx), (t_colour)(r->r10));
+                  pathPrint((char *)(r->rdi), (uint8_t)(r->rsi), (t_colour)(r->rdx), (t_colour)(r->r10));
                   break;
 
             case SYS_GETCHAR_ID:
-                  return getchar();
+                  return pathGetChar();
                   break;
 
             case SYS_CLEAR_ID:

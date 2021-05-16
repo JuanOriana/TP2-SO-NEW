@@ -11,7 +11,7 @@ void pathPrint(char *string, uint8_t length, t_colour bgColour, t_colour fontCol
     if (outFd == 1)
         sys_write(string, length, bgColour, fontColour);
     else
-        print("X");
+        print("Writing string %s into fd %d\n", string, outFd);
 }
 
 int pathGetChar()
