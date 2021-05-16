@@ -20,9 +20,9 @@ void slowInc(int64_t *p, int64_t inc)
 void inc(int argc, char *argv[])
 {
   uint64_t i;
-  int flag = strToInt(argv[1], 0);
-  int64_t value = strToInt(argv[2], 0);
-  int N = strToInt(argv[3], 0);
+  int flag = strToInt(argv[1]);
+  int64_t value = strToInt(argv[2]);
+  int N = strToInt(argv[3]);
 
   if (flag && sOpen(SEM_ID, 1) == -1)
   {

@@ -180,7 +180,7 @@ char *strtok(char *string, char *result, const char delim)
       return result;
 }
 
-int64_t strToInt(char *str, int *error)
+int64_t strToInt(char *str)
 {
       int number = 0;
       int mult = 1;
@@ -365,7 +365,7 @@ void strToDouble(char *numStr, int *error, double *result)
       {
             integerPart[k] = numStr[i];
       }
-      *result += strToInt(integerPart, error);
+      *result += strToInt(integerPart);
       if (numStr[i] == '.')
       {
             i++;

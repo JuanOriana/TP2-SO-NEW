@@ -13,7 +13,7 @@
 uint32_t uintToBase(uint64_t value, char *buffer, uint32_t base);
 uint32_t uintToBaseWL(uint64_t value, char *buffer, uint32_t base, uint32_t lenght);
 uint8_t BSDToInt(uint8_t num);
-int64_t strToInt(char *str, int *error);
+int64_t strToInt(char *str);
 uint64_t strToHex(char *str, int *error);
 uint64_t pow(uint64_t x, uint64_t y);
 char *strtok(char *string, char *result, const char delim);
