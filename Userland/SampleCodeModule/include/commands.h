@@ -54,4 +54,10 @@ void unblock(int argc, char **args);
 
 void sem(int argc, char **args);
 
+void cat(int argc, char **args);
+
+void wc(int argc, char **args);
+
+void filter(int argc, char **args);
+
 #endif
