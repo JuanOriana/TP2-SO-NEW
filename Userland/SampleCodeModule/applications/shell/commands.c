@@ -281,23 +281,11 @@ void cat(int argc, char **args)
             return;
       }
 
-      char buffer[BUFFER_SIZE] = {0};
-
       int c;
-      int i;
       while ((c = getchar()) != EOF)
       {
-            cleanString(buffer);
-            i = 0;
-            while (c != '\n')
-            {
-                  putchar(c);
-                  buffer[i++] = c;
-                  c = getchar();
+            putchar(c);
             }
-
-            print("\n%s\n", buffer);
-      }
 }
 
 //counts the lines recieved from input

@@ -133,13 +133,13 @@ static void processCommand(t_shellData *shellData)
 
       int pipeIdx = findPipe(argc, argv);
 
-      if (pipeIdx == 0 || pipeIdx == argc - 1)
-      {
-            print("Pipe should be between two commands\n");
-      }
-
       if (pipeIdx != -1)
       {
+            if (pipeIdx == 0 || pipeIdx == argc - 1)
+            {
+                  print("Pipe should be between two commands\n");
+                  return;
+            }
             if (runPipe(pipeIdx, argv, argc, fg) == -1)
             {
                   print("One of the pipe commands was not valid \n");
