@@ -13,8 +13,8 @@ typedef struct
 {
     int id;
     char buffer[BUFF_SIZE];
-    int beggining;
-    int end;
+    int readIndex;
+    int writeIndex;
     long totalProcesses;
     int lockW;
     int lockR;
@@ -61,7 +61,7 @@ int pOpen(int pipeId)
 
     sPost(pipes.arrLock);
 
-    return pipeIndex + 1;
+    return pipeId;
 }
 
 int pClose(int pipeId)
@@ -86,7 +86,6 @@ int pClose(int pipeId)
 
     sClose(pipe->lockR);
     sClose(pipe->lockW);
-
     pipe->state = EMPTY;
 
     sPost(pipes.arrLock);
@@ -105,8 +104,8 @@ int pRead(int pipeId)
 
     sWait(pipe->lockR);
 
-    char c = pipe->buffer[pipe->beggining];
-    pipe->beggining = (pipe->beggining + 1) % BUFF_SIZE;
+    char c = pipe->buffer[pipe->readIndex];
+    pipe->readIndex = (pipe->readIndex + 1) % BUFF_SIZE;
 
     sem_post(pipe->lockR);
 
@@ -123,7 +122,7 @@ int pWrite(int pipeId, char *str)
     while (*str != 0)
         putCharPipeByIdx(pipeIndex, *str++);
 
-    return 0;
+    return pipeId;
 }
 
 int putCharPipeByIdx(int pipeIndex, char c)
@@ -132,8 +131,8 @@ int putCharPipeByIdx(int pipeIndex, char c)
 
     sWait(pipe->lockR);
 
-    pipe->buffer[pipe->end] = c;
-    pipe->end = (pipe->end + 1) % BUFF_SIZE;
+    pipe->buffer[pipe->writeIndex] = c;
+    pipe->writeIndex = (pipe->writeIndex + 1) % BUFF_SIZE;
 
     sPost(pipe->lockR);
 
@@ -147,12 +146,15 @@ int putCharPipe(int pipeId, char c)
     if (pipeIndex == -1)
         return -1;
 
-    return putCharPipeByIdx(pipeIndex, c);
+    putCharPipeByIdx(pipeIndex, c);
+
+    return pipeId;
 }
 
 static int newPipe(int pipeId)
 {
-    int newIdx = getFree();
+    int newIdx = getFreePipe();
+
     if (newIdx == -1)
     {
         return -1;
@@ -162,7 +164,7 @@ static int newPipe(int pipeId)
 
     pipe->id = pipeId;
     pipe->state = IN_USE;
-    pipe->beggining = pipe->end = pipe->totalProcesses = 0;
+    pipe->readIndex = pipe->writeIndex = pipe->totalProcesses = 0;
 
     if ((pipe->lockR = sOpen(semId++, 0)) == -1)
     {
@@ -174,29 +176,27 @@ static int newPipe(int pipeId)
         return -1;
     }
 
-    return newIdx;
+    return pipeId;
 }
 
 static int getPipeIdx(int pipeId)
 {
     for (int i = 0; i < PIPE_COUNT; i++)
     {
-        if (pipes.pipes[i].state)
+
+        if (pipes.pipes[i].state == IN_USE && pipes.pipes[i].id == pipeId)
         {
-            if (pipes.pipes[i].id == pipeId)
-            {
-                return i;
-            }
+            return i;
         }
     }
     return -1;
 }
 
-static int getFree()
+static int getFreePipe()
 {
     for (int i = 0; i < PIPE_COUNT; i++)
     {
-        if (!pipes.pipes[i].state)
+        if (pipes.pipes[i].state == EMPTY)
         {
             return i;
         }
