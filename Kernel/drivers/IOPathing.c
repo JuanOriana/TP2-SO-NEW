@@ -9,9 +9,13 @@ void pathPrint(char *str, uint8_t length, t_colour bgColour, t_colour fontColour
     int outFd = currentWritesTo();
 
     if (outFd == 1)
+    {
         sys_write(str, length, bgColour, fontColour);
+    }
     else
+    {
         pWrite(outFd, str);
+    }
 }
 
 int pathGetChar()

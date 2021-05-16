@@ -113,7 +113,7 @@ int pRead(int pipeId)
     char c = pipe->buffer[pipe->readIndex];
     pipe->readIndex = (pipe->readIndex + 1) % BUFF_SIZE;
 
-    sPost(pipe->lockR);
+    sPost(pipe->lockW);
 
     return c;
 }
@@ -135,7 +135,7 @@ static int putCharPipeByIdx(int pipeIndex, char c)
 {
     Pipe *pipe = &pipesArray.pipes[pipeIndex];
 
-    sWait(pipe->lockR);
+    sWait(pipe->lockW);
 
     pipe->buffer[pipe->writeIndex] = c;
     pipe->writeIndex = (pipe->writeIndex + 1) % BUFF_SIZE;
