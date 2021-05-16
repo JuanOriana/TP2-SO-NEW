@@ -71,7 +71,7 @@ void keyboardHandler(uint64_t rsp)
                                           {
                                                 killFgProcess();
                                           }
-                                          else if (pressCodes[scanCode][0] == 'c')
+                                          else if (pressCodes[scanCode][0] == 'd')
                                           {
                                                 queueInsert(currentBuffer, &EOF);
                                           }
@@ -107,7 +107,7 @@ void keyboardHandler(uint64_t rsp)
       }
 }
 
-char getchar()
+int getchar()
 {
       char c = 0;
       queueRemoveData(currentBuffer, &c);
