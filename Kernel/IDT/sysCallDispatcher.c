@@ -10,6 +10,8 @@
 #include <memoryManager.h>
 #include <timerTick.h>
 #include <semaphores.h>
+#include <pipes.h>
+#include <IOPathing.h>
 
 #define SYS_GETMEM_ID 0
 #define SYS_RTC_TIME_ID 1
@@ -34,9 +36,13 @@
 #define SYS_SEM_WAIT_ID 20
 #define SYS_SEM_CLOSE_ID 21
 #define SYS_YIELD_ID 22
-#define SYS_DUMP_SEM 23
+#define SYS_DUMP_SEM_ID 23
+#define SYS_PIPE_OPEN_ID 24
+#define SYS_PIPE_READ_ID 25
+#define SYS_PIPE_WRITE_ID 26
+#define SYS_PIPE_CLOSE_ID 27
 
-#define SYSCALLS_QTY 24
+#define SYSCALLS_QTY 28
 
 uint64_t sysCallDispatcher(t_registers *r)
 {
@@ -57,11 +63,11 @@ uint64_t sysCallDispatcher(t_registers *r)
                   break;
 
             case SYS_WRITE_ID:
-                  sys_write((char *)(r->rdi), (uint8_t)(r->rsi), (t_colour)(r->rdx), (t_colour)(r->r10));
+                  pathPrint((char *)(r->rdi), (uint8_t)(r->rsi), (t_colour)(r->rdx), (t_colour)(r->r10));
                   break;
 
             case SYS_GETCHAR_ID:
-                  return getchar();
+                  return pathGetChar();
                   break;
 
             case SYS_CLEAR_ID:
@@ -119,8 +125,20 @@ uint64_t sysCallDispatcher(t_registers *r)
             case SYS_YIELD_ID:
                   yield();
                   break;
-            case SYS_DUMP_SEM:
+            case SYS_DUMP_SEM_ID:
                   sStatus();
+                  break;
+            case SYS_PIPE_OPEN_ID:
+                  return pOpen(r->rdi);
+                  break;
+            case SYS_PIPE_READ_ID:
+                  return pRead(r->rdi);
+                  break;
+            case SYS_PIPE_WRITE_ID:
+                  return pWrite(r->rdi, (char *)r->rsi);
+                  break;
+            case SYS_PIPE_CLOSE_ID:
+                  return pClose(r->rdi);
                   break;
             }
       }
