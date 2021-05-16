@@ -7,6 +7,7 @@
         "syscall.h": "c",
         "lib.h": "c",
         "semaphore.h": "c",
-        "semaphores.h": "c"
+        "semaphores.h": "c",
+        "pipes.h": "c"
     }
 }

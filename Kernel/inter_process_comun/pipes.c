@@ -30,6 +30,11 @@ typedef struct Pipe
 long semId = 420;
 static PipeArray pipes;
 
+static int putCharPipeByIdx(int pipeIndex, char c);
+static int getPipeIdx(int pipeId);
+static int getFreePipe();
+static int newPipe(int pipeId);
+
 int initPipes()
 {
     //Init lock for PipeArray
@@ -107,7 +112,7 @@ int pRead(int pipeId)
     char c = pipe->buffer[pipe->readIndex];
     pipe->readIndex = (pipe->readIndex + 1) % BUFF_SIZE;
 
-    sem_post(pipe->lockR);
+    sPost(pipe->lockR);
 
     return c;
 }
@@ -125,7 +130,7 @@ int pWrite(int pipeId, char *str)
     return pipeId;
 }
 
-int putCharPipeByIdx(int pipeIndex, char c)
+static int putCharPipeByIdx(int pipeIndex, char c)
 {
     Pipe *pipe = &pipes.pipes[pipeIndex];
 
