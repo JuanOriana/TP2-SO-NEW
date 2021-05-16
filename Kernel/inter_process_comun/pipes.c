@@ -1,4 +1,5 @@
-
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <semaphores.h>
 #include <pipes.h>
 #include <stringLib.h>
@@ -28,7 +29,7 @@ typedef struct Pipe
 } PipeArray;
 
 long semId = 420;
-static PipeArray pipes;
+static PipeArray pipesArray;
 
 static int putCharPipeByIdx(int pipeIndex, char c);
 static int getPipeIdx(int pipeId);
@@ -38,7 +39,7 @@ static int newPipe(int pipeId);
 int initPipes()
 {
     //Init lock for PipeArray
-    if ((pipes.arrLock = sOpen(semId++, 1)) == -1)
+    if ((pipesArray.arrLock = sOpen(semId++, 1)) == -1)
     {
         print("Error initing pipes\n");
         return -1;
@@ -48,7 +49,7 @@ int initPipes()
 
 int pOpen(int pipeId)
 {
-    sWait(pipes.arrLock);
+    sWait(pipesArray.arrLock);
 
     int pipeIndex = getPipeIdx(pipeId);
 
@@ -57,14 +58,14 @@ int pOpen(int pipeId)
         pipeIndex = newPipe(pipeId);
         if (pipeIndex == -1)
         {
-            sPost(pipes.arrLock);
+            sPost(pipesArray.arrLock);
             return -1;
         }
     }
 
-    pipes.pipes[pipeIndex].totalProcesses++;
+    pipesArray.pipes[pipeIndex].totalProcesses++;
 
-    sPost(pipes.arrLock);
+    sPost(pipesArray.arrLock);
 
     return pipeId;
 }
@@ -76,16 +77,16 @@ int pClose(int pipeId)
     if (pipeIndex == -1)
         return -1;
 
-    sWait(pipes.arrLock);
+    sWait(pipesArray.arrLock);
 
-    Pipe *pipe = &pipes.pipes[pipeIndex];
+    Pipe *pipe = &pipesArray.pipes[pipeIndex];
 
     pipe->totalProcesses--;
 
     //Depleted pipe?
     if (pipe->totalProcesses > 0)
     {
-        sPost(pipes.arrLock);
+        sPost(pipesArray.arrLock);
         return 1;
     }
 
@@ -93,7 +94,7 @@ int pClose(int pipeId)
     sClose(pipe->lockW);
     pipe->state = EMPTY;
 
-    sPost(pipes.arrLock);
+    sPost(pipesArray.arrLock);
 
     return 1;
 }
@@ -105,7 +106,7 @@ int pRead(int pipeId)
     if (pipeIndex == -1)
         return -1;
 
-    Pipe *pipe = &pipes.pipes[pipeIndex];
+    Pipe *pipe = &pipesArray.pipes[pipeIndex];
 
     sWait(pipe->lockR);
 
@@ -132,7 +133,7 @@ int pWrite(int pipeId, char *str)
 
 static int putCharPipeByIdx(int pipeIndex, char c)
 {
-    Pipe *pipe = &pipes.pipes[pipeIndex];
+    Pipe *pipe = &pipesArray.pipes[pipeIndex];
 
     sWait(pipe->lockR);
 
@@ -165,7 +166,7 @@ static int newPipe(int pipeId)
         return -1;
     }
 
-    Pipe *pipe = &pipes.pipes[newIdx];
+    Pipe *pipe = &pipesArray.pipes[newIdx];
 
     pipe->id = pipeId;
     pipe->state = IN_USE;
@@ -189,7 +190,7 @@ static int getPipeIdx(int pipeId)
     for (int i = 0; i < PIPE_COUNT; i++)
     {
 
-        if (pipes.pipes[i].state == IN_USE && pipes.pipes[i].id == pipeId)
+        if (pipesArray.pipes[i].state == IN_USE && pipesArray.pipes[i].id == pipeId)
         {
             return i;
         }
@@ -201,7 +202,7 @@ static int getFreePipe()
 {
     for (int i = 0; i < PIPE_COUNT; i++)
     {
-        if (pipes.pipes[i].state == EMPTY)
+        if (pipesArray.pipes[i].state == EMPTY)
         {
             return i;
         }
