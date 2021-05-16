@@ -5,7 +5,7 @@
 #include <stdint.h>
 
 void keyboardHandler(uint64_t rsp);
-char getchar();
+int getchar();
 uint64_t* getSnapshot();
 
 #endif

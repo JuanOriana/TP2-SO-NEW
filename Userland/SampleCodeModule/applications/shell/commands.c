@@ -312,7 +312,7 @@ void wc(int argc, char **args)
       int c;
       int count = 1;
 
-      while ((c = getchar()))
+      while ((c = getchar()) != EOF)
       {
             putchar(c);
             if ((char)c == '\n')

@@ -23,7 +23,7 @@ void printStringLn(char *str)
       putchar('\n');
 }
 
-char getchar()
+int getchar()
 {
       return syscall(GETCHAR, 0, 0, 0, 0, 0, 0);
 }
