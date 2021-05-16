@@ -8,6 +8,7 @@
         "lib.h": "c",
         "semaphore.h": "c",
         "semaphores.h": "c",
-        "pipes.h": "c"
+        "pipes.h": "c",
+        "memorymanager.h": "c"
     }
 }

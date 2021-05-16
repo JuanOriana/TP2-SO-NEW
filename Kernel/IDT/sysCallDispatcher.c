@@ -34,7 +34,12 @@
 #define SYS_SEM_WAIT_ID 20
 #define SYS_SEM_CLOSE_ID 21
 #define SYS_YIELD_ID 22
-#define SYS_DUMP_SEM 23
+#define SYS_DUMP_SEM_ID 23
+////
+#define SYS_PIPE_OPEN_ID 24
+#define SYS_PIPE_READ_ID 25
+#define SYS_PIPE_WRITE_ID 26
+#define SYS_PIPE_CLOSE_ID 27
 
 #define SYSCALLS_QTY 24
 
@@ -119,7 +124,7 @@ uint64_t sysCallDispatcher(t_registers *r)
             case SYS_YIELD_ID:
                   yield();
                   break;
-            case SYS_DUMP_SEM:
+            case SYS_DUMP_SEM_ID:
                   sStatus();
                   break;
             }

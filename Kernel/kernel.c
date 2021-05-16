@@ -11,6 +11,7 @@
 #include <timerTick.h>
 #include <videoDriver.h>
 #include <interrupts.h>
+#include <pipes.h>
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -56,6 +57,7 @@ int main()
       load_idt();
       initVideoDriver(BLACK, WHITE);
       memInit((char *)sampleCodeModuleHeapAddress, HEAP_MEMORY_SIZE);
+      initPipes();
       initScheduler();
 
       char *argv[] = {"Shell"};
