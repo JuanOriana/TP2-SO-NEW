@@ -306,7 +306,7 @@ void wc(int argc, char **args)
             if ((char)c == '\n')
                   count++;
       }
-      print("number of lines: %d\n", count);
+      print("\nNumber of lines: %d\n", count);
 }
 
 void filter(int argc, char **args)

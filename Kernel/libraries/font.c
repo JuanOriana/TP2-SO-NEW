@@ -1671,7 +1671,7 @@ static unsigned char __font_bitmap__[] = {
     ___XX___,
     ___XX___,
     ___XX___,
-    ________,
+    ___XX___,
     ___XX___,
     ___XX___,
     ___XX___,
@@ -1716,7 +1716,26 @@ static unsigned char __font_bitmap__[] = {
     ________,
     ________,
     ________,
-    ________};
+    ________,
+    // 127
+    //	width 8, bbx 0, bby -4, bbw 8, bbh 16
+    XXXXXXXX,
+    XXXXXXXX,
+    XXXXXXXX,
+    XXXXXXXX,
+    XXXXXXXX,
+    XXXXXXXX,
+    XXXXXXXX,
+    XXXXXXXX,
+    XXXXXXXX,
+    XXXXXXXX,
+    XXXXXXXX,
+    XXXXXXXX,
+    XXXXXXXX,
+    XXXXXXXX,
+    XXXXXXXX,
+    XXXXXXXX,
+    };
 
 char* getCharMap(int c) {
       return ((char*)__font_bitmap__ + (c - ' ') * CHAR_HEIGHT);

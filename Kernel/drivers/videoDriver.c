@@ -6,6 +6,7 @@
 #include <videoDriver.h>
 
 #define PIXEL_SIZE 3
+#define BLINK_CHAR 127
 
 struct vbe_mode_info_structure {
       uint16_t attributes;   // deprecated, only bit 7 should be of interest to you, and it indicates the mode supports a linear frame buffer.
@@ -157,7 +158,7 @@ void clearScreen() {
 
 void blinkCursor() {
       if (screen.blink) {
-            staticputchar('|');
+            staticputchar(BLINK_CHAR);
             screen.blink = 0;
       } else {
             staticputchar(' ');
