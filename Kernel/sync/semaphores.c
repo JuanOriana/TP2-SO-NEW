@@ -5,9 +5,24 @@
 #include <stringLib.h>
 
 #define NULL 0
+
+typedef struct Semaphore
+{
+    int id;
+    int value;
+    int listeners;
+    int blockedPIDs[MAX_BLOCKED_PIDS];
+    int blockedPIDsSize;
+    int mutex;
+    struct Semaphore *next;
+
+} Semaphore;
+
 Semaphore *semaphores = NULL;
 
 static void dumpBlockedPIDs(int *blockedPIDs, int blockedPIDsSize);
+static Semaphore *findSem(uint64_t id);
+
 
 uint64_t sOpen(uint64_t id, uint64_t initValue)
 {
