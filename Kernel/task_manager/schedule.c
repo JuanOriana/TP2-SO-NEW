@@ -222,7 +222,6 @@ int addProcess(void (*entryPoint)(int, char **), int argc, char **argv, int fg, 
       processQueue(newProcess);
       if (newProcess->pcb.fg && newProcess->pcb.ppid)
             blockProcess(newProcess->pcb.ppid);
-
       return newProcess->pcb.pid;
 }
 
@@ -499,4 +498,31 @@ void yield()
 {
       cyclesLeft = 0;
       callTimerTick();
+}
+
+int currentReadsFrom()
+{
+      if (currentProcess)
+      {
+            return currentProcess->pcb.fd[0];
+      }
+      return -1;
+}
+
+int currentWritesTo()
+{
+      if (currentProcess)
+      {
+            return currentProcess->pcb.fd[1];
+      }
+      return -1;
+}
+
+int currentProcessFg()
+{
+      if (currentProcess)
+      {
+            return currentProcess->pcb.fg;
+      }
+      return -1;
 }

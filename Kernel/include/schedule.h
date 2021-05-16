@@ -17,5 +17,8 @@ void processDisplay();
 void setNewCycle(uint64_t pid, int priority);
 void killFgProcess();
 void yield();
+int currentReadsFrom();
+int currentWritesTo();
+int currentProcessFg();
 
 #endif

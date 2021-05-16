@@ -9,6 +9,7 @@
         "semaphore.h": "c",
         "semaphores.h": "c",
         "pipes.h": "c",
-        "memorymanager.h": "c"
+        "memorymanager.h": "c",
+        "keyboarddriver.h": "c"
     }
 }

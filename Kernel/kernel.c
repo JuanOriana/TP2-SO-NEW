@@ -62,6 +62,7 @@ int main()
 
       char *argv[] = {"Shell"};
       addProcess(sampleCodeModuleAddress, 1, argv, 1, 0);
+      print("%d", currentReadsFrom());
       _hlt();
 
       printStringLn("RIP");
