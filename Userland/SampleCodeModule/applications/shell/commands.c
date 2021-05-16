@@ -12,6 +12,8 @@
 #include <loop.h>
 #include <semLib.h>
 
+#define EOF -1
+
 static void memToString(char *buffer, uint8_t *mem, int bytes);
 
 //devuelve el tiempo acutal del sistema
@@ -269,4 +271,58 @@ void unblock(int argc, char **args)
 void sem(int argc, char **args)
 {
       syscall(DUMP_SEM, 0, 0, 0, 0, 0, 0);
+}
+
+void cat(int argc, char **args)
+{
+      if (argc != 1)
+      {
+            print("Error: Invalid ammount of arguments.\n");
+            return;
+      }
+
+      int c;
+      while ((c = getchar()) != EOF)
+      {
+            putchar(c);
+      }
+}
+
+//counts the lines recieved from input
+void wc(int argc, char **args)
+{
+      if (argc != 1)
+      {
+            print("Error: Invalid ammount of arguments.\n");
+            return;
+      }
+
+      int c;
+      int count = 1;
+
+      while ((c = getchar()) != EOF)
+      {
+            putchar(c);
+            if ((char)c == '\n')
+                  count++;
+      }
+      print("number of lines: %d\n", count);
+}
+
+void filter(int argc, char **args)
+{
+      if (argc != 1)
+      {
+            print("Error: Invalid ammount of arguments.\n");
+            return;
+      }
+
+      int c;
+      while ((c = getchar()) != EOF)
+      {
+            if (!check_vowel(c))
+                  putchar(c);
+      }
+
+      print("\n");
 }

@@ -31,5 +31,6 @@ int intToStr(int x, char str[], int d);
 char *itoa(int value, char *buffer, int base);
 void waitCycles(int cycles);
 int tokenizeBuffer(char token, char **dest, char *source, int max);
+int check_vowel(char a);
 
 #endif

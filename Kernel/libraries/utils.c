@@ -287,3 +287,18 @@ char *itoa(int value, char *buffer, int base) {
       // reverse the string and return it
       return reverse(buffer, 0, i - 1);
 }
+
+int log2(uint32_t n) 
+{
+      if (n == 0) 
+      {
+            return -1;
+      }
+      int ans = -1;
+      while (n) 
+      {
+            ans++;
+            n >>= 1;
+      }
+      return ans;
+}

@@ -63,7 +63,10 @@ static void initShell(t_shellData *shellData)
           {&niceProcess, "nice", "changes process priority"},
           {&block, "block", "blocks process"},
           {&unblock, "unblock", "unblocks process"},
-          {&sem, "sem", "prints current state of active semaphores"}};
+          {&sem, "sem", "prints current state of active semaphores"},
+          {&cat, "cat", "prints standard input in standard output"},
+          {&wc,"wc","counts the number of input lines"},
+          {&filter,"filter","filter the vowels of the input"}};
 
       for (int i = 0; i < COMMANDS; i++)
       {
