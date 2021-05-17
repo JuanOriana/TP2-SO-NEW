@@ -29,10 +29,8 @@
  * right after this header (i.e. the size occupies the 8 bytes before the
  * returned address).
  */
-#define HEADER_SIZE 8
 
 #define MIN_ALLOC_LOG_2 4 //16 B min aloc
-#define MIN_ALLOC ((size_t) 1 << MIN_ALLOC_LOG2)
 
 #define MAX_ALLOC_LOG2 30 //1GB MB max aloc
 #define MAX_LEVELS (MAX_ALLOC_LOG2 - MIN_ALLOC_LOG_2)
@@ -170,7 +168,8 @@ void freeCust(void *ap)
     listPush(&buckets[listPtr->level], listPtr);
 }
 
-void dumpMM() {
+void dumpMM() 
+{
       List *p, *aux;
       uint32_t index = 0;
       uint32_t availableSpace = 0;
@@ -275,7 +274,7 @@ static int getFirstAvailableLevel(uint8_t minLevel)
     for (minAvailableLevel = minLevel; minAvailableLevel < levels && listHasNone(&buckets[minAvailableLevel]); minAvailableLevel++)
         ;
     //Me pase?
-    if (minAvailableLevel >= levels)
+    if (minAvailableLevel > levels)
         return -1;
 
     return minAvailableLevel;
