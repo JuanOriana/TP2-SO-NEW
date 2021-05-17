@@ -73,6 +73,7 @@ typedef struct ProcessNode
 typedef struct pList
 {
       uint32_t size;
+      uint32_t readySize;
       ProcessNode *first;
       ProcessNode *last;
 } ProcessList;
@@ -114,6 +115,7 @@ void initScheduler()
       processes->first = NULL;
       processes->last = processes->first;
       processes->size = 0;
+      processes->readySize = 0;
 
       //Create an idling process and store it in case no process is available
       // (Must be popped bcz of queue)
@@ -153,7 +155,7 @@ void *scheduler(void *oldRSP)
       }
       // If I still have something to process, do so (if I kill al processses int his loop it might bring trouble)
       // CONSIDER TRACKING READY PROCESSES ALSO
-      if (processes->size > 0)
+      if (processes->readySize > 0)
       {
             currentProcess = processDequeue();
             while (currentProcess->state != READY)
@@ -288,6 +290,9 @@ static void processQueue(ProcessNode *newProcess)
             processes->last = newProcess;
       }
 
+      if (newProcess->state == READY)
+            processes->readySize++;
+
       processes->size++;
 }
 
@@ -299,6 +304,9 @@ static ProcessNode *processDequeue()
       ProcessNode *p = processes->first;
       processes->first = processes->first->next;
       processes->size--;
+
+      if (p->state == READY)
+            processes->readySize--;
 
       return p;
 }
@@ -357,6 +365,18 @@ static uint64_t setNewState(uint64_t pid, State newState)
       if (process == NULL || process->state == KILLED)
             return -1;
 
+      if (process == currentProcess)
+      {
+            process->state = newState;
+            return process->pcb.pid;
+      }
+
+      if (process->state != READY && newState == READY)
+            processes->readySize++;
+
+      if (process->state == READY && newState != READY)
+            processes->readySize--;
+
       process->state = newState;
 
       return process->pcb.pid;
@@ -364,7 +384,7 @@ static uint64_t setNewState(uint64_t pid, State newState)
 
 uint64_t killProcess(uint64_t pid)
 {
-      if (pid <= 1)
+      if (pid <= 2)
       {
             return -1;
       }

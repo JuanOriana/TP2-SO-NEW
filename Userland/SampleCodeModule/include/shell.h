@@ -23,6 +23,6 @@ typedef struct t_shellData
       char username[BUFFER_SIZE];
 } t_shellData;
 
-void runShell();
+void runShell(int argc, char **argv);
 
 #endif

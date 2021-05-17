@@ -18,6 +18,7 @@
         "pipelib.h": "c",
         "loop.h": "c",
         "registers.h": "c",
-        "commands.h": "c"
+        "commands.h": "c",
+        "shell.h": "c"
     }
 }

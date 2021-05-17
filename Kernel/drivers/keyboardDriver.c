@@ -14,11 +14,14 @@
 #include <utils.h>
 #include <videoDriver.h>
 #include <schedule.h>
+#include <semaphores.h>
 
 #define REGISTERS 16
+#define KEY_SEM_ID 8
 
 static uint8_t action(uint8_t scanCode);
 static void updateSnapshot(uint64_t *rsp);
+static void sendKey(t_queue *queue, void *c);
 
 static char pressCodes[KEYS][2] =
     {{0, 0}, {0, 0}, {'1', '!'}, {'2', '@'}, {'3', '#'}, {'4', '$'}, {'5', '%'}, {'6', '^'}, {'7', '&'}, {'8', '*'}, {'9', '('}, {'0', ')'}, {'-', '_'}, {'=', '+'}, {'\b', '\b'}, {'\t', '\t'}, {'q', 'Q'}, {'w', 'W'}, {'e', 'E'}, {'r', 'R'}, {'t', 'T'}, {'y', 'Y'}, {'u', 'U'}, {'i', 'I'}, {'o', 'O'}, {'p', 'P'}, {'[', '{'}, {']', '}'}, {'\n', '\n'}, {0, 0}, {'a', 'A'}, {'s', 'S'}, {'d', 'D'}, {'f', 'F'}, {'g', 'G'}, {'h', 'H'}, {'j', 'J'}, {'k', 'K'}, {'l', 'L'}, {';', ':'}, {'\'', '\"'}, {'`', '~'}, {0, 0}, {'\\', '|'}, {'z', 'Z'}, {'x', 'X'}, {'c', 'C'}, {'v', 'V'}, {'b', 'B'}, {'n', 'N'}, {'m', 'M'}, {',', '<'}, {'.', '>'}, {'/', '?'}, {0, 0}, {0, 0}, {0, 0}, {' ', ' '}, {0, 0}};
@@ -29,6 +32,13 @@ static t_queue buffer = {bufferSpace, 0, -1, 0, MAX_SIZE, sizeof(char)};
 static t_queue *currentBuffer = &buffer;
 static t_specialKeyCode clearS = CLEAR_SCREEN;
 static uint64_t registers[REGISTERS + 1] = {0};
+
+int initKeyboard()
+{
+      if ((sOpen(KEY_SEM_ID, 0)) == -1)
+            return -1;
+      return 0;
+}
 
 void keyboardHandler(uint64_t rsp)
 {
@@ -61,7 +71,7 @@ void keyboardHandler(uint64_t rsp)
                                     {
                                           if (pressCodes[scanCode][0] == 'l')
                                           {
-                                                queueInsert(currentBuffer, &clearS);
+                                                sendKey(currentBuffer, &clearS);
                                           }
                                           else if (pressCodes[scanCode][0] == 's')
                                           {
@@ -73,18 +83,18 @@ void keyboardHandler(uint64_t rsp)
                                           }
                                           else if (pressCodes[scanCode][0] == 'd')
                                           {
-                                                queueInsert(currentBuffer, &EOF);
+                                                sendKey(currentBuffer, &EOF);
                                           }
                                     }
                                     else
                                     {
                                           if (!IS_LETTER(pressCodes[scanCode][0]))
                                           {
-                                                queueInsert(currentBuffer, &pressCodes[scanCode][specialChars]);
+                                                sendKey(currentBuffer, &pressCodes[scanCode][specialChars]);
                                           }
                                           else
                                           {
-                                                queueInsert(currentBuffer, &pressCodes[scanCode][ABS(capsLock - (specialChars))]);
+                                                sendKey(currentBuffer, &pressCodes[scanCode][ABS(capsLock - (specialChars))]);
                                           }
                                     }
                               }
@@ -110,17 +120,8 @@ void keyboardHandler(uint64_t rsp)
 int getchar()
 {
       char c = 0;
+      sWait(KEY_SEM_ID);
       queueRemoveData(currentBuffer, &c);
-      while (c == 0)
-      {
-            if (ticksElapsed() % 12 == 0)
-            {
-                  blinkCursor();
-            }
-            _hlt();
-            queueRemoveData(currentBuffer, &c);
-      }
-      stopBlink();
       return c;
 }
 
@@ -129,6 +130,11 @@ uint64_t *getSnapshot()
       return registers;
 }
 
+static void sendKey(t_queue *queue, void *c)
+{
+      sPost(KEY_SEM_ID);
+      queueInsert(queue, c);
+}
 static void updateSnapshot(uint64_t *rsp)
 {
       int i;
