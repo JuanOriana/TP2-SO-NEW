@@ -15,6 +15,7 @@
 #include <testMem.h>
 #include <testSync.h>
 #include <pipeLib.h>
+#include <phylo.h>
 
 static void initShell(t_shellData *shellData);
 static void shellText(t_shellData *shellData);
@@ -72,7 +73,9 @@ static void initShell(t_shellData *shellData)
           {&sem, "sem", "prints current state of active semaphores"},
           {&cat, "cat", "prints standard input in standard output"},
           {&wc, "wc", "counts the number of input lines"},
-          {&filter, "filter", "filter the vowels of the input"}};
+          {&filter, "filter", "filter the vowels of the input"},
+          {&philosopherProblem,"phylo","runs philosopher problem"},
+          };
 
       for (int i = 0; i < COMMANDS; i++)
       {
@@ -133,13 +136,13 @@ static void processCommand(t_shellData *shellData)
 
       int pipeIdx = findPipe(argc, argv);
 
-      if (pipeIdx == 0 || pipeIdx == argc - 1)
-      {
-            print("Pipe should be between two commands\n");
-      }
-
       if (pipeIdx != -1)
       {
+            if (pipeIdx == 0 || pipeIdx == argc - 1)
+            {
+                  print("Pipe should be between two commands\n");
+                  return;
+            }
             if (runPipe(pipeIdx, argv, argc, fg) == -1)
             {
                   print("One of the pipe commands was not valid \n");

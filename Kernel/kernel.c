@@ -57,7 +57,6 @@ int main()
       load_idt();
       initVideoDriver(BLACK, WHITE);
       memInit((char *)sampleCodeModuleHeapAddress, HEAP_MEMORY_SIZE);
-      initPipes();
       initScheduler();
 
       char *argv[] = {"Shell"};

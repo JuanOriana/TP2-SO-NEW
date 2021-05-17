@@ -7,24 +7,10 @@
 #include <stringLib.h>
 #include <interrupts.h>
 
-//Consider separating the process/PCB creation part from the
-//Schedueling part into two different files
-//But how to deal with crossed dependencies? (Process-> schedule, Schedule -> process)
-
 #define STACK_SIZE (4 * 1024)
 #define INIT_PRIO 1
 #define INIT_PRIO_AUG 2
 #define CYCLE_CAP 40
-
-int argsCopy(char **buffer, char **argv, int argc)
-{
-      for (int i = 0; i < argc; i++)
-      {
-            buffer[i] = mallocCust(sizeof(char) * (strlen(argv[i]) + 1));
-            strcpy(argv[i], buffer[i]);
-      }
-      return 1;
-}
 
 typedef enum
 {
@@ -33,17 +19,19 @@ typedef enum
       KILLED
 } State;
 
-// How to deal with fds? array? hmmm
 typedef struct
 {
       uint64_t pid;
       uint64_t ppid;
       int fg;
+      // 0 -> in - 1 -> out
       int fd[2];
       char name[30];
       void *rsp;
       void *rbp;
       int priority;
+      int argc;
+      char **argv;
 } PCB;
 
 typedef struct
@@ -85,13 +73,13 @@ typedef struct ProcessNode
 typedef struct pList
 {
       uint32_t size;
-      uint32_t readyProcessCount;
       ProcessNode *first;
       ProcessNode *last;
 } ProcessList;
 
 static void setNewSF(void (*entryPoint)(int, char **), int argc, char **argv, void *rbp);
 static int createPCB(PCB *process, char *name, int fg, int *fd);
+static int argsCopy(char **buffer, char **argv, int argc);
 static uint64_t getNewPid();
 static void wrapper(void (*entryPoint)(int, char **), int argc, char **argv);
 static void exit();
@@ -126,7 +114,6 @@ void initScheduler()
       processes->first = NULL;
       processes->last = processes->first;
       processes->size = 0;
-      processes->readyProcessCount = 0;
 
       //Create an idling process and store it in case no process is available
       // (Must be popped bcz of queue)
@@ -216,6 +203,9 @@ int addProcess(void (*entryPoint)(int, char **), int argc, char **argv, int fg, 
             return -1;
       argsCopy(argvAux, argv, argc);
 
+      newProcess->pcb.argc = argc;
+      newProcess->pcb.argv = argvAux;
+
       setNewSF(entryPoint, argc, argvAux, newProcess->pcb.rbp);
 
       newProcess->state = READY;
@@ -298,11 +288,6 @@ static void processQueue(ProcessNode *newProcess)
             processes->last = newProcess;
       }
 
-      if (newProcess->state == READY)
-      {
-            processes->readyProcessCount++;
-      }
-
       processes->size++;
 }
 
@@ -315,11 +300,6 @@ static ProcessNode *processDequeue()
       processes->first = processes->first->next;
       processes->size--;
 
-      if (p->state == READY)
-      {
-            processes->readyProcessCount--;
-      }
-
       return p;
 }
 
@@ -331,6 +311,10 @@ static int queueIsEmpty()
 static void freeProcess(ProcessNode *process)
 {
       // Warning?
+      for (int i = 0; i < process->pcb.argc; i++)
+            freeCust(process->pcb.argv[i]);
+      freeCust(process->pcb.argv);
+
       freeCust((void *)((char *)process->pcb.rbp - STACK_SIZE + 1));
       freeCust((void *)process);
 }
@@ -346,10 +330,6 @@ static void exit()
 static void wrapper(void (*entryPoint)(int, char **), int argc, char **argv)
 {
       entryPoint(argc, argv);
-      for (int i = 0; i < argc; i++)
-            freeCust(argv[i]);
-      freeCust(argv);
-
       exit();
 }
 
@@ -376,12 +356,6 @@ static uint64_t setNewState(uint64_t pid, State newState)
 
       if (process == NULL || process->state == KILLED)
             return -1;
-
-      if (newState == READY && process->state != READY)
-            processes->readyProcessCount++;
-
-      else if (newState != READY && process->state == READY)
-            processes->readyProcessCount--;
 
       process->state = newState;
 
@@ -536,4 +510,14 @@ void waitForPid(uint64_t pid)
             process->pcb.fg = 1;
             blockProcess(currentProcess->pcb.pid);
       }
+}
+
+static int argsCopy(char **buffer, char **argv, int argc)
+{
+      for (int i = 0; i < argc; i++)
+      {
+            buffer[i] = mallocCust(sizeof(char) * (strlen(argv[i]) + 1));
+            strcpy(argv[i], buffer[i]);
+      }
+      return 1;
 }

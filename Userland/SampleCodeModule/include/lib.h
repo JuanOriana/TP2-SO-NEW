@@ -7,7 +7,7 @@ char* cpuVendor(char* result);
 uint64_t cpuModel();
 void getRegistersData(uint64_t * registers);
 
-uint64_t mallocCust(unsigned int qty);
-void freeCust(uint64_t memory);
+void * mallocCust(unsigned int qty);
+void freeCust(void* memory);
 
 #endif

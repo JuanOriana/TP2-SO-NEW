@@ -281,22 +281,10 @@ void cat(int argc, char **args)
             return;
       }
 
-      char buffer[BUFFER_SIZE] = {0};
-
       int c;
-      int i;
       while ((c = getchar()) != EOF)
       {
-            cleanString(buffer);
-            i = 0;
-            while (c != '\n')
-            {
-                  putchar(c);
-                  buffer[i++] = c;
-                  c = getchar();
-            }
-
-            print("\n%s\n", buffer);
+            putchar(c);
       }
 }
 
@@ -328,22 +316,10 @@ void filter(int argc, char **args)
             print("Error: Invalid ammount of arguments.\n");
             return;
       }
-      char buffer[BUFFER_SIZE] = {0};
-
       int c;
-      int i;
       while ((c = getchar()) != EOF)
       {
-            cleanString(buffer);
-            i = 0;
-            while (c != '\n')
-            {
+            if (!check_vowel(c))
                   putchar(c);
-                  if (!check_vowel(c))
-                        buffer[i++] = c;
-                  c = getchar();
-            }
-
-            print("\n%s\n", buffer);
       }
 }
