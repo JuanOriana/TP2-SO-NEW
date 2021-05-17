@@ -15,6 +15,7 @@
 #include <testMem.h>
 #include <testSync.h>
 #include <pipeLib.h>
+#include <phylo.h>
 
 static void initShell(t_shellData *shellData);
 static void shellText(t_shellData *shellData);
@@ -32,7 +33,7 @@ static char *regNames[] = {"R15: ", "R14: ", "R13: ", "R12: ", "R11: ", "R10: ",
 
 int shellPipeId = 42;
 
-void runShell()
+void runShell(int argc, char **argv)
 {
       initShell(&shell);
       char c;
@@ -70,9 +71,12 @@ static void initShell(t_shellData *shellData)
           {&block, "block", "blocks process"},
           {&unblock, "unblock", "unblocks process"},
           {&sem, "sem", "prints current state of active semaphores"},
+          {&pipe, "pipe", "prints current state of active pipes"},
           {&cat, "cat", "prints standard input in standard output"},
           {&wc, "wc", "counts the number of input lines"},
-          {&filter, "filter", "filter the vowels of the input"}};
+          {&filter, "filter", "filter the vowels of the input"},
+          {&philosopherProblem, "phylo", "runs philosopher problem"},
+      };
 
       for (int i = 0; i < COMMANDS; i++)
       {

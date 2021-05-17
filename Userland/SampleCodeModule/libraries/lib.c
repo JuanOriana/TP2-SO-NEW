@@ -1,13 +1,15 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <systemCalls.h>
 #include <stdint.h>
 #include <lib.h>
 
-uint64_t mallocCust(unsigned int qty)
+void* mallocCust(unsigned int qty)
 {
-    return syscall(MALLOC, qty, 0, 0, 0, 0, 0);
+    return (void*)syscall(MALLOC, qty, 0, 0, 0, 0, 0);
 }
 
-void freeCust(uint64_t memory)
+void freeCust(void * memory)
 {
-    syscall(FREE, memory, 0, 0, 0, 0, 0);
+    syscall(FREE, (uint64_t)memory, 0, 0, 0, 0, 0);
 }

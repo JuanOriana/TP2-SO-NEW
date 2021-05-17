@@ -6,6 +6,7 @@
 
 void keyboardHandler(uint64_t rsp);
 int getchar();
-uint64_t* getSnapshot();
+uint64_t *getSnapshot();
+int initKeyboard();
 
 #endif

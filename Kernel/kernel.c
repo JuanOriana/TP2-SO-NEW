@@ -12,6 +12,7 @@
 #include <videoDriver.h>
 #include <interrupts.h>
 #include <pipes.h>
+#include <keyboardDriver.h>
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -58,6 +59,7 @@ int main()
       initVideoDriver(BLACK, WHITE);
       memInit((char *)sampleCodeModuleHeapAddress, HEAP_MEMORY_SIZE);
       initScheduler();
+      initKeyboard();
 
       char *argv[] = {"Shell"};
       addProcess(sampleCodeModuleAddress, 1, argv, 1, 0);

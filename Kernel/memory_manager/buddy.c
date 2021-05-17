@@ -31,6 +31,7 @@
  */
 
 #define MIN_ALLOC_LOG_2 4 //16 B min aloc
+#define MIN_ALLOC ((size_t)1 << MIN_ALLOC_LOG2)
 
 #define MAX_ALLOC_LOG2 30 //1GB MB max aloc
 #define MAX_LEVELS (MAX_ALLOC_LOG2 - MIN_ALLOC_LOG_2)
@@ -76,12 +77,12 @@ static List *getAdress(List *node);
 static int getFirstAvailableLevel(uint8_t minLevel);
 static void addLevelNode(List *list, List *node, uint8_t level);
 
-void memInit(char *memBase, unsigned long memSize)
+void memInitBuddy(char *memBase, unsigned long memSize)
 {
     if (memBase == NULL)
         return;
 
-    base = (List *) memBase;
+    base = (List *)memBase;
     maxMemSize = memSize;
 
     /*
@@ -92,7 +93,7 @@ void memInit(char *memBase, unsigned long memSize)
     * Dado un indice del bucket list, el tamano de las alocaciones en ese bucket se encuentra con
     * "(size_t)1 << (MAX_ALLOC_LOG2 - bucket)".
     */
-    levels = (int) log2(memSize) - MIN_ALLOC_LOG_2 + 1;
+    levels = (int)log2(memSize) - MIN_ALLOC_LOG_2 + 1;
 
     if (levels > MAX_LEVELS) //Upper bound definido por tamano de array
         levels = MAX_LEVELS;
@@ -108,7 +109,7 @@ void memInit(char *memBase, unsigned long memSize)
     addLevelNode(&buckets[levels - 1], base, levels - 1);
 }
 
-void *mallocCust(unsigned long nbytes)
+void *mallocCustBuddy(unsigned long nbytes)
 {
     /*
    * Make sure it's possible for an allocation of this size to succeed. There's
@@ -145,12 +146,12 @@ void *mallocCust(unsigned long nbytes)
     return (void *)(retNode + 1);
 }
 
-void freeCust(void *ap)
+void freeCustBuddy(void *ap)
 {
     if (ap == NULL)
         return;
 
-    List *listPtr = (List *) ap - 1;
+    List *listPtr = (List *)ap - 1;
 
     listPtr->free = 1;
 
@@ -168,32 +169,35 @@ void freeCust(void *ap)
     listPush(&buckets[listPtr->level], listPtr);
 }
 
-void dumpMM() 
+void dumpMMBuddy()
 {
-      List *p, *aux;
-      uint32_t index = 0;
-      uint32_t availableSpace = 0;
+    List *p, *aux;
+    uint32_t index = 0;
+    uint32_t availableSpace = 0;
 
-      print("Buddy MM dump\n");
+    print("Buddy MM dump\n");
 
-      for (int i = levels - 1; i >= 0; i--) {
-            p = &buckets[i];
-            if (!listHasNone(p)) {
-                print("    Level: %d\n", i + MIN_ALLOC_LOG_2);
-                print("    Free blocks of size: 2^%d\n", i + MIN_ALLOC_LOG_2);
+    for (int i = levels - 1; i >= 0; i--)
+    {
+        p = &buckets[i];
+        if (!listHasNone(p))
+        {
+            print("    Level: %d\n", i + MIN_ALLOC_LOG_2);
+            print("    Free blocks of size: 2^%d\n", i + MIN_ALLOC_LOG_2);
 
-                for (aux = p->next, index = 0; aux != p; index++, aux = aux->next) {
-                    print("        Block number: %d\n", index);
-                    if (aux->free)
-                        print("            state: free\n");
-                    else
-                        print("            state: used\n");
-                }
-                availableSpace += index * BIN_POW(i + MIN_ALLOC_LOG_2);
+            for (aux = p->next, index = 0; aux != p; index++, aux = aux->next)
+            {
+                print("        Block number: %d\n", index);
+                if (aux->free)
+                    print("            state: free\n");
+                else
+                    print("            state: used\n");
             }
-      }
+            availableSpace += index * BIN_POW(i + MIN_ALLOC_LOG_2);
+        }
+    }
 
-      print("Available Space: %d\n", availableSpace);
+    print("Available Space: %d\n", availableSpace);
 }
 
 /*
@@ -283,7 +287,7 @@ static int getFirstAvailableLevel(uint8_t minLevel)
 static List *findBuddyFromNode(List *node)
 {
     uint8_t level = node->level;
-    uintptr_t currentOffset = (uintptr_t) node - (uintptr_t) base;
+    uintptr_t currentOffset = (uintptr_t)node - (uintptr_t)base;
     uintptr_t newOffset = currentOffset ^ BIN_POW(MIN_ALLOC_LOG_2 + level);
 
     return (List *)(newOffset + (uintptr_t)base);

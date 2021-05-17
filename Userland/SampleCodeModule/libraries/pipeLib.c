@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <pipeLib.h>
 
 uint64_t pOpen(uint64_t id)
@@ -18,4 +20,9 @@ int pWrite(uint64_t id, char *str)
 int pClose(uint64_t id)
 {
     return syscall(PIPE_CLOSE, id, 0, 0, 0, 0, 0);
+}
+
+int pDump()
+{
+    return syscall(PIPE_DUMP, 0, 0, 0, 0, 0, 0);
 }

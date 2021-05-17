@@ -11,6 +11,7 @@
 #include <test_util.h>
 #include <loop.h>
 #include <semLib.h>
+#include <pipeLib.h>
 
 #define EOF -1
 
@@ -149,9 +150,6 @@ void checkZeroException(int argc, char **args)
       }
       int a = 0;
       int b = 20 / a;
-      if (b == 0)
-      {
-      }
 }
 
 //causa una excepcion de tipo invalid opcode
@@ -322,4 +320,9 @@ void filter(int argc, char **args)
             if (!check_vowel(c))
                   putchar(c);
       }
+}
+
+void pipe(int argc, char **args)
+{
+      pDump();
 }
