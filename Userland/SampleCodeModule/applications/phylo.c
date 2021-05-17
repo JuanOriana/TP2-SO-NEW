@@ -10,7 +10,7 @@
 
 #define MAX_PHiLOS 10
 #define BASE_PHiLOS 5
-#define MUTEX_ID 1
+#define MUTEX_ID 999
 #define NULL 0
 
 
@@ -23,11 +23,10 @@ typedef enum
 
 typedef struct Philosopher
 {
-    int state;
     int pid;
     int sem;
     int idx;
-    STATE philoState;
+    STATE state;
 } Philosopher;
 
 Philosopher *philos[MAX_PHiLOS];
@@ -123,7 +122,7 @@ void philosopherProblem(int argc, char *argv[])
         default:
             break;
         }
-        printTable();
+        if(problemRunning) printTable();
     }
 
     for (int i = 0; i < actualPhilosopherCount; i++)
@@ -132,6 +131,8 @@ void philosopherProblem(int argc, char *argv[])
         killProcess(philos[i]->pid);
         freeCust(philos[i]);
     }
+    actualPhilosopherCount = 0;
+    semId = 1000;
     sClose(MUTEX_ID);
 }
 
