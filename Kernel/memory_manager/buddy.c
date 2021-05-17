@@ -1,5 +1,7 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com// #include <memoryManager.h>
+#include "memoryManager.h"
+#include "stringLib.h"
 #include <stdint.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -76,13 +78,13 @@ static List *getAdress(List *node);
 static int getFirstAvailableLevel(uint8_t minLevel);
 static void addLevelNode(List *list, List *node, uint8_t level);
 
-void initMemBuddy(void *memBase, uint64_t totalSize)
+void memInit(char *memBase, unsigned long memSize)
 {
     if (memBase == NULL)
         return;
 
     base = (List *) memBase;
-    maxMemSize = totalSize;
+    maxMemSize = memSize;
 
     /*
     * Los allocs se hacen en potencias de 2 arrancando de MIN_ALLOC y terminando en
@@ -92,7 +94,7 @@ void initMemBuddy(void *memBase, uint64_t totalSize)
     * Dado un indice del bucket list, el tamano de las alocaciones en ese bucket se encuentra con
     * "(size_t)1 << (MAX_ALLOC_LOG2 - bucket)".
     */
-    levels = (int) log2(totalSize) - MIN_ALLOC_LOG_2 + 1;
+    levels = (int) log2(memSize) - MIN_ALLOC_LOG_2 + 1;
 
     if (levels > MAX_LEVELS) //Upper bound definido por tamano de array
         levels = MAX_LEVELS;
@@ -108,16 +110,16 @@ void initMemBuddy(void *memBase, uint64_t totalSize)
     addLevelNode(&buckets[levels - 1], base, levels - 1);
 }
 
-void *mallocCustBuddy(uint32_t bytes)
+void *mallocCust(unsigned long nbytes)
 {
     /*
    * Make sure it's possible for an allocation of this size to succeed. There's
    * a hard-coded limit on the maximum allocation size because of the way this
    * allocator works.
    */
-    int realBytesNeeded = bytes + sizeof(List);
+    int realBytesNeeded = nbytes + sizeof(List);
 
-    if (bytes == 0 || realBytesNeeded > maxMemSize + 1)
+    if (nbytes == 0 || realBytesNeeded > maxMemSize + 1)
     {
         return NULL;
     }
@@ -145,12 +147,12 @@ void *mallocCustBuddy(uint32_t bytes)
     return (void *)(retNode + 1);
 }
 
-void freeCustBuddy(void *ptr)
+void freeCust(void *ap)
 {
-    if (ptr == NULL)
+    if (ap == NULL)
         return;
 
-    List *listPtr = (List *) ptr - 1;
+    List *listPtr = (List *) ap - 1;
 
     listPtr->free = 1;
 
@@ -166,6 +168,33 @@ void freeCustBuddy(void *ptr)
     }
 
     listPush(&buckets[listPtr->level], listPtr);
+}
+
+void dumpMM() {
+      List *p, *aux;
+      uint32_t index = 0;
+      uint32_t availableSpace = 0;
+
+      print("Buddy MM dump\n");
+
+      for (int i = levels - 1; i >= 0; i--) {
+            p = &buckets[i];
+            if (!listHasNone(p)) {
+                print("    Level: %d\n", i + MIN_ALLOC_LOG_2);
+                print("    Free blocks of size: 2^%d\n", i + MIN_ALLOC_LOG_2);
+
+                for (aux = p->next, index = 0; aux != p; index++, aux = aux->next) {
+                    print("        Block number: %d\n", index);
+                    if (aux->free)
+                        print("            state: free\n");
+                    else
+                        print("            state: used\n");
+                }
+                availableSpace += index * BIN_POW(i + MIN_ALLOC_LOG_2);
+            }
+      }
+
+      print("Available Space: %d\n", availableSpace);
 }
 
 /*

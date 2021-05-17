@@ -15,6 +15,7 @@
 #include <testMem.h>
 #include <testSync.h>
 #include <pipeLib.h>
+#include <phylo.h>
 
 static void initShell(t_shellData *shellData);
 static void shellText(t_shellData *shellData);
@@ -73,7 +74,9 @@ static void initShell(t_shellData *shellData)
           {&pipe, "pipe", "prints current state of active pipes"},
           {&cat, "cat", "prints standard input in standard output"},
           {&wc, "wc", "counts the number of input lines"},
-          {&filter, "filter", "filter the vowels of the input"}};
+          {&filter, "filter", "filter the vowels of the input"},
+          {&philosopherProblem,"phylo","runs philosopher problem"},
+          };
 
       for (int i = 0; i < COMMANDS; i++)
       {
