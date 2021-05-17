@@ -26,7 +26,7 @@ static Header *freep = NULL;
 
 unsigned long totalUnits;
 
-void memInitList(char *memBase, unsigned long memSize)
+void memInit(char *memBase, unsigned long memSize)
 {
       // Initially its all a very large block
       totalUnits = (memSize + sizeof(Header) - 1) / sizeof(Header) + 1;
@@ -36,7 +36,7 @@ void memInitList(char *memBase, unsigned long memSize)
 }
 
 // Ref for malloc/free : The C Programming Language  - K&R
-void *mallocCustList(unsigned long nbytes)
+void *mallocCust(unsigned long nbytes)
 {
       if (nbytes == 0)
             return NULL;
@@ -66,7 +66,7 @@ void *mallocCustList(unsigned long nbytes)
       }
 }
 
-void freeCustList(void *freeMem)
+void freeCust(void *freeMem)
 {
       if (freeMem == NULL || (((long)freeMem - (long)base) % sizeof(Header)) != 0) //Discard null and unaligned
             return;
@@ -114,7 +114,7 @@ void freeCustList(void *freeMem)
       freep = p;
 }
 
-void dumpMMList()
+void dumpMM()
 {
       long long idx = 1;
       Header *original, *p;
