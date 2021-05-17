@@ -150,9 +150,6 @@ void checkZeroException(int argc, char **args)
       }
       int a = 0;
       int b = 20 / a;
-      if (b == 0)
-      {
-      }
 }
 
 //causa una excepcion de tipo invalid opcode

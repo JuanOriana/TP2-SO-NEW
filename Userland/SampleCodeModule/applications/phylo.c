@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <phylo.h>
 #include <systemCalls.h>
 #include <processes.h>
@@ -36,8 +38,8 @@ static int problemRunning;
 static int semId = 1000;
 
 
-#define RIGHT(i) (i + 1) % (actualPhilosopherCount)                         /* number of i’s right neighbor */
-#define LEFT(i) (i + actualPhilosopherCount - 1) % (actualPhilosopherCount) /* number of i’s left neighbor */
+#define RIGHT(i) ((i) + 1) % (actualPhilosopherCount)                         /* number of i’s right neighbor */
+#define LEFT(i) ((i) + actualPhilosopherCount - 1) % (actualPhilosopherCount) /* number of i’s left neighbor */
 
 
 void philo(int argc, char *argv[])
@@ -177,6 +179,7 @@ void printTable()
 {
     for(int i=0; i<actualPhilosopherCount;i++){
             philos[i]->state == EATING ? putchar('E') : putchar('.');
+            putchar(' ');
         }
     putchar('\n');
 }
