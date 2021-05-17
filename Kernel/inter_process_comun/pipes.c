@@ -187,3 +187,25 @@ static int getFreePipe()
     }
     return -1;
 }
+
+void dumpPipes()
+{
+    print("Active pipes:\n");
+    for (int i = 0; i < PIPE_COUNT; i++)
+    {
+        Pipe pipe = pipesArray.pipes[i];
+        if (pipe.state == IN_USE)
+        {
+            print("\n");
+            print("Pipe ID: %d\n", pipe.id);
+            print("   Number of attached processes: %d\n", pipe.totalProcesses);
+            print("   Read sem: %d\n", pipe.lockR);
+            print("   Write sem: %d\n", pipe.lockW);
+            print("   Chars in buff: %d\n", pipe.lockW);
+            print("   Buffer content: ");
+            for (int i = pipe.readIndex; i != pipe.writeIndex; i = (i + 1) % BUFF_SIZE)
+                putchar(pipe.buffer[i]);
+        }
+    }
+    print("\n");
+}

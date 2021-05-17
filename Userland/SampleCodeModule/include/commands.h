@@ -60,4 +60,6 @@ void wc(int argc, char **args);
 
 void filter(int argc, char **args);
 
+void pipe(int argc, char **args);
+
 #endif

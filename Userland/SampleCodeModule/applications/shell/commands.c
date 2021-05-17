@@ -11,6 +11,7 @@
 #include <test_util.h>
 #include <loop.h>
 #include <semLib.h>
+#include <pipeLib.h>
 
 #define EOF -1
 
@@ -322,4 +323,9 @@ void filter(int argc, char **args)
             if (!check_vowel(c))
                   putchar(c);
       }
+}
+
+void pipe(int argc, char **args)
+{
+      pDump();
 }
