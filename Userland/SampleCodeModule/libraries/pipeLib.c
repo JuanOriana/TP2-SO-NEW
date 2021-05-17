@@ -19,3 +19,8 @@ int pClose(uint64_t id)
 {
     return syscall(PIPE_CLOSE, id, 0, 0, 0, 0, 0);
 }
+
+int pDump()
+{
+    return syscall(PIPE_DUMP, 0, 0, 0, 0, 0, 0);
+}

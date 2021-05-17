@@ -25,7 +25,6 @@ Semaphore *semaphores = NULL;
 static void dumpBlockedPIDs(int *blockedPIDs, int blockedPIDsSize);
 static Semaphore *findSem(uint64_t id);
 
-
 uint64_t sOpen(uint64_t id, uint64_t initValue)
 {
     Semaphore *sem = findSem(id);
@@ -144,7 +143,7 @@ void sStatus()
     while (sem)
     {
         print("Semaphore %d\n", i++);
-        print("     Index: %d\n", sem->id);
+        print("     ID: %d\n", sem->id);
         print("     Value: %d\n", sem->value);
         print("     Number of attached processes: %d\n", sem->listeners);
         print("     Number of blocked processes: %d\n", sem->blockedPIDsSize);

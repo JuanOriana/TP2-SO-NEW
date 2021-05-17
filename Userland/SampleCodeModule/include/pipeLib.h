@@ -11,4 +11,6 @@ int pWrite(uint64_t id, char *str);
 
 int pClose(uint64_t id);
 
+int pDump();
+
 #endif
