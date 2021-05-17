@@ -64,7 +64,8 @@ void takeForks(int i)
     philos[i]->state = HUNGRY;
     test(i);
     sPost(tableMutex);
-    sWait(philos[i]->sem);
+    if(philos[i]->state == HUNGRY)
+        sWait(philos[i]->sem);
 }
 
 void placeForks(int i)
