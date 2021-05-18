@@ -190,13 +190,15 @@ static int getFreePipe()
 
 void dumpPipes()
 {
+    print("\PIPE DUMP\n");
+    print("------------------------------------------------\n");
     print("Active pipes:\n");
     for (int i = 0; i < PIPE_COUNT; i++)
     {
         Pipe pipe = pipesArray.pipes[i];
         if (pipe.state == IN_USE)
         {
-            print("\n");
+            print("-------------------------------\n");
             print("Pipe ID: %d\n", pipe.id);
             print("   Number of attached processes: %d\n", pipe.totalProcesses);
             print("   Read sem: %d\n", pipe.lockR);
@@ -205,7 +207,8 @@ void dumpPipes()
             print("   Buffer content: ");
             for (int i = pipe.readIndex; i != pipe.writeIndex; i = (i + 1) % BUFF_SIZE)
                 putchar(pipe.buffer[i]);
+            print("\n");
         }
     }
-    print("\n");
+    print("-------------------------------\n");
 }

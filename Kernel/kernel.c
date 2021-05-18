@@ -61,7 +61,7 @@ int main()
       initScheduler();
       initKeyboard();
 
-      char *argv[] = {"Shell"};
+      char *argv[] = {"Overseer"};
       addProcess(sampleCodeModuleAddress, 1, argv, 1, 0);
       _hlt();
 

@@ -137,11 +137,14 @@ int sClose(uint64_t id)
 
 void sStatus()
 {
+    print("\SEMAPHORE DUMP\n");
+    print("------------------------------------------------\n");
     print("Active semaphores:\n");
     Semaphore *sem = semaphores;
     int i = 1;
     while (sem)
     {
+        print("-------------------------------\n");
         print("Semaphore %d\n", i++);
         print("     ID: %d\n", sem->id);
         print("     Value: %d\n", sem->value);
@@ -151,6 +154,7 @@ void sStatus()
         dumpBlockedPIDs(sem->blockedPIDs, sem->blockedPIDsSize);
         sem = sem->next;
     }
+    print("-------------------------------\n");
 }
 
 static void dumpBlockedPIDs(int *blockedPIDs, int blockedPIDsSize)

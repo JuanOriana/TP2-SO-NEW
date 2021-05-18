@@ -418,12 +418,12 @@ char *stateToStr(State state)
       switch (state)
       {
       case READY:
-            return "Ready";
+            return "R";
             break;
       case BLOCKED:
-            return "Blocked";
+            return "B";
       default:
-            return "Awaiting death";
+            return "D";
             break;
       };
 }
@@ -433,24 +433,14 @@ void printProcess(ProcessNode *process)
 
       if (process != NULL)
       {
-            printInt(process->pcb.pid);
-            printString("        ");
-            printString(process->pcb.name);
-            printString("       ");
-            printString(stateToStr(process->state));
-            printString("      ");
-            printInt((uint64_t)process->pcb.rsp);
-            printString("     ");
-            printInt((uint64_t)process->pcb.rbp);
-            printString("       ");
-            printInt((int)process->pcb.fg);
-            printStringLn("");
+            print("%d        %d        %x        %x        %s            %s\n", process->pcb.pid, (int)process->pcb.fg,
+                  (uint64_t)process->pcb.rsp, (uint64_t)process->pcb.rbp, stateToStr(process->state), process->pcb.name);
       }
 }
 
 void processDisplay()
 {
-      printStringLn("PID      NAME        STATE      RSP          RBP          FG");
+      printStringLn("PID      FG       RSP              RBP              STATE        NAME");
 
       if (currentProcess != NULL)
             printProcess(currentProcess);

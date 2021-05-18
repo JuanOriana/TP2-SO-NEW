@@ -121,18 +121,23 @@ void dumpMM()
       original = p = freep;
       int flag = 1;
 
-      print("Free List MM dump\n");
-      print("Total memory: %d\n", totalUnits * sizeof(Header));
+      print("\MEMORY DUMP (Free List)\n");
+      print("- - Blocks of 16 bytes\n");
+      print("------------------------------------------------\n");
+      print("Total memory: %d bytes\n\n", totalUnits * sizeof(Header));
       if (freep == NULL)
             print("    No free blocks\n");
-
+      print("Free blocks: \n");
+      print("-------------------------------\n");
       while (p != original || flag)
       {
             flag = 0;
             print("    Block number %d\n", idx);
             print("        Base: %x\n", (uint64_t)p);
             print("        Free blocks: %d\n", p->s.size);
+            print("-------------------------------\n");
             p = p->s.ptr;
             idx++;
       }
+      print("\n\n");
 }
