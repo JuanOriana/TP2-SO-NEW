@@ -140,18 +140,21 @@ void *scheduler(void *oldRSP)
             //ELse, save last state
             currentProcess->pcb.rsp = oldRSP;
 
-            if (currentProcess->pcb.pid != idleProcess->pcb.pid && currentProcess->state == KILLED)
+            if (currentProcess->pcb.pid != idleProcess->pcb.pid)
             {
-                  ProcessNode *parent = getProcessOfPID(currentProcess->pcb.ppid);
-                  //Free parents awaiting
-                  if (parent != NULL && currentProcess->pcb.fg && parent->state == BLOCKED)
+                  if (currentProcess->state == KILLED)
                   {
-                        unblockProcess(parent->pcb.pid);
+                        ProcessNode *parent = getProcessOfPID(currentProcess->pcb.ppid);
+                        //Free parents awaiting
+                        if (parent != NULL && currentProcess->pcb.fg && parent->state == BLOCKED)
+                        {
+                              unblockProcess(parent->pcb.pid);
+                        }
+                        freeProcess(currentProcess);
                   }
-                  freeProcess(currentProcess);
+                  else
+                        processQueue(currentProcess);
             }
-            else
-                  processQueue(currentProcess);
       }
       // If I still have something to process, do so (if I kill al processses int his loop it might bring trouble)
       // CONSIDER TRACKING READY PROCESSES ALSO
