@@ -19,6 +19,8 @@
         "loop.h": "c",
         "registers.h": "c",
         "commands.h": "c",
-        "shell.h": "c"
+        "shell.h": "c",
+        "keys.h": "c",
+        "phylo.h": "c"
     }
 }

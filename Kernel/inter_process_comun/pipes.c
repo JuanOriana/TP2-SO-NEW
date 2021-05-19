@@ -12,7 +12,7 @@
 
 typedef struct
 {
-    int id;
+    uint32_t id;
     char buffer[BUFF_SIZE];
     int readIndex;
     int writeIndex;
@@ -22,20 +22,20 @@ typedef struct
     int state;
 } Pipe;
 
-typedef struct Pipe
+typedef struct
 {
     Pipe pipes[PIPE_COUNT];
 } PipeArray;
 
-long semId = 420;
+uint32_t semId = 420;
 static PipeArray pipesArray;
 
 static int putCharPipeByIdx(int pipeIndex, char c);
-static int getPipeIdx(int pipeId);
+static int getPipeIdx(uint32_t pipeId);
 static int getFreePipe();
-static int newPipe(int pipeId);
+static uint32_t newPipe(uint32_t pipeId);
 
-int pOpen(int pipeId)
+uint32_t pOpen(uint32_t pipeId)
 {
     int pipeIndex = getPipeIdx(pipeId);
 
@@ -43,9 +43,7 @@ int pOpen(int pipeId)
     {
         pipeIndex = newPipe(pipeId);
         if (pipeIndex == -1)
-        {
             return -1;
-        }
     }
 
     pipesArray.pipes[pipeIndex].totalProcesses++;
@@ -53,7 +51,7 @@ int pOpen(int pipeId)
     return pipeId;
 }
 
-int pClose(int pipeId)
+int pClose(uint32_t pipeId)
 {
     int pipeIndex = getPipeIdx(pipeId);
 
@@ -66,9 +64,7 @@ int pClose(int pipeId)
 
     //Depleted pipe?
     if (pipe->totalProcesses > 0)
-    {
         return 1;
-    }
 
     sClose(pipe->lockR);
     sClose(pipe->lockW);
@@ -77,7 +73,7 @@ int pClose(int pipeId)
     return 1;
 }
 
-int pRead(int pipeId)
+int pRead(uint32_t pipeId)
 {
     int pipeIndex = getPipeIdx(pipeId);
 
@@ -86,6 +82,7 @@ int pRead(int pipeId)
 
     Pipe *pipe = &pipesArray.pipes[pipeIndex];
 
+    // One less char to read, one more free to write.
     sWait(pipe->lockR);
 
     char c = pipe->buffer[pipe->readIndex];
@@ -96,7 +93,7 @@ int pRead(int pipeId)
     return c;
 }
 
-int pWrite(int pipeId, char *str)
+uint32_t pWrite(uint32_t pipeId, char *str)
 {
     int pipeIndex = getPipeIdx(pipeId);
 
@@ -123,7 +120,7 @@ static int putCharPipeByIdx(int pipeIndex, char c)
     return 0;
 }
 
-int putCharPipe(int pipeId, char c)
+uint32_t putCharPipe(uint32_t pipeId, char c)
 {
     int pipeIndex = getPipeIdx(pipeId);
 
@@ -135,7 +132,7 @@ int putCharPipe(int pipeId, char c)
     return pipeId;
 }
 
-static int newPipe(int pipeId)
+static uint32_t newPipe(uint32_t pipeId)
 {
     int newIdx = getFreePipe();
 
@@ -151,27 +148,20 @@ static int newPipe(int pipeId)
     pipe->readIndex = pipe->writeIndex = pipe->totalProcesses = 0;
 
     if ((pipe->lockR = sOpen(semId++, 0)) == -1)
-    {
         return -1;
-    }
 
     if ((pipe->lockW = sOpen(semId++, BUFF_SIZE)) == -1)
-    {
         return -1;
-    }
 
     return pipeId;
 }
 
-static int getPipeIdx(int pipeId)
+static int getPipeIdx(uint32_t pipeId)
 {
     for (int i = 0; i < PIPE_COUNT; i++)
     {
-
         if (pipesArray.pipes[i].state == IN_USE && pipesArray.pipes[i].id == pipeId)
-        {
             return i;
-        }
     }
     return -1;
 }
@@ -181,22 +171,22 @@ static int getFreePipe()
     for (int i = 0; i < PIPE_COUNT; i++)
     {
         if (pipesArray.pipes[i].state == EMPTY)
-        {
             return i;
-        }
     }
     return -1;
 }
 
 void dumpPipes()
 {
+    print("\nPIPE DUMP\n");
+    print("------------------------------------------------\n");
     print("Active pipes:\n");
     for (int i = 0; i < PIPE_COUNT; i++)
     {
         Pipe pipe = pipesArray.pipes[i];
         if (pipe.state == IN_USE)
         {
-            print("\n");
+            print("-------------------------------\n");
             print("Pipe ID: %d\n", pipe.id);
             print("   Number of attached processes: %d\n", pipe.totalProcesses);
             print("   Read sem: %d\n", pipe.lockR);
@@ -205,7 +195,8 @@ void dumpPipes()
             print("   Buffer content: ");
             for (int i = pipe.readIndex; i != pipe.writeIndex; i = (i + 1) % BUFF_SIZE)
                 putchar(pipe.buffer[i]);
+            print("\n");
         }
     }
-    print("\n");
+    print("-------------------------------\n");
 }

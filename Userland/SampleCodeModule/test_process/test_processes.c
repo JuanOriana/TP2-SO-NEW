@@ -25,7 +25,7 @@ void process1(int argc, char *argv[])
 {
     while (1)
     {
-        // printString(argv[1]);
+        print("%s", argv[1]);
     }
 }
 

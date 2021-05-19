@@ -4,27 +4,34 @@
 #define NULL 0
 
 #define MAX_BLOCKS 128
-#define MAX_MEMORY 128*1024*1024  //Should be around 80% of memory managed by the MM
+#define MAX_MEMORY 32 * 1024 * 1024 //Should be around 80% of memory managed by the MM
 
-typedef struct MM_rq{
+typedef struct MM_rq
+{
   void *address;
   uint32_t size;
-}mm_rq;
+} mm_rq;
 
-void testMem(int argc, char* argv[]){
+void testMem(int argc, char *argv[])
+{
   mm_rq mm_rqs[MAX_BLOCKS];
   uint8_t rq;
   uint32_t total;
 
-  while (1){
+  print("Memory test begins:\n");
+
+  while (1)
+  {
     rq = 0;
     total = 0;
 
     // Request as many blocks as we can
-    while(rq < MAX_BLOCKS && total < MAX_MEMORY){
+    while (rq < MAX_BLOCKS && total < MAX_MEMORY)
+    {
+      print("%d\n", total / (1024 * 1024));
       mm_rqs[rq].size = GetUniform(MAX_MEMORY - total - 1) + 1;
-      mm_rqs[rq].address = (void*)mallocCust(mm_rqs[rq].size); // TODO: Port this call as required
-//TODO: check if NULL
+      mm_rqs[rq].address = (void *)mallocCust(mm_rqs[rq].size); // TODO: Port this call as required
+                                                                //TODO: check if NULL
       total += mm_rqs[rq].size;
       rq++;
     }
@@ -38,12 +45,12 @@ void testMem(int argc, char* argv[]){
     // Check
     for (i = 0; i < rq; i++)
       if (mm_rqs[i].address != NULL)
-        if(!memcheck(mm_rqs[i].address, i, mm_rqs[i].size))
+        if (!memcheck(mm_rqs[i].address, i, mm_rqs[i].size))
           printStringLn("ERROR!"); // TODO: Port this call as required
 
     // Free
     for (i = 0; i < rq; i++)
       if (mm_rqs[i].address != NULL)
-        freeCust((uint64_t)mm_rqs[i].address);  // TODO: Port this call as required
+        freeCust(mm_rqs[i].address); // TODO: Port this call as required
   }
 }

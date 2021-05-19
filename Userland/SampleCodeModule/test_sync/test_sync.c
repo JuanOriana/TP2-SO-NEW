@@ -56,9 +56,9 @@ void testSync(int argc, char *argv[])
 
   for (i = 0; i < TOTAL_PAIR_PROCESSES; i++)
   {
-    char *argv1[4] = {"inc", "1", "1", "100"};
+    char *argv1[4] = {"inc", "1", "1", "10000"};
     createProcess(&inc, 4, argv1, 0, 0);
-    char *argv2[4] = {"inc", "1", "-1", "100"};
+    char *argv2[4] = {"inc", "1", "-1", "10000"};
     createProcess(&inc, 4, argv2, 0, 0);
   }
 }
@@ -73,9 +73,9 @@ void testNoSync(int argc, char *argv[])
 
   for (i = 0; i < TOTAL_PAIR_PROCESSES; i++)
   {
-    char *argv1[4] = {"inc", "0", "1", "100"};
+    char *argv1[4] = {"inc", "0", "1", "10000"};
     createProcess(&inc, 4, argv1, 0, 0);
-    char *argv2[4] = {"inc", "0", "-1", "100"};
+    char *argv2[4] = {"inc", "0", "-1", "10000"};
     createProcess(&inc, 4, argv2, 0, 0);
   }
 }
