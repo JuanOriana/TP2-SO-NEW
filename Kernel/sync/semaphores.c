@@ -10,11 +10,11 @@
 
 typedef struct Semaphore
 {
-    int id;
-    int value;
-    int listeners;
-    int blockedPIDs[MAX_BLOCKED_PIDS];
-    int blockedPIDsSize;
+    uint32_t id;
+    uint32_t value;
+    uint16_t listeners;
+    uint32_t blockedPIDs[MAX_BLOCKED_PIDS];
+    uint16_t blockedPIDsSize;
     int mutex;
     struct Semaphore *next;
 
@@ -22,11 +22,12 @@ typedef struct Semaphore
 
 Semaphore *semaphores = NULL;
 
-static void dumpBlockedPIDs(int *blockedPIDs, int blockedPIDsSize);
-static Semaphore *findSem(uint64_t id);
+static void dumpBlockedPIDs(uint32_t *blockedPIDs, uint16_t blockedPIDsSize);
+static Semaphore *findSem(uint32_t id);
 
-uint64_t sOpen(uint64_t id, uint64_t initValue)
+uint32_t sOpen(uint32_t id, uint32_t initValue)
 {
+
     Semaphore *sem = findSem(id);
     if (sem == NULL)
     {
@@ -52,11 +53,17 @@ uint64_t sOpen(uint64_t id, uint64_t initValue)
         }
     }
 
+    if (sem->listeners >= MAX_BLOCKED_PIDS)
+    {
+        print("No space for this listener");
+        return -1;
+    }
+
     sem->listeners++;
     return id;
 }
 
-Semaphore *findSem(uint64_t id)
+Semaphore *findSem(uint32_t id)
 {
     Semaphore *sem = semaphores;
     while (sem)
@@ -68,7 +75,7 @@ Semaphore *findSem(uint64_t id)
     return NULL;
 }
 
-int sWait(uint64_t id)
+int sWait(uint32_t id)
 {
     Semaphore *sem = findSem(id);
     if (sem == NULL)
@@ -92,7 +99,7 @@ int sWait(uint64_t id)
     return 0;
 }
 
-int sPost(uint64_t id)
+int sPost(uint32_t id)
 {
     Semaphore *sem = findSem(id);
     if (sem == NULL)
@@ -114,7 +121,7 @@ int sPost(uint64_t id)
     return 0;
 }
 
-int sClose(uint64_t id)
+int sClose(uint32_t id)
 {
     Semaphore *sem = findSem(id);
     if (sem == NULL)
@@ -137,7 +144,7 @@ int sClose(uint64_t id)
 
 void sStatus()
 {
-    print("\SEMAPHORE DUMP\n");
+    print("\nSEMAPHORE DUMP\n");
     print("------------------------------------------------\n");
     print("Active semaphores:\n");
     Semaphore *sem = semaphores;
@@ -157,7 +164,7 @@ void sStatus()
     print("-------------------------------\n");
 }
 
-static void dumpBlockedPIDs(int *blockedPIDs, int blockedPIDsSize)
+static void dumpBlockedPIDs(uint32_t *blockedPIDs, uint16_t blockedPIDsSize)
 {
     for (int i = 0; i < blockedPIDsSize; i++)
     {

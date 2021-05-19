@@ -78,7 +78,7 @@ static List *getAdress(List *node);
 static int getFirstAvailableLevel(uint8_t minLevel);
 static void addLevelNode(List *list, List *node, uint8_t level);
 
-void memInitBuddy(char *memBase, unsigned long memSize)
+void memInit(char *memBase, unsigned long memSize)
 {
     if (memBase == NULL)
         return;
@@ -110,7 +110,7 @@ void memInitBuddy(char *memBase, unsigned long memSize)
     addLevelNode(&buckets[levels - 1], base, levels - 1);
 }
 
-void *mallocCustBuddy(unsigned long nbytes)
+void *mallocCust(unsigned long nbytes)
 {
     /*
    * Make sure it's possible for an allocation of this size to succeed. There's
@@ -147,7 +147,7 @@ void *mallocCustBuddy(unsigned long nbytes)
     return (void *)(retNode + 1);
 }
 
-void freeCustBuddy(void *ap)
+void freeCust(void *ap)
 {
     if (ap == NULL)
         return;
@@ -170,7 +170,7 @@ void freeCustBuddy(void *ap)
     listPush(&buckets[listPtr->level], listPtr);
 }
 
-void dumpMMBuddy()
+void dumpMM()
 {
     List *p, *aux;
     uint32_t index = 0;

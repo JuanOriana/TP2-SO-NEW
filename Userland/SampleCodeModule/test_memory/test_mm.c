@@ -4,7 +4,7 @@
 #define NULL 0
 
 #define MAX_BLOCKS 128
-#define MAX_MEMORY 128 * 1024 * 1024 //Should be around 80% of memory managed by the MM
+#define MAX_MEMORY 32 * 1024 * 1024 //Should be around 80% of memory managed by the MM
 
 typedef struct MM_rq
 {
@@ -28,6 +28,7 @@ void testMem(int argc, char *argv[])
     // Request as many blocks as we can
     while (rq < MAX_BLOCKS && total < MAX_MEMORY)
     {
+      print("%d\n", total / (1024 * 1024));
       mm_rqs[rq].size = GetUniform(MAX_MEMORY - total - 1) + 1;
       mm_rqs[rq].address = (void *)mallocCust(mm_rqs[rq].size); // TODO: Port this call as required
                                                                 //TODO: check if NULL
@@ -50,6 +51,6 @@ void testMem(int argc, char *argv[])
     // Free
     for (i = 0; i < rq; i++)
       if (mm_rqs[i].address != NULL)
-        freeCust((uint64_t)mm_rqs[i].address); // TODO: Port this call as required
+        freeCust(mm_rqs[i].address); // TODO: Port this call as required
   }
 }
