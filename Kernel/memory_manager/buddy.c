@@ -34,7 +34,7 @@
 #define MIN_ALLOC_LOG_2 4 //16 B min aloc
 #define MIN_ALLOC ((size_t)1 << MIN_ALLOC_LOG2)
 
-#define MAX_ALLOC_LOG2 30 //1GB MB max aloc
+#define MAX_ALLOC_LOG2 32
 #define MAX_LEVELS (MAX_ALLOC_LOG2 - MIN_ALLOC_LOG_2)
 
 #define BIN_POW(x) (1 << (x))
@@ -67,6 +67,7 @@ static List buckets[MAX_LEVELS];
 static List *base;
 static uint64_t maxMemSize;
 static uint8_t levels;
+
 static void listInit(List *list);
 static void listPush(List *list, List *entry);
 static void listRemove(List *entry);
@@ -74,7 +75,7 @@ static List *listPop(List *list);
 static char listHasNone(List *list);
 static uint8_t findIdealLevel(uint32_t bytes);
 static List *findBuddyFromNode(List *node);
-static List *getAdress(List *node);
+static List *getAddress(List *node);
 static int getFirstAvailableLevel(uint8_t minLevel);
 static void addLevelNode(List *list, List *node, uint8_t level);
 
@@ -162,12 +163,18 @@ void freeCust(void *ap)
     while (listPtr->level != levels - 1 && buddy->level == listPtr->level && buddy->free)
     {
         listRemove(buddy);
-        listPtr = getAdress(listPtr);
+        listPtr = getAddress(listPtr);
         listPtr->level++;
         buddy = findBuddyFromNode(listPtr);
     }
 
     listPush(&buckets[listPtr->level], listPtr);
+}
+
+static void printBlock(List *block, int idx)
+{
+    print("        Block number: %d\n", idx);
+    print("            state: free\n");
 }
 
 void dumpMM()
@@ -176,8 +183,10 @@ void dumpMM()
     uint32_t index = 0;
     uint32_t availableSpace = 0;
 
-    print("Buddy MM dump\n");
-
+    print("\nMEMORY DUMP (Buddy)\n");
+    print("------------------------------------------------\n");
+    print("Levels with free blocks:\n");
+    print("-------------------------------\n");
     for (int i = levels - 1; i >= 0; i--)
     {
         p = &buckets[i];
@@ -186,74 +195,20 @@ void dumpMM()
             print("    Level: %d\n", i + MIN_ALLOC_LOG_2);
             print("    Free blocks of size: 2^%d\n", i + MIN_ALLOC_LOG_2);
 
-            for (aux = p->next, index = 0; aux != p; index++, aux = aux->next)
+            for (aux = p->next, index = 1; aux != p; index++, aux = aux->next)
             {
-                print("        Block number: %d\n", index);
                 if (aux->free)
-                    print("            state: free\n");
-                else
-                    print("            state: used\n");
+                {
+                    printBlock(aux, index);
+                    availableSpace += index * BIN_POW(i + MIN_ALLOC_LOG_2);
+                }
             }
-            availableSpace += index * BIN_POW(i + MIN_ALLOC_LOG_2);
+
+            print("-------------------------------\n");
         }
     }
 
     print("Available Space: %d\n", availableSpace);
-}
-
-/*
- * Initialize a list to empty. Because these are circular lists, an "empty"
- * list is an entry where both links point to itself. This makes insertion
- * and removal simpler because they don't need any branches.
- */
-static void listInit(List *list)
-{
-    list->prev = list;
-    list->next = list;
-}
-
-/*
- * Append the provided entry to the end of the list. This assumes the entry
- * isn't in a list already because it overwrites the linked list pointers.
- */
-static void listPush(List *list, List *entry)
-{
-    List *prev = list->prev;
-    entry->prev = prev;
-    entry->next = list;
-    prev->next = entry;
-    list->prev = entry;
-}
-
-/*
- * Remove the provided entry from whichever list it's currently in. This
- * assumes that the entry is in a list. You don't need to provide the list
- * because the lists are circular, so the list's pointers will automatically
- * be updated if the first or last entries are removed.
- */
-static void listRemove(List *entry)
-{
-    List *prev = entry->prev;
-    List *next = entry->next;
-    prev->next = next;
-    next->prev = prev;
-}
-
-/*
- * Remove and return the first entry in the list or NULL if the list is empty.
- */
-static List *listPop(List *list)
-{
-    List *back = list->prev;
-    if (back == list)
-        return NULL;
-    listRemove(back);
-    return back;
-}
-
-static char listHasNone(List *list)
-{
-    return list->prev == list;
 }
 
 static uint8_t findIdealLevel(uint32_t bytes)
@@ -266,7 +221,7 @@ static uint8_t findIdealLevel(uint32_t bytes)
 
     aux -= MIN_ALLOC_LOG_2;
 
-    if (bytes && !(bytes & (bytes - 1))) //Si entra exactamente lo guardo en aux, si no es en aux + 1
+    if (bytes && !(bytes & (bytes - 1))) //Perfect fit aux, else aux + 1
         return aux;
 
     return aux + 1;
@@ -295,7 +250,7 @@ static List *findBuddyFromNode(List *node)
 }
 
 //www.archives.uce.com/105da903ea7e4ea183d6d3022e77e3a7?v=0c4be5ffdca74b0688ff3495045ab63e
-static List *getAdress(List *node)
+static List *getAddress(List *node)
 {
     uint8_t level = node->level;
     uintptr_t mask = BIN_POW(MIN_ALLOC_LOG_2 + level);
@@ -313,4 +268,46 @@ static void addLevelNode(List *list, List *node, uint8_t level)
     node->free = 1;
     node->level = level;
     listPush(list, node);
+}
+
+/*
+ * Initialize a list to empty. Because these are circular lists, an "empty"
+ * list is an entry where both links point to itself. This makes insertion
+ * and removal simpler because they don't need any branches.
+ */
+static void listInit(List *list)
+{
+    list->prev = list;
+    list->next = list;
+}
+
+static void listPush(List *list, List *entry)
+{
+    List *prev = list->prev;
+    entry->prev = prev;
+    entry->next = list;
+    prev->next = entry;
+    list->prev = entry;
+}
+
+static void listRemove(List *entry)
+{
+    List *prev = entry->prev;
+    List *next = entry->next;
+    prev->next = next;
+    next->prev = prev;
+}
+
+static List *listPop(List *list)
+{
+    List *back = list->prev;
+    if (back == list)
+        return NULL;
+    listRemove(back);
+    return back;
+}
+
+static char listHasNone(List *list)
+{
+    return list->prev == list;
 }
