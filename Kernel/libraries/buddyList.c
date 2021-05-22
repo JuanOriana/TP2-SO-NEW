@@ -1,4 +1,4 @@
-#include "listADT.h"
+#include "buddyList.h"
 
 void listInit(List *list)
 {
@@ -31,7 +31,6 @@ List *listPop(List *list)
     listRemove(back);
     return back;
 }
-
 
 /* Because these are circular lists, an "empty"
 list is an entry where both links point to itself.
