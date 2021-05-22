@@ -120,9 +120,7 @@ SECTION .text
 	mov rdi, %1 ; pasaje de parametro
 	mov rsi, rsp
 	call exceptionDispatcher
-
-    popState
-	iretq
+	;Not returning bc dispatcher kill the process
 %endmacro
 
 _syscallHandler:
