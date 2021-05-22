@@ -154,7 +154,7 @@ void dumpMM()
                 {
                     printBlock(aux, index);
                     availableSpace += index * BIN_POW(i + MIN_ALLOC_LOG_2);
-                }   
+                }
             }
 
             print("-------------------------------\n");
