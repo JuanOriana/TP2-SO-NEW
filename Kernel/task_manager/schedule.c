@@ -156,8 +156,7 @@ void *scheduler(void *oldRSP)
                         processQueue(currentProcess);
             }
       }
-      // If I still have something to process, do so (if I kill al processses int his loop it might bring trouble)
-      // CONSIDER TRACKING READY PROCESSES ALSO
+
       if (processes->readySize > 0)
       {
             currentProcess = processDequeue();
@@ -196,7 +195,6 @@ int addProcess(void (*entryPoint)(int, char **), int argc, char **argv, int fg, 
       if (newProcess == NULL)
             return -1;
 
-      //What if createPCB and setNewSft where in another file? Consider
       if (createPCB(&newProcess->pcb, argv[0], fg, fd) == -1)
       {
             freeCust(newProcess);
@@ -238,7 +236,6 @@ static int createPCB(PCB *process, char *name, int fg, int *fd)
       if (process->rbp == NULL)
             return -1;
 
-      // ALIGNMENT ??????
       process->rbp = (void *)((char *)process->rbp + STACK_SIZE - 1);
       process->rsp = (void *)((StackFrame *)process->rbp - 1);
       return 0;
@@ -246,8 +243,6 @@ static int createPCB(PCB *process, char *name, int fg, int *fd)
 
 static void setNewSF(void (*entryPoint)(int, char **), int argc, char **argv, void *rbp)
 {
-      // Consider saving this data in some global variables, doesnt look quite right ATM
-      //ALIGNMENT? Ask profs
       StackFrame *frame = (StackFrame *)rbp - 1;
       frame->gs = 0x001;
       frame->fs = 0x002;
@@ -321,7 +316,6 @@ static int queueIsEmpty()
 
 static void freeProcess(ProcessNode *process)
 {
-      // Warning?
       for (int i = 0; i < process->pcb.argc; i++)
             freeCust(process->pcb.argv[i]);
       freeCust(process->pcb.argv);
@@ -519,7 +513,6 @@ void waitForPid(uint64_t pid)
       ProcessNode *process = getProcessOfPID(pid);
       if (process)
       {
-            // Is fg = 1 needed? its seems like its the only way 4 it to work
             process->pcb.fg = 1;
             blockProcess(currentProcess->pcb.pid);
       }

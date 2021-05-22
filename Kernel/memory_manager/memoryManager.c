@@ -22,7 +22,7 @@ union header
 };
 
 static Header *base;
-static Header *freep = NULL;
+static Header *startingNode = NULL;
 
 unsigned long totalUnits;
 
@@ -30,9 +30,9 @@ void memInitList(char *memBase, unsigned long memSize)
 {
       // Initially its all a very large block
       totalUnits = (memSize + sizeof(Header) - 1) / sizeof(Header) + 1;
-      freep = base = (Header *)memBase;
-      freep->s.size = totalUnits;
-      freep->s.ptr = freep;
+      startingNode = base = (Header *)memBase;
+      startingNode->s.size = totalUnits;
+      startingNode->s.ptr = startingNode;
 }
 
 // Ref for malloc/free : The C Programming Language  - K&R
@@ -44,7 +44,7 @@ void *mallocCustList(unsigned long nbytes)
       unsigned long nunits = (nbytes + sizeof(Header) - 1) / sizeof(Header) + 1; //Normalize to header units
 
       Header *p, *prevp;
-      prevp = freep;
+      prevp = startingNode;
 
       for (p = prevp->s.ptr;; prevp = p, p = p->s.ptr)
       {
@@ -58,10 +58,10 @@ void *mallocCustList(unsigned long nbytes)
                         p += p->s.size;
                         p->s.size = nunits;
                   }
-                  freep = prevp;
+                  startingNode = prevp;
                   return (void *)(p + 1); //Return new memspace WITHOUT header
             }
-            if (p == freep) // No block found, need more space
+            if (p == startingNode) // No block found, need more space
                   return NULL;
       }
 }
@@ -79,7 +79,7 @@ void freeCustList(void *freeMem)
 
       char isExternal = 0;
 
-      for (p = freep; !(freeBlock > p && freeBlock < p->s.ptr); p = p->s.ptr)
+      for (p = startingNode; !(freeBlock > p && freeBlock < p->s.ptr); p = p->s.ptr)
       { // Find blocks that surround
 
             if (freeBlock == p || freeBlock == p->s.ptr) // block is already free!
@@ -111,21 +111,21 @@ void freeCustList(void *freeMem)
       else
             p->s.ptr = freeBlock;
 
-      freep = p;
+      startingNode = p;
 }
 
 void dumpMMList()
 {
       long long idx = 1;
       Header *original, *p;
-      original = p = freep;
+      original = p = startingNode;
       int flag = 1;
 
       print("\nMEMORY DUMP (Free List)\n");
-      print("- - Blocks of 16 bytes\n");
+      print("- - Units of 16 bytes\n");
       print("------------------------------------------------\n");
-      print("Total memory: %d bytes\n\n", totalUnits * sizeof(Header));
-      if (freep == NULL)
+      print("Total memory: %d units\n\n", totalUnits * sizeof(Header));
+      if (startingNode == NULL)
             print("    No free blocks\n");
       print("Free blocks: \n");
       print("-------------------------------\n");
@@ -134,7 +134,7 @@ void dumpMMList()
             flag = 0;
             print("    Block number %d\n", idx);
             print("        Base: %x\n", (uint64_t)p);
-            print("        Free blocks: %d\n", p->s.size);
+            print("        Free units: %d\n", p->s.size);
             print("-------------------------------\n");
             p = p->s.ptr;
             idx++;
