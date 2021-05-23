@@ -9,6 +9,7 @@
 #define IS_DIGIT(c) ((c) >= '0' && (c) <= '9' ? 1 : 0)
 #define ABS(c) ((c) >= 0 ? (c) : (c) * -1)
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
+#define DECIMAL_BASE 10
 
 uint32_t uintToBase(uint64_t value, char *buffer, uint32_t base);
 uint32_t uintToBaseWL(uint64_t value, char *buffer, uint32_t base, uint32_t lenght);
@@ -32,5 +33,7 @@ char *itoa(int value, char *buffer, int base);
 void waitCycles(int cycles);
 int tokenizeBuffer(char token, char **dest, char *source, int max);
 int check_vowel(char a);
+uint64_t getSecondsElapsed();
+void sleep(unsigned int seconds);
 
 #endif

@@ -11,7 +11,7 @@
 //Tanenbaum's based implementation
 
 #define MAX_PHiLOS 10
-#define BASE_PHiLOS 5
+#define BASE_PHiLOS 2
 #define MUTEX_ID 999
 #define NULL 0
 
@@ -41,20 +41,27 @@ static int getRemovablePhilo();
 #define RIGHT(i) ((i) + 1) % (actualPhilosopherCount)                         /* number of i’s right neighbor */
 #define LEFT(i) ((i) + actualPhilosopherCount - 1) % (actualPhilosopherCount) /* number of i’s left neighbor */
 
+int getMyIdx(int pid)
+{
+
+    for (int i = 0; i < actualPhilosopherCount; i++)
+    {
+        if (philos[i]->pid == pid)
+            return i;
+    }
+    return -1;
+}
+
 void philo(int argc, char *argv[])
 {
-    sWait(tableMutex);
-    int idx = strToInt(argv[1]);
-    sPost(tableMutex);
-
     while (problemRunning)
     {
-        for (int i = 0; i < 10000000; i++)
-            ;
+        int idx = getMyIdx(getPID());
+        sleep(1);
         takeForks(idx);
-        for (int i = 0; i < 100000000; i++)
-            ;
+        sleep(1);
         placeForks(idx);
+        sleep(1);
     }
 }
 
@@ -64,15 +71,15 @@ void takeForks(int i)
     philos[i]->state = HUNGRY;
     test(i);
     sPost(tableMutex);
-    if (philos[i]->state == HUNGRY)
-        sWait(philos[i]->sem);
+    sWait(philos[i]->sem);
+    // print("Soy el philo %d (por comer)\n izq %d der %d\n", i, LEFT(i), RIGHT(i));
 }
 
 void placeForks(int i)
 {
     sWait(tableMutex);
     philos[i]->state = THINKING;
-    //Now my left and right philos can use my forks
+    //print("Soy el philo %d (ya comi)\n", i);
     test(LEFT(i));
     test(RIGHT(i));
     sPost(tableMutex);
@@ -154,6 +161,7 @@ int addPhilosopher()
     char buf[4] = {0};
     char *name[] = {"philo", itoa(actualPhilosopherCount, buf, 10)};
     auxPhilo->pid = createProcess(&philo, 2, name, 0, 0);
+    auxPhilo->idx = actualPhilosopherCount;
     philos[actualPhilosopherCount++] = auxPhilo;
     sPost(tableMutex);
     return 0;
@@ -172,14 +180,20 @@ int removePhilosopher()
     do
         chosenPhiloIdx = getRemovablePhilo();
     while (chosenPhiloIdx == -1);
+    print("El elegido tiene idx : %d\n", chosenPhiloIdx);
 
+    Philosopher *chosenPhilo = philos[chosenPhiloIdx];
     actualPhilosopherCount--;
-    Philosopher *lastPhilo = philos[actualPhilosopherCount];
+    if (chosenPhiloIdx != actualPhilosopherCount)
+    {
+        Philosopher *lastPhilo = philos[actualPhilosopherCount];
+        philos[chosenPhiloIdx] = lastPhilo;
+        lastPhilo->idx = chosenPhiloIdx;
+    }
     philos[actualPhilosopherCount] = 0;
-    sClose(philos[chosenPhiloIdx]->sem);
-    killProcess(philos[chosenPhiloIdx]->pid);
-    freeCust(philos[chosenPhiloIdx]);
-    philos[chosenPhiloIdx] = lastPhilo;
+    sClose(chosenPhilo->sem);
+    killProcess(chosenPhilo->pid);
+    freeCust(chosenPhilo);
     sPost(tableMutex);
     return 0;
 }
@@ -188,17 +202,17 @@ void printTable(int argc, char *argv[])
 {
     while (problemRunning)
     {
+        sWait(tableMutex);
         for (int i = 0; i < actualPhilosopherCount; i++)
         {
             philos[i]->state == EATING ? putchar('E') : putchar('.');
             putchar(' ');
         }
         putchar('\n');
-        for (int i = 0; i < 100000000; i++)
-            ;
+        sPost(tableMutex);
+        sleep(1);
     }
 }
-
 
 int getRemovablePhilo()
 {

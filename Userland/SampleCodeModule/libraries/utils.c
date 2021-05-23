@@ -548,3 +548,15 @@ int check_vowel(char a)
 
       return 0;
 }
+
+uint64_t getSecondsElapsed()
+{
+      return syscall(SECONDS_ELAPSED, 0, 0, 0, 0, 0, 0);
+}
+
+void sleep(unsigned int seconds)
+{
+      unsigned int limitTime = seconds + getSecondsElapsed();
+      while (getSecondsElapsed() < limitTime)
+            ;
+}
