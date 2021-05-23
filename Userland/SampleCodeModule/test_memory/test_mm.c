@@ -31,7 +31,6 @@ void testMem(int argc, char *argv[])
       print("%d\n", total / (1024 * 1024));
       mm_rqs[rq].size = GetUniform(MAX_MEMORY - total - 1) + 1;
       mm_rqs[rq].address = (void *)mallocCust(mm_rqs[rq].size); // TODO: Port this call as required
-                                                                //TODO: check if NULL
       total += mm_rqs[rq].size;
       rq++;
     }

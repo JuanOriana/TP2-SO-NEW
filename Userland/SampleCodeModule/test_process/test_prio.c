@@ -23,8 +23,7 @@ void endless_loop(int argc, char *argv[])
 
     while (1)
     {
-        printStringWC(argv[1], BLACK, BLACK);
-        printInt(pid);
+        print("%s: %d ",argv[1], pid);;
         bussy_wait(MINOR_WAIT);
     }
 }
@@ -74,20 +73,7 @@ void test_prio()
 
     printStringLn("CHANGING PRIORITIES WHILE BLOCKED...\n");
     for (i = 0; i < TOTAL_PROCESSES; i++)
-    {
-        switch (i % 3)
-        {
-        case 0:
-            nice(pids[i], 20); //medium priority
-            break;
-        case 1:
-            nice(pids[i], 20); //medium priority
-            break;
-        case 2:
-            nice(pids[i], 20); //medium priority
-            break;
-        }
-    }
+        nice(pids[i], 20); //medium priority
 
     printStringLn("UNBLOCKING...");
 
