@@ -1,8 +1,9 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com// #include <memoryManager.h>
+#ifdef BUDDY
 #include "memoryManager.h"
 #include "stringLib.h"
-#include "listADT.h"
+#include "buddyList.h"
 #include <unistd.h>
 #include <utils.h>
 
@@ -221,3 +222,5 @@ static void addNodeToLevel(List *list, List *node, uint8_t level)
     node->level = level;
     listPush(list, node);
 }
+
+#endif

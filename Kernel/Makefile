@@ -23,6 +23,7 @@ OBJECTS_TASK_MANAGER=$(SOURCES_TASK_MANAGER:.c=.o)
 OBJECTS_SYNC=$(SOURCES_SYNC:.c=.o)
 OBJECTS_IPC=$(SOURCES_IPC:.c=.o)
 
+MM=-D FREE_LIST
 
 LOADERSRC=loader.asm
 
@@ -35,7 +36,7 @@ $(KERNEL): $(LOADEROBJECT) $(OBJECTS) $(STATICLIBS) $(OBJECTS_ASM) $(OBJECTS_IDT
 	$(LD) $(LDFLAGS) -T kernel.ld -o $@ $^
 
 %.o: %.c
-	$(GCC) $(GCCFLAGS) -I./include -c $< -o $@
+	$(GCC) $(GCCFLAGS) -I./include $(MM) -c $< -o $@
 
 %.o : %.asm
 	$(ASM) $(ASMFLAGS) $< -o $@

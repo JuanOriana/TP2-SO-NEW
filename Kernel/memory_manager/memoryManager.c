@@ -1,5 +1,6 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+#ifdef FREE_LIST
 
 #include "memoryManager.h"
 #include "stringLib.h"
@@ -15,7 +16,7 @@ union header
       {
             union header *ptr;
             unsigned size;
-      } s;
+      } data;
       Align x;
 };
 
@@ -24,17 +25,17 @@ static Header *startingNode = NULL;
 
 unsigned long totalUnits;
 
-void memInitList(char *memBase, unsigned long memSize)
+void memInit(char *memBase, unsigned long memSize)
 {
       // Initially its all a very large block
       totalUnits = (memSize + sizeof(Header) - 1) / sizeof(Header) + 1;
       startingNode = base = (Header *)memBase;
-      startingNode->s.size = totalUnits;
-      startingNode->s.ptr = startingNode;
+      startingNode->data.size = totalUnits;
+      startingNode->data.ptr = startingNode;
 }
 
 // Ref for malloc/free : The C Programming Language  - K&R
-void *mallocCustList(unsigned long nbytes)
+void *mallocCust(unsigned long nbytes)
 {
       if (nbytes == 0)
             return NULL;
@@ -44,29 +45,29 @@ void *mallocCustList(unsigned long nbytes)
       Header *currNode, *prevNode;
       prevNode = startingNode;
 
-      for (currNode = prevNode->s.ptr;; prevNode = currNode, currNode = currNode->s.ptr)
+      for (currNode = prevNode->data.ptr;; prevNode = currNode, currNode = currNode->data.ptr)
       {
-            if (currNode->s.size >= nunits) //If >=, can use this block
+            if (currNode->data.size >= nunits)
             {
-                  if (currNode->s.size == nunits) // Equal just use
-                        prevNode->s.ptr = currNode->s.ptr;
-                  else // Fragment block
+                  if (currNode->data.size == nunits) // Equal just use
+                        prevNode->data.ptr = currNode->data.ptr;
+                  else
                   {
-                        currNode->s.size -= nunits;
-                        currNode += currNode->s.size;
-                        currNode->s.size = nunits;
+                        currNode->data.size -= nunits;
+                        currNode += currNode->data.size;
+                        currNode->data.size = nunits;
                   }
                   startingNode = prevNode;
                   return (void *)(currNode + 1); //Return new memspace WITHOUT header
             }
-            if (currNode == startingNode) // No block found, need more space
+            if (currNode == startingNode)
                   return NULL;
       }
 }
 
-void freeCustList(void *freeMem)
+void freeCust(void *freeMem)
 {
-      if (freeMem == NULL || (((long)freeMem - (long)base) % sizeof(Header)) != 0) //Discard null and unaligned
+      if (freeMem == NULL || (((long)freeMem - (long)base) % sizeof(Header)) != 0)
             return;
 
       Header *freeBlock, *currNode;
@@ -77,65 +78,67 @@ void freeCustList(void *freeMem)
 
       char isExternal = 0;
 
-      for (currNode = startingNode; !(freeBlock > currNode && freeBlock < currNode->s.ptr); currNode = currNode->s.ptr)
-      { // Find blocks that surround
+      for (currNode = startingNode; !(freeBlock > currNode && freeBlock < currNode->data.ptr); currNode = currNode->data.ptr)
+      {
 
-            if (freeBlock == currNode || freeBlock == currNode->s.ptr) // block is already free!
+            if (freeBlock == currNode || freeBlock == currNode->data.ptr)
                   return;
 
-            if (currNode >= currNode->s.ptr && (freeBlock > currNode || freeBlock < currNode->s.ptr))
-            { //Free block might be on the ends
+            if (currNode >= currNode->data.ptr && (freeBlock > currNode || freeBlock < currNode->data.ptr))
+            {
                   isExternal = 1;
                   break;
             }
       }
 
-      if (!isExternal && (currNode + currNode->s.size > freeBlock || freeBlock + freeBlock->s.size > currNode->s.ptr)) //Absurd!!
+      if (!isExternal && (currNode + currNode->data.size > freeBlock || freeBlock + freeBlock->data.size > currNode->data.ptr)) //Absurd!!
             return;
 
-      if (freeBlock + freeBlock->s.size == currNode->s.ptr) //Join right
+      if (freeBlock + freeBlock->data.size == currNode->data.ptr) //Join right
       {
-            freeBlock->s.size += currNode->s.ptr->s.size;
-            freeBlock->s.ptr = currNode->s.ptr->s.ptr;
+            freeBlock->data.size += currNode->data.ptr->data.size;
+            freeBlock->data.ptr = currNode->data.ptr->data.ptr;
       }
       else
-            freeBlock->s.ptr = currNode->s.ptr;
+            freeBlock->data.ptr = currNode->data.ptr;
 
-      if (currNode + currNode->s.size == freeBlock) //Join left
+      if (currNode + currNode->data.size == freeBlock) //Join left
       {
-            currNode->s.size += freeBlock->s.size;
-            currNode->s.ptr = freeBlock->s.ptr;
+            currNode->data.size += freeBlock->data.size;
+            currNode->data.ptr = freeBlock->data.ptr;
       }
       else
-            currNode->s.ptr = freeBlock;
+            currNode->data.ptr = freeBlock;
 
       startingNode = currNode;
 }
 
-void dumpMMList()
+void dumpMM()
 {
       long long idx = 1;
-      Header *original, *p;
-      original = p = startingNode;
+      Header *original, *current;
+      original = current = startingNode;
       int flag = 1;
 
       print("\nMEMORY DUMP (Free List)\n");
       print("- - Units of 16 bytes\n");
       print("------------------------------------------------\n");
-      print("Total memory: %d units\n\n", totalUnits * sizeof(Header));
+      print("Total memory: %d bytes\n\n", totalUnits * sizeof(Header));
       if (startingNode == NULL)
             print("    No free blocks\n");
       print("Free blocks: \n");
       print("-------------------------------\n");
-      while (p != original || flag)
+      while (current != original || flag)
       {
             flag = 0;
             print("    Block number %d\n", idx);
-            print("        Base: %x\n", (uint64_t)p);
-            print("        Free units: %d\n", p->s.size);
+            print("        Base: %x\n", (uint64_t)current);
+            print("        Free units: %d\n", current->data.size);
             print("-------------------------------\n");
-            p = p->s.ptr;
+            current = current->data.ptr;
             idx++;
       }
       print("\n\n");
 }
+
+#endif
