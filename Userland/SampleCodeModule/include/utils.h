@@ -35,5 +35,6 @@ int tokenizeBuffer(char token, char **dest, char *source, int max);
 int check_vowel(char a);
 uint64_t getSecondsElapsed();
 void sleep(unsigned int seconds);
+void waitTicks(unsigned int ticks);
 
 #endif

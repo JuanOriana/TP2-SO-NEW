@@ -18,7 +18,6 @@ void slowInc(int64_t *p, int64_t inc)
   yield();
   *p = aux;
 }
-//uint64_t sem, int64_t value, uint64_t N
 void inc(int argc, char *argv[])
 {
   uint64_t i;

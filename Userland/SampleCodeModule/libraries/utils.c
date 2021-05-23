@@ -498,7 +498,7 @@ int ticksElapsed()
 void waitCycles(int cycles)
 {
       int goal = ticksElapsed() + cycles;
-      while (ticksElapsed() <= goal)
+      while (ticksElapsed() < goal)
             ;
 }
 
@@ -553,6 +553,7 @@ uint64_t getSecondsElapsed()
 {
       return syscall(SECONDS_ELAPSED, 0, 0, 0, 0, 0, 0);
 }
+
 
 void sleep(unsigned int seconds)
 {

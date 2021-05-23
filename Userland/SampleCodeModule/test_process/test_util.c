@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include "test_util.h"
 
+
 static uint32_t m_z = 362436069;
 static uint32_t m_w = 521288629;
 
@@ -26,4 +27,22 @@ uint8_t memcheck(void *start, uint8_t value, uint32_t size){
       return 0;
 
   return 1;
+}
+
+void busyWait(uint64_t n)
+{
+    uint64_t i;
+    for (i = 0; i < n; i++)
+        ;
+}
+
+void endlessLoop(int argc, char *argv[])
+{
+    uint64_t pid = getPID();
+
+    while (1)
+    {
+        print("%d ",pid);
+        busyWait(MINOR_WAIT);
+    }
 }
