@@ -144,7 +144,7 @@ uint64_t sysCallDispatcher(t_registers *r)
                   return pClose(r->rdi);
                   break;
             case SYS_WAIT_ID:
-                  waitForPid(r->rdi);
+                  waitForPID(r->rdi);
                   break;
             case SYS_DUMP_PIPE_ID:
                   dumpPipes();

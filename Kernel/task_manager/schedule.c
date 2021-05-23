@@ -10,7 +10,7 @@
 #define STACK_SIZE (4 * 1024)
 #define INIT_PRIO 1
 #define INIT_PRIO_AUG 2
-#define CYCLE_CAP 40
+#define PRIO_CAP 40
 
 typedef enum
 {
@@ -70,7 +70,7 @@ typedef struct ProcessNode
       struct ProcessNode *next;
 } ProcessNode;
 
-typedef struct pList
+typedef struct ProcessList
 {
       uint32_t size;
       uint32_t readySize;
@@ -81,7 +81,7 @@ typedef struct pList
 static void setNewSF(void (*entryPoint)(int, char **), int argc, char **argv, void *rbp);
 static int createPCB(PCB *process, char *name, int fg, int *fd);
 static int argsCopy(char **buffer, char **argv, int argc);
-static uint64_t getNewPid();
+static uint64_t getnewPID();
 static void wrapper(void (*entryPoint)(int, char **), int argc, char **argv);
 static void exit();
 static void freeProcess(ProcessNode *process);
@@ -92,7 +92,7 @@ static void processQueue(ProcessNode *newProcess);
 static ProcessNode *processDequeue();
 static int queueIsEmpty();
 
-static uint64_t newPidVal = 0;
+static uint64_t newPIDVal = 0;
 static ProcessList *processes;
 static ProcessNode *currentProcess;
 static uint64_t cyclesLeft;
@@ -107,18 +107,15 @@ static void haltFunc(int argc, char **argv)
 void initScheduler()
 {
       processes = mallocCust(sizeof(ProcessList));
-      //Almost impossible, but it needs to be checked nonetheless
+
       if (processes == NULL)
-      {
             return;
-      }
+
       processes->first = NULL;
       processes->last = processes->first;
       processes->size = 0;
       processes->readySize = 0;
 
-      //Create an idling process and store it in case no process is available
-      // (Must be popped bcz of queue)
       char *argv[] = {"Halt Process"};
       addProcess(&haltFunc, 1, argv, 0, 0);
       idleProcess = processDequeue();
@@ -126,26 +123,21 @@ void initScheduler()
 
 void *scheduler(void *oldRSP)
 {
-      //If I have a current process, his new rsp is the one i just got
-      // If killed free, else queue it to find it later.
       if (currentProcess)
       {
-            // If should continue, do so
             if (currentProcess->state == READY && cyclesLeft > 0)
             {
                   cyclesLeft--;
                   return oldRSP;
             }
 
-            //ELse, save last state
             currentProcess->pcb.rsp = oldRSP;
 
-            if (currentProcess->pcb.pid != idleProcess->pcb.pid)
+            if (currentProcess->pcb.pid != idleProcess->pcb.pid) //idleProces should never be pushed into the queue
             {
                   if (currentProcess->state == KILLED)
                   {
                         ProcessNode *parent = getProcessOfPID(currentProcess->pcb.ppid);
-                        //Free parents awaiting
                         if (parent != NULL && currentProcess->pcb.fg && parent->state == BLOCKED)
                         {
                               unblockProcess(parent->pcb.pid);
@@ -162,7 +154,7 @@ void *scheduler(void *oldRSP)
             currentProcess = processDequeue();
             while (currentProcess->state != READY)
             {
-                  // Same logic as first iff
+
                   if (currentProcess->state == KILLED)
                   {
                         freeProcess(currentProcess);
@@ -174,13 +166,12 @@ void *scheduler(void *oldRSP)
                   currentProcess = processDequeue();
             }
       }
-      // Just idle if no processes are available
+
       else
       {
             currentProcess = idleProcess;
       }
 
-      // Asign new quantum, as we have changed our process
       cyclesLeft = currentProcess->pcb.priority;
       return currentProcess->pcb.rsp;
 }
@@ -215,18 +206,19 @@ int addProcess(void (*entryPoint)(int, char **), int argc, char **argv, int fg, 
       processQueue(newProcess);
       if (newProcess->pcb.fg && newProcess->pcb.ppid)
             blockProcess(newProcess->pcb.ppid);
+
       return newProcess->pcb.pid;
 }
 
 static int createPCB(PCB *process, char *name, int fg, int *fd)
 {
       strcpy(name, process->name);
-      process->pid = getNewPid();
-      //currentProcess running is his parent
+      process->pid = getnewPID();
+
       process->ppid = currentProcess == NULL ? 0 : currentProcess->pcb.pid;
       if (fg > 1 || fg < 0)
             return -1;
-      // If i have a parent and he is not in the foreground, then i can not be in the foreground either
+      // If i have a parent and he is not in the foreground, then I can not be in the foreground either
       process->fg = currentProcess == NULL ? fg : (currentProcess->pcb.fg ? fg : 0);
       process->rbp = mallocCust(STACK_SIZE);
       process->priority = process->fg ? INIT_PRIO_AUG : INIT_PRIO;
@@ -269,49 +261,9 @@ static void setNewSF(void (*entryPoint)(int, char **), int argc, char **argv, vo
       frame->base = 0x000;
 }
 
-static uint64_t getNewPid()
+static uint64_t getnewPID()
 {
-      return newPidVal++;
-}
-
-static void processQueue(ProcessNode *newProcess)
-{
-      if (queueIsEmpty())
-      {
-            processes->first = newProcess;
-            processes->last = processes->first;
-      }
-      else
-      {
-            processes->last->next = newProcess;
-            newProcess->next = NULL;
-            processes->last = newProcess;
-      }
-
-      if (newProcess->state == READY)
-            processes->readySize++;
-
-      processes->size++;
-}
-
-static ProcessNode *processDequeue()
-{
-      if (queueIsEmpty())
-            return NULL;
-
-      ProcessNode *p = processes->first;
-      processes->first = processes->first->next;
-      processes->size--;
-
-      if (p->state == READY)
-            processes->readySize--;
-
-      return p;
-}
-
-static int queueIsEmpty()
-{
-      return processes->size == 0;
+      return newPIDVal++;
 }
 
 static void freeProcess(ProcessNode *process)
@@ -457,8 +409,8 @@ void setNewCycle(uint64_t pid, int priority)
 
       if (priority < 0)
             priority = 0;
-      if (priority > CYCLE_CAP)
-            priority = CYCLE_CAP;
+      if (priority > PRIO_CAP)
+            priority = PRIO_CAP;
 
       ProcessNode *p = getProcessOfPID(pid);
 
@@ -508,7 +460,7 @@ int currentProcessFg()
       return -1;
 }
 
-void waitForPid(uint64_t pid)
+void waitForPID(uint64_t pid)
 {
       ProcessNode *process = getProcessOfPID(pid);
       if (process)
@@ -526,4 +478,44 @@ static int argsCopy(char **buffer, char **argv, int argc)
             strcpy(argv[i], buffer[i]);
       }
       return 1;
+}
+
+static void processQueue(ProcessNode *newProcess)
+{
+      if (queueIsEmpty())
+      {
+            processes->first = newProcess;
+            processes->last = processes->first;
+      }
+      else
+      {
+            processes->last->next = newProcess;
+            newProcess->next = NULL;
+            processes->last = newProcess;
+      }
+
+      if (newProcess->state == READY)
+            processes->readySize++;
+
+      processes->size++;
+}
+
+static ProcessNode *processDequeue()
+{
+      if (queueIsEmpty())
+            return NULL;
+
+      ProcessNode *p = processes->first;
+      processes->first = processes->first->next;
+      processes->size--;
+
+      if (p->state == READY)
+            processes->readySize--;
+
+      return p;
+}
+
+static int queueIsEmpty()
+{
+      return processes->size == 0;
 }

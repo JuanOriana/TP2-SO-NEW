@@ -43,6 +43,7 @@ uint32_t sOpen(uint32_t id, uint32_t initValue)
         sem->mutex = 0;
 
         Semaphore *lastSem = semaphores;
+
         if (lastSem == NULL)
             semaphores = sem;
         else
@@ -63,23 +64,11 @@ uint32_t sOpen(uint32_t id, uint32_t initValue)
     return id;
 }
 
-Semaphore *findSem(uint32_t id)
-{
-    Semaphore *sem = semaphores;
-    while (sem)
-    {
-        if (sem->id == id)
-            return sem;
-        sem = sem->next;
-    }
-    return NULL;
-}
-
 int sWait(uint32_t id)
 {
     Semaphore *sem = findSem(id);
     if (sem == NULL)
-        return 1;
+        return -1;
 
     acquire(&(sem->mutex));
     if (sem->value > 0)
@@ -103,7 +92,8 @@ int sPost(uint32_t id)
 {
     Semaphore *sem = findSem(id);
     if (sem == NULL)
-        return 1;
+        return -1;
+
     acquire(&(sem->mutex));
     if (sem->blockedPIDsSize > 0)
     {
@@ -117,6 +107,7 @@ int sPost(uint32_t id)
     }
     else
         sem->value++;
+
     release(&(sem->mutex));
     return 0;
 }
@@ -125,10 +116,12 @@ int sClose(uint32_t id)
 {
     Semaphore *sem = findSem(id);
     if (sem == NULL)
-        return 1;
+        return -1;
+
     sem->listeners--;
     if (sem->listeners > 0)
         return 0;
+
     Semaphore *aux = semaphores;
     if (aux == sem)
         semaphores = aux->next;
@@ -138,6 +131,7 @@ int sClose(uint32_t id)
             aux = aux->next;
         aux->next = sem->next;
     }
+
     freeCust(sem);
     return 0;
 }
@@ -170,4 +164,16 @@ static void dumpBlockedPIDs(uint32_t *blockedPIDs, uint16_t blockedPIDsSize)
     {
         print("         PID: %d\n", blockedPIDs[i]);
     }
+}
+
+static Semaphore *findSem(uint32_t id)
+{
+    Semaphore *sem = semaphores;
+    while (sem)
+    {
+        if (sem->id == id)
+            return sem;
+        sem = sem->next;
+    }
+    return NULL;
 }
