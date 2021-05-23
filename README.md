@@ -14,8 +14,10 @@ Luego regrese al direcotiro principal y ejecute el siguiente comando:
 make MM=<MMTYPE> all
 ```
 Donde <MMTYPE> puede tomar alguno de los siguientes 2 valores para el manejo de la memoria:
-  *FREE_LIST
-  *BUDDY
+ 
+* FREE_LIST
+* BUDDY
+ 
  El parametro se puede omitir y se usara FREE_LIST por defecto
 ## Uso de la Shell
 Para usar un comando en la shell, es suficiente con escribir su nombre (con sus parametros de ser necesario) y apretar el enter. 
