@@ -24,7 +24,6 @@ static void processChar(char c, t_shellData *shellData);
 static int findPipe(int argc, char **argv);
 static int runPipe(int pipeIndex, char **argv, int argc, int fg);
 static int getCommandIdx(char *name);
-static int runPipeCommand(int argc, char **argv, int fdIn, int fdOut);
 
 static t_shellData shell;
 
@@ -246,7 +245,19 @@ static int runPipe(int pipeIndex, char **argv, int argc, int fg)
 {
       char *currentArgv[MAX_ARGS];
       int currentArgc = 0;
+      int fd[2];
       uint32_t pids[2];
+
+      for (int i = pipeIndex + 1, j = 0; i < argc; i++, j++)
+      {
+            currentArgv[j] = argv[i];
+            currentArgc++;
+      }
+
+      int commandIdx = getCommandIdx(currentArgv[0]);
+
+      if (commandIdx == -1)
+            return -1;
 
       int pipe = pOpen(shellPipeId++);
 
@@ -256,16 +267,10 @@ static int runPipe(int pipeIndex, char **argv, int argc, int fg)
             return -1;
       }
 
-      for (int i = pipeIndex + 1, j = 0; i < argc; i++, j++)
-      {
-            currentArgv[j] = argv[i];
-            currentArgc++;
-      }
+      fd[0] = pipe; //fd[0]: in, fd[1]: out
+      fd[1] = 1;
 
-      pids[0] = runPipeCommand(currentArgc, currentArgv, pipe, 1);
-
-      if (pids[0] == -1)
-            return -1;
+      pids[0] = createProcess(shell.commands[commandIdx].command, currentArgc, currentArgv, 0, fd);
 
       currentArgc = 0;
 
@@ -275,36 +280,24 @@ static int runPipe(int pipeIndex, char **argv, int argc, int fg)
             currentArgc++;
       }
 
-      pids[1] = runPipeCommand(currentArgc, currentArgv, 0, pipe);
-
-      if (pids[1] == -1)
-            return -1;
-
-      int eof = -1;
-
-      if (fg == 0)
-            wait(pids[1]);
-
-      pWrite(shellPipeId - 1, (char *)&eof);
-      wait(pids[0]);
-
-      pClose(shellPipeId - 1);
-
-      return 1;
-}
-
-static int runPipeCommand(int argc, char **argv, int fdIn, int fdOut)
-{
-      int fd[2];
-      int commandIdx = getCommandIdx(argv[0]);
+      commandIdx = getCommandIdx(currentArgv[0]);
 
       if (commandIdx == -1)
             return -1;
 
-      fd[0] = fdIn;
-      fd[1] = fdOut;
+      fd[0] = 0;
+      fd[1] = pipe;
 
-      return createProcess(shell.commands[commandIdx].command, argc, argv, 0, fd);
+      pids[1] = createProcess(shell.commands[commandIdx].command, currentArgc, currentArgv, fg, fd);
+
+      int a = -1;
+      if (fg == 0)
+            wait(pids[1]);
+      pWrite(shellPipeId - 1, (char *)&a);
+      wait(pids[0]);
+      pClose(shellPipeId - 1);
+
+      return 1;
 }
 
 static int getCommandIdx(char *name)
