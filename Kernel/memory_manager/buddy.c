@@ -17,10 +17,6 @@
 
 #define BIN_POW(x) (1 << (x))
 
-/*
- * This is the starting address of the address range for this allocator. Every
- * returned allocation will be an offset of this pointer from 0 to maxMemSize.
- */
 static List *base;
 static uint64_t maxMemSize;
 static uint8_t levels;
@@ -40,20 +36,11 @@ void memInit(char *memBase, unsigned long memSize)
     base = (List *)memBase;
     maxMemSize = memSize;
 
-    /*
-    * Los allocs se hacen en potencias de 2 arrancando de MIN_ALLOC y terminando en
-    * totalSize inclusive. Cada allocation size tiene un bucket que guarda una lista
-    * para ese tamano de alloc.
-    *
-    * Dado un indice del bucket list, el tamano de las alocaciones en ese bucket se encuentra con
-    * "(size_t)1 << (MAX_ALLOC_LOG2 - bucket)".
-    */
     levels = (int)log2(memSize) - MIN_ALLOC_LOG_2 + 1;
 
-    if (levels > MAX_LEVELS) //Upper bound definido por tamano de array
+    if (levels > MAX_LEVELS)
         levels = MAX_LEVELS;
 
-    //Inicialmente todas las listas estan vacias EXCEPTO la de Max level (que corresponde a la memoria completa libre)
     for (size_t i = 0; i < levels; i++)
     {
         listInit(&levelsList[i]);
@@ -63,13 +50,6 @@ void memInit(char *memBase, unsigned long memSize)
 
     addNodeToLevel(&levelsList[levels - 1], base, levels - 1);
 }
-
-/*
- * Every allocation needs an 8-byte header to store the allocation size while
- * staying 8-byte aligned. The address returned by "malloc" is the address
- * right after this header (i.e. the size occupies the 8 bytes before the
- * returned address).
- */
 
 void *mallocCust(unsigned long nbytes)
 {

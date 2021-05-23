@@ -1,10 +1,7 @@
 #ifndef SCHEDULE_H
 #define SCHEDULE_H
 
-#define MAX_PROCESSES 2
-
 #include <stdint.h>
-#include <screens.h>
 
 void initScheduler();
 void *scheduler(void *oldRSP);
@@ -20,6 +17,6 @@ void yield();
 int currentReadsFrom();
 int currentWritesTo();
 int currentProcessFg();
-void waitForPid(uint64_t pid);
+void waitForPID(uint64_t pid);
 
 #endif

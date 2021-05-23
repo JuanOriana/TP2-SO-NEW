@@ -82,7 +82,6 @@ int pRead(uint32_t pipeId)
 
     Pipe *pipe = &pipesArray.pipes[pipeIndex];
 
-    // One less char to read, one more free to write.
     sWait(pipe->lockR);
 
     char c = pipe->buffer[pipe->readIndex];
