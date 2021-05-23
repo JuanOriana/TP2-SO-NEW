@@ -57,11 +57,12 @@ void philo(int argc, char *argv[])
     while (problemRunning)
     {
         int idx = getMyIdx(getPID());
+        print("philo %d\n",idx);
         sleep(1);
         takeForks(idx);
+         print("philo %d eatin\n",idx);
         sleep(1);
         placeForks(idx);
-        sleep(1);
     }
 }
 
@@ -80,6 +81,7 @@ void placeForks(int i)
     sWait(tableMutex);
     philos[i]->state = THINKING;
     //print("Soy el philo %d (ya comi)\n", i);
+    sleep(1);
     test(LEFT(i));
     test(RIGHT(i));
     sPost(tableMutex);
@@ -158,9 +160,8 @@ int addPhilosopher()
 
     auxPhilo->state = THINKING;
     auxPhilo->sem = sOpen(semId++, 1);
-    char buf[4] = {0};
-    char *name[] = {"philo", itoa(actualPhilosopherCount, buf, 10)};
-    auxPhilo->pid = createProcess(&philo, 2, name, 0, 0);
+    char *name[] = {"philo"};
+    auxPhilo->pid = createProcess(&philo, 1, name, 0, 0);
     auxPhilo->idx = actualPhilosopherCount;
     philos[actualPhilosopherCount++] = auxPhilo;
     sPost(tableMutex);
