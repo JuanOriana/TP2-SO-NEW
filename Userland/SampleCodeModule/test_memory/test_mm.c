@@ -28,10 +28,13 @@ void testMem(int argc, char *argv[])
     // Request as many blocks as we can
     while (rq < MAX_BLOCKS && total < MAX_MEMORY)
     {
-      print("%d\n", total / (1024 * 1024));
       mm_rqs[rq].size = GetUniform(MAX_MEMORY - total - 1) + 1;
       mm_rqs[rq].address = (void *)mallocCust(mm_rqs[rq].size); // TODO: Port this call as required
-                                                                //TODO: check if NULL
+      if (mm_rqs[rq].address == NULL)
+      {
+        print("No memory!");
+        return;
+      }
       total += mm_rqs[rq].size;
       rq++;
     }
