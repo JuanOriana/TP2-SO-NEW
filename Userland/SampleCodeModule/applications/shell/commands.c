@@ -208,7 +208,7 @@ void loopCommand(int argc, char **args)
 {
 
       char *argv[] = {"Loop"};
-      createProcess(&loop, 1, argv, 0, 0);
+      createProcess(&loop, 1, argv,  BG, NULL);
       return;
 }
 

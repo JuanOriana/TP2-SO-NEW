@@ -33,7 +33,7 @@ void testProcesses()
         for (rq = 0; rq < MAX_PROCESSES; rq++)
         {
             char *argv[] = {"endlessLoop"};
-            p_rqs[rq].pid = createProcess(&endlessLoop, 1, argv, 0, 0);
+            p_rqs[rq].pid = createProcess(&endlessLoop, 1, argv,  BG, NULL);
 
             if (p_rqs[rq].pid == -1)
             {

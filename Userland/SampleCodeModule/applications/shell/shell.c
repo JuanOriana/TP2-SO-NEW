@@ -165,7 +165,7 @@ static void processCommand(t_shellData *shellData)
             printStringLn("Invalid command");
             return;
       }
-      createProcess(shellData->commands[idx].command, argc, argv, fg, 0);
+      createProcess(shellData->commands[idx].command, argc, argv, fg, NULL);
 }
 
 //muestra en pantalla el texto de la shell
@@ -270,7 +270,7 @@ static int runPipe(int pipeIndex, char **argv, int argc, int fg)
       fd[0] = pipe; //fd[0]: in, fd[1]: out
       fd[1] = 1;
 
-      pids[0] = createProcess(shell.commands[commandIdx].command, currentArgc, currentArgv, 0, fd);
+      pids[0] = createProcess(shell.commands[commandIdx].command, currentArgc, currentArgv, BG, fd);
 
       currentArgc = 0;
 

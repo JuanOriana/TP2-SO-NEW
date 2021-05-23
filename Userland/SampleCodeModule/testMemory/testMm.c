@@ -1,7 +1,6 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <testMem.h>
-#define NULL 0
 
 #define MAX_BLOCKS 128
 #define MAX_MEMORY 32 * 1024 * 1024 //Should be around 80% of memory managed by the MM

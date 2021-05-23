@@ -22,7 +22,7 @@ void testPrio()
     for (i = 0; i < TOTAL_PROCESSES; i++)
     {
         char *argv[] = {"endlessLoop"};
-        pids[i] = createProcess(&endlessLoop, 1, argv, 0, 0);
+        pids[i] = createProcess(&endlessLoop, 1, argv, BG, NULL);
     }
 
     busyWait(5 * MAJOR_WAIT);
@@ -44,7 +44,7 @@ void testPrio()
         }
     }
 
-    busyWait(5 * MAJOR_WAIT);
+    busyWait(3 * MAJOR_WAIT);
 
     print("\nBLOCKING...\n");
 
@@ -55,8 +55,6 @@ void testPrio()
     print("CHANGING PRIORITIES WHILE BLOCKED...\n");
     for (i = 0; i < TOTAL_PROCESSES; i++)
         nice(pids[i], MED_PRIO);
-
-    busyWait(3 * MAJOR_WAIT);
 
     print("UNBLOCKING...\n");
 

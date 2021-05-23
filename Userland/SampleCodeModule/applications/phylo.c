@@ -12,7 +12,6 @@
 #define MAX_PHILOS 10
 #define BASE_PHILOS 2
 #define MUTEX_ID 999
-#define NULL 0
 
 typedef enum
 {
@@ -100,7 +99,7 @@ void philosopherProblem(int argc, char *argv[])
     for (int i = 0; i < BASE_PHILOS; i++)
         addPhilosopher();
     char *args[] = {"PrintTable"};
-    int printTablePid = createProcess(&printTable, 1, args, 0, 0);
+    int printTablePid = createProcess(&printTable, 1, args,  BG, NULL);
     while (problemRunning)
     {
 
@@ -153,7 +152,7 @@ int addPhilosopher()
     auxPhilo->state = THINKING;
     auxPhilo->sem = sOpen(semId++, 1);
     char *name[] = {"philo"};
-    auxPhilo->pid = createProcess(&philo, 1, name, 0, 0);
+    auxPhilo->pid = createProcess(&philo, 1, name,  BG, NULL);
     philos[actualPhilosopherCount++] = auxPhilo;
     sPost(tableMutex);
     return 0;

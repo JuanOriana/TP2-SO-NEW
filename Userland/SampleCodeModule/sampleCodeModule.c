@@ -7,6 +7,6 @@
 int main()
 {
       char *argv[] = {"Shell"};
-      createProcess(runShell, 1, argv, 1, 0);
+      createProcess(runShell, 1, argv, FG, NULL);
       return 0;
 }

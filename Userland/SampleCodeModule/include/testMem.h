@@ -2,6 +2,7 @@
 #define _TESTMM_H
 
 #include "testUtil.h"
+#include <processes.h>
 #include <lib.h>
 #include <utils.h>
 #include <stringLib.h>
