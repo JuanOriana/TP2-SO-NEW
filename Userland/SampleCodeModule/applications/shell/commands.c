@@ -8,7 +8,7 @@
 #include <systemCalls.h>
 #include <processes.h>
 #include <utils.h>
-#include <test_util.h>
+#include <testUtil.h>
 #include <loop.h>
 #include <semLib.h>
 #include <pipeLib.h>
@@ -22,7 +22,7 @@ void time(int argc, char **args)
 {
       if (argc != 1)
       {
-            printStringLn("Invalid ammount of arguments.");
+            printStringLn("Invalid amount of arguments.");
             putchar('\n');
             return;
       }
@@ -214,12 +214,12 @@ void loopCommand(int argc, char **args)
 
 void testPriority(int argc, char **args)
 {
-      test_prio();
+      testPrio();
 }
 
 void testScheduler(int argc, char **args)
 {
-      test_processes();
+      testProcesses();
 }
 
 void kill(int argc, char **args)

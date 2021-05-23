@@ -93,7 +93,7 @@ void philosopherProblem(int argc, char *argv[])
     problemRunning = 1;
     tableMutex = sOpen(MUTEX_ID, 1);
     print("Welcome to the Philosophers Problem!\n");
-    print("You start with 5 philosophers, and have a minimum of 5 and maximum of 10 philosophers.\n");
+    print("You start with 2 philosophers, and have maximum of 10 philosophers.\n");
     print("You can add them with \'a\', delete them with \'d\' and exit the problem with \'q\'.\n");
     print("The state of each will be displayed as E (Eating) or . (HUNGRY)\n\n");
 
@@ -115,7 +115,7 @@ void philosopherProblem(int argc, char *argv[])
             break;
         case 'd':
             if (removePhilosopher() == -1)
-                print("Can\'t remove another philosopher. Minimum 5 philosophers.\n");
+                print("Can\'t remove another philosopher. Minimum 2 philosophers.\n");
             else
                 print("One philosopher has left!\n");
             break;

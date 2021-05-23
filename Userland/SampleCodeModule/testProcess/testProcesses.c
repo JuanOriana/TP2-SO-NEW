@@ -1,7 +1,7 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <utils.h>
-#include <test_util.h>
+#include <testUtil.h>
 #include <stringLib.h>
 
 #define MAX_PROCESSES 10 //Should be around 80% of the the processes handled by the kernel
@@ -20,7 +20,7 @@ typedef struct P_rq
     enum State state;
 } p_rq;
 
-void test_processes()
+void testProcesses()
 {
     p_rq p_rqs[MAX_PROCESSES];
     uint8_t rq;

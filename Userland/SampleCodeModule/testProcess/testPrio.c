@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <stringLib.h>
 #include <utils.h>
-#include <test_util.h>
+#include <testUtil.h>
 
 #define LOW_PRIO 1
 #define MED_PRIO 10
@@ -12,7 +12,7 @@
 
 #define TOTAL_PROCESSES 3 // TODO: Long enough to see theese processes beeing run at least twice
 
-void test_prio()
+void testPrio()
 {
     uint64_t pids[TOTAL_PROCESSES];
     uint64_t i;

@@ -6,9 +6,9 @@ SOURCES= $(wildcard *.c)
 SOURCES_ASM=$(wildcard asm/*.asm)
 SOURCES_LIBRARIES=$(wildcard libraries/*.c)
 SOURCES_APPLICATIONS=$(wildcard applications/*.c applications/shell/*.c applications/calculator/*.c)
-SOURCES_TEST_PROC=$(wildcard test_process/*.c)
-SOURCES_TEST_MM=$(wildcard test_memory/*.c)
-SOURCES_TEST_SYNC=$(wildcard test_sync/*.c)
+SOURCES_TEST_PROC=$(wildcard testProcess/*.c)
+SOURCES_TEST_MM=$(wildcard testMemory/*.c)
+SOURCES_TEST_SYNC=$(wildcard testSync/*.c)
 
 
 
@@ -34,6 +34,6 @@ $(MODULE): $(OBJECTS) $(OBJECTS_ASM) $(OBJECTS_LIBRARIES) $(OBJECTS_APPLICATIONS
 	$(ASM) $(ASMFLAGS) $< -o $@
 
 clean:
-	rm -rf *.o applications/*.o applications/calculator/*.o applications/shell/*.o asm/*.o *.bin libraries/*.o test_process/*.o
+	rm -rf *.o applications/*.o applications/calculator/*.o applications/shell/*.o asm/*.o *.bin libraries/*.o testProcess/*.o testMemory/*.o testSync/*.o
 
 .PHONY: all clean print
