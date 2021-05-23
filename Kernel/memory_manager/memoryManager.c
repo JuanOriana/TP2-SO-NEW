@@ -1,5 +1,6 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+#ifdef FREE_LIST
 
 #include "memoryManager.h"
 #include "stringLib.h"
@@ -24,7 +25,7 @@ static Header *startingNode = NULL;
 
 unsigned long totalUnits;
 
-void memInitList(char *memBase, unsigned long memSize)
+void memInit(char *memBase, unsigned long memSize)
 {
       // Initially its all a very large block
       totalUnits = (memSize + sizeof(Header) - 1) / sizeof(Header) + 1;
@@ -34,7 +35,7 @@ void memInitList(char *memBase, unsigned long memSize)
 }
 
 // Ref for malloc/free : The C Programming Language  - K&R
-void *mallocCustList(unsigned long nbytes)
+void *mallocCust(unsigned long nbytes)
 {
       if (nbytes == 0)
             return NULL;
@@ -64,7 +65,7 @@ void *mallocCustList(unsigned long nbytes)
       }
 }
 
-void freeCustList(void *freeMem)
+void freeCust(void *freeMem)
 {
       if (freeMem == NULL || (((long)freeMem - (long)base) % sizeof(Header)) != 0)
             return;
@@ -112,7 +113,7 @@ void freeCustList(void *freeMem)
       startingNode = currNode;
 }
 
-void dumpMMList()
+void dumpMM()
 {
       long long idx = 1;
       Header *original, *current;
@@ -139,3 +140,5 @@ void dumpMMList()
       }
       print("\n\n");
 }
+
+#endif
