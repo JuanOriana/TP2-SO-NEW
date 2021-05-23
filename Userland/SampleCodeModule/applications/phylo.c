@@ -1,6 +1,5 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
-#include <phylo.h>
 #include <systemCalls.h>
 #include <processes.h>
 #include <semLib.h>
@@ -57,10 +56,8 @@ void philo(int argc, char *argv[])
     while (problemRunning)
     {
         int idx = getMyIdx(getPID());
-        print("philo %d\n",idx);
         sleep(1);
         takeForks(idx);
-         print("philo %d eatin\n",idx);
         sleep(1);
         placeForks(idx);
     }
@@ -174,28 +171,15 @@ int removePhilosopher()
     {
         return -1;
     }
-    sWait(tableMutex);
 
-    int chosenPhiloIdx;
-    //Evitar esta espera activa?
-    do
-        chosenPhiloIdx = getRemovablePhilo();
-    while (chosenPhiloIdx == -1);
-    print("El elegido tiene idx : %d\n", chosenPhiloIdx);
-
-    Philosopher *chosenPhilo = philos[chosenPhiloIdx];
     actualPhilosopherCount--;
-    if (chosenPhiloIdx != actualPhilosopherCount)
-    {
-        Philosopher *lastPhilo = philos[actualPhilosopherCount];
-        philos[chosenPhiloIdx] = lastPhilo;
-        lastPhilo->idx = chosenPhiloIdx;
-    }
-    philos[actualPhilosopherCount] = 0;
+    Philosopher *chosenPhilo = philos[actualPhilosopherCount];
+
     sClose(chosenPhilo->sem);
     killProcess(chosenPhilo->pid);
     freeCust(chosenPhilo);
     sPost(tableMutex);
+
     return 0;
 }
 
