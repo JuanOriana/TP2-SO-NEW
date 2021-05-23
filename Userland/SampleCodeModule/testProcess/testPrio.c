@@ -8,7 +8,7 @@
 
 #define LOW_PRIO 1
 #define MED_PRIO 10
-#define HIGH_PRIO 20
+#define HIGH_PRIO 40
 
 #define TOTAL_PROCESSES 3 // TODO: Long enough to see theese processes beeing run at least twice
 
@@ -25,24 +25,11 @@ void testPrio()
         pids[i] = createProcess(&endlessLoop, 1, argv, BG, NULL);
     }
 
-    busyWait(5 * MAJOR_WAIT);
-
     print("\nCHANGING PRIORITIES...\n");
 
-    for (i = 0; i < TOTAL_PROCESSES; i++)
-    {
-        switch (i % 3)
-        {
-        case 0:
-            nice(pids[i], LOW_PRIO);
-        case 1:
-            nice(pids[i], MED_PRIO);
-            break;
-        case 2:
-            nice(pids[i], HIGH_PRIO);
-            break;
-        }
-    }
+    nice(pids[0], LOW_PRIO);
+    nice(pids[1], MED_PRIO);
+    nice(pids[2], HIGH_PRIO);
 
     busyWait(3 * MAJOR_WAIT);
 
@@ -50,7 +37,6 @@ void testPrio()
 
     for (i = 0; i < TOTAL_PROCESSES; i++)
         blockProcess(pids[i]);
-
 
     print("CHANGING PRIORITIES WHILE BLOCKED...\n");
     for (i = 0; i < TOTAL_PROCESSES; i++)
