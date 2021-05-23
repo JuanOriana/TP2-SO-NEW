@@ -4,7 +4,7 @@ Construccion de sistema operativo y estructura y herramientas de manejo de recur
 
 ## Installation
 
-Ingrese al directorio Toolchain y ejecute el siguiente comando:*
+Ingrese al directorio Toolchain y ejecute el siguiente comando:
 ```bash
 make all
 ```
