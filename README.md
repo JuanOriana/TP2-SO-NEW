@@ -9,7 +9,7 @@ Ingrese al directorio Toolchain y ejecute el siguiente comando:
 make all
 ```
 
-Luego regrese al direcotiro principal y ejecute el siguiente comando:
+Luego regrese al directorio principal y ejecute el siguiente comando:
 ```bash
 make MM=<MMTYPE> all
 ```
