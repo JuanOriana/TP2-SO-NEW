@@ -7,7 +7,7 @@
 #include <testUtil.h>
 
 #define LOW_PRIO 1
-#define MED_PRIO 10
+#define MED_PRIO 20
 #define HIGH_PRIO 40
 
 #define TOTAL_PROCESSES 3 // TODO: Long enough to see theese processes beeing run at least twice
@@ -31,7 +31,6 @@ void testPrio()
     nice(pids[1], MED_PRIO);
     nice(pids[2], HIGH_PRIO);
 
-    busyWait(3 * MAJOR_WAIT);
     busyWait(3 * MAJOR_WAIT);
 
     print("\nBLOCKING...\n");

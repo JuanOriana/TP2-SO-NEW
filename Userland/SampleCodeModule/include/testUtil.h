@@ -3,7 +3,7 @@
 #include <utils.h>
 #include <processes.h>
 
-#define MINOR_WAIT 100000
+#define MINOR_WAIT 1000000
 #define MAJOR_WAIT 10000000
 
 uint32_t GetUint();
