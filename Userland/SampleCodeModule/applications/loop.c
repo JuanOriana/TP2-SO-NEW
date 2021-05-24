@@ -8,7 +8,7 @@ void loop(int argc, char **args)
 {
     if (argc != 1)
     {
-        printString("Invalid ammount of arguments.\n");
+        print("Invalid ammount of arguments.\n");
         return;
     }
 
@@ -17,7 +17,6 @@ void loop(int argc, char **args)
     while (1)
     {
         waitCycles(10);
-        printInt(pid);
-        printString("\n");
+        print("%d\n", pid);
     }
 }
