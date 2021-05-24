@@ -72,7 +72,7 @@ void deletechar()
 void strcopy(char *str1, char *str2)
 { //copies str1 into str2
 
-      if (strlen(str1) < (sizeof str2) )
+      if (strlen(str1) < (sizeof str2))
       {
             int i;
             for (i = 0; str1[i] != 0; i++)
@@ -83,7 +83,8 @@ void strcopy(char *str1, char *str2)
       }
 }
 
-int print(char const *fmt, ...) {
+int print(char const *fmt, ...)
+{
       va_list arg;
       int length;
 
@@ -93,7 +94,8 @@ int print(char const *fmt, ...) {
       return length;
 }
 
-static int scan(char const *fmt, va_list arg) {
+static int scan(char const *fmt, va_list arg)
+{
       int int_temp;
       char char_temp;
       char *string_temp;
@@ -103,47 +105,52 @@ static int scan(char const *fmt, va_list arg) {
 
       char buffer[512];
 
-      while ((ch = *fmt++)) {
-            if ('%' == ch) {
-                  switch (ch = *fmt++) {
-                        /* %% - print out a single %    */
-                        case '%':
-                              putchar('%');
-                              length++;
-                              break;
+      while ((ch = *fmt++))
+      {
+            if ('%' == ch)
+            {
+                  switch (ch = *fmt++)
+                  {
+                  /* %% - print out a single %    */
+                  case '%':
+                        putchar('%');
+                        length++;
+                        break;
 
-                        /* %c: print out a character    */
-                        case 'c':
-                              char_temp = va_arg(arg, int);
-                              putchar(char_temp);
-                              length++;
-                              break;
+                  /* %c: print out a character    */
+                  case 'c':
+                        char_temp = va_arg(arg, int);
+                        putchar(char_temp);
+                        length++;
+                        break;
 
-                        /* %s: print out a string       */
-                        case 's':
-                              string_temp = va_arg(arg, char *);
-                              printString(string_temp);
-                              length += strlen(string_temp);
-                              break;
+                  /* %s: print out a string       */
+                  case 's':
+                        string_temp = va_arg(arg, char *);
+                        printString(string_temp);
+                        length += strlen(string_temp);
+                        break;
 
-                        /* %d: print out an int         */
-                        case 'd':
-                              int_temp = va_arg(arg, int);
-                              itoa(int_temp, buffer, 10);
-                              printString(buffer);
-                              length += strlen(buffer);
-                              break;
+                  /* %d: print out an int         */
+                  case 'd':
+                        int_temp = va_arg(arg, int);
+                        itoa(int_temp, buffer, 10);
+                        printString(buffer);
+                        length += strlen(buffer);
+                        break;
 
-                        /* %x: print out an int in hex  */
-                        case 'x':
-                              int_temp = va_arg(arg, int);
-                              itoa(int_temp, buffer, 16);
-                              printString("0x");
-                              printString(buffer);
-                              length += strlen(buffer);
-                              break;
+                  /* %x: print out an int in hex  */
+                  case 'x':
+                        int_temp = va_arg(arg, int);
+                        itoa(int_temp, buffer, 16);
+                        printString("0x");
+                        printString(buffer);
+                        length += strlen(buffer);
+                        break;
                   }
-            } else {
+            }
+            else
+            {
                   putchar(ch);
                   length++;
             }

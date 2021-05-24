@@ -25,15 +25,14 @@ void testProcesses()
     uint8_t rq;
     uint8_t alive = 0;
     uint8_t action;
-    char buffer[3];
 
     while (1)
     {
         //Create MAX_PROCESSES processes
         for (rq = 0; rq < MAX_PROCESSES; rq++)
         {
-            char *argv[] = {"endlessLoop", itoa(rq,buffer,DECIMAL_BASE)};
-            p_rqs[rq].pid = createProcess(&endlessLoop, 2, argv,  BG, NULL);
+            char *argv[] = {"endlessLoop"};
+            p_rqs[rq].pid = createProcess(&endlessLoop, 1, argv, BG, NULL);
 
             if (p_rqs[rq].pid == -1)
             {

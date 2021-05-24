@@ -367,7 +367,7 @@ void strToDouble(char *numStr, int *error, double *result)
       *result += strToInt(integerPart);
       if (numStr[i] == '.')
       {
-             double commaOffset = 0;
+            double commaOffset = 0;
             i++;
             for (; numStr[i] != 0; i++, commaOffset++)
             {
@@ -553,7 +553,6 @@ uint64_t getSecondsElapsed()
 {
       return syscall(SECONDS_ELAPSED, 0, 0, 0, 0, 0, 0);
 }
-
 
 void sleep(unsigned int seconds)
 {

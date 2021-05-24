@@ -5,14 +5,17 @@
 
 static unsigned long ticks = 0;
 
-void timerHandler() {
+void timerHandler()
+{
       ticks++;
 }
 
-int ticksElapsed() {
+int ticksElapsed()
+{
       return ticks;
 }
 
-int secondsElapsed() {
-	return ticks / 18;
+int secondsElapsed()
+{
+      return ticks / 18;
 }

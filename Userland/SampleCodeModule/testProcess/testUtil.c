@@ -40,10 +40,11 @@ void busyWait(uint64_t n)
 
 void endlessLoop(int argc, char *argv[])
 {
+  int pid = getPID();
 
   while (1)
   {
-    print("%s ", argv[1]);
+    print("%d ", pid);
     busyWait(MINOR_WAIT);
   }
 }

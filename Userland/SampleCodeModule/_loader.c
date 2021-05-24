@@ -8,20 +8,21 @@ extern char endOfBinary;
 
 int main();
 
-void * memset(void * destiny, int32_t c, uint64_t length);
+void *memset(void *destiny, int32_t c, uint64_t length);
 
-int _start() {
+int _start()
+{
 	//Clean BSS
 	memset(&bss, 0, &endOfBinary - &bss);
 	return main();
 }
 
-
-void * memset(void * destination, int32_t c, uint64_t length) {
+void *memset(void *destination, int32_t c, uint64_t length)
+{
 	uint8_t chr = (uint8_t)c;
-	char * dst = (char*)destination;
+	char *dst = (char *)destination;
 
-	while(length--)
+	while (length--)
 		dst[length] = chr;
 
 	return destination;
