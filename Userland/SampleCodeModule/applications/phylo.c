@@ -92,6 +92,8 @@ void philosopherProblem(int argc, char *argv[])
     print("You can add them with \'a\', delete them with \'d\' and exit the problem with \'q\'.\n");
     print("The state of each will be displayed as E (Eating) or . (HUNGRY)\n\n");
 
+    sleep(5);
+
     for (int i = 0; i < BASE_PHILOS; i++)
         addPhilosopher();
     char *args[] = {"PrintTable"};
@@ -162,7 +164,7 @@ int removePhilosopher()
     while (1)
     {
         sWait(tableMutex);
-        //CHECK
+        //Last philo is going to have to wait until he is safe to leave
         if (philos[LEFT(actualPhilosopherCount - 1)]->state == THINKING ||
             philos[RIGHT(actualPhilosopherCount - 1)]->state == THINKING)
             break;
