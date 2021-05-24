@@ -82,27 +82,27 @@ void *mallocCust(unsigned long nbytes)
     return (void *)(retNode + 1);
 }
 
-void freeCust(void *ap)
+void freeCust(void *freePointer)
 {
-    if (ap == NULL)
+    if (freePointer == NULL)
         return;
 
-    List *listPtr = (List *)ap - 1;
+    List *listPtr = (List *)freePointer - 1;
 
-    listPtr->free = 1;
+    freeNode->free = 1;
 
-    List *buddy = findBuddy(listPtr);
+    List *buddy = findBuddy(freeNode);
 
     //If i can join buddys, do so
-    while (listPtr->level != levels - 1 && buddy->level == listPtr->level && buddy->free)
+    while (freeNode->level != levels - 1 && buddy->level == freeNode->level && buddy->free)
     {
         listRemove(buddy);
-        listPtr = getAddress(listPtr);
-        listPtr->level++;
-        buddy = findBuddy(listPtr);
+        freeNode = getAddress(freeNode);
+        freeNode->level++;
+        buddy = findBuddy(freeNode);
     }
 
-    listPush(&levelsList[listPtr->level], listPtr);
+    listPush(&levelsList[freeNode->level], freeNode);
 }
 
 static void printBlock(List *block, int idx)
@@ -113,7 +113,7 @@ static void printBlock(List *block, int idx)
 
 void dumpMM()
 {
-    List *p, *aux;
+    List *list, *aux;
     uint32_t index = 0;
     uint32_t availableSpace = 0;
 
@@ -123,13 +123,13 @@ void dumpMM()
     print("-------------------------------\n");
     for (int i = levels - 1; i >= 0; i--)
     {
-        p = &levelsList[i];
-        if (!isEmpty(p))
+        list = &levelsList[i];
+        if (!isEmpty(list))
         {
             print("    Level: %d\n", i + MIN_ALLOC_LOG_2);
             print("    Free blocks of size: 2^%d\n", i + MIN_ALLOC_LOG_2);
 
-            for (aux = p->next, index = 1; aux != p; index++, aux = aux->next)
+            for (aux = list->next, index = 1; aux != list; index++, aux = aux->next)
             {
                 if (aux->free)
                 {
@@ -147,18 +147,18 @@ void dumpMM()
 
 static uint8_t findIdealLevel(uint32_t bytes)
 {
-    uint8_t aux = log2(bytes);
+    uint8_t bytesToLog = log2(bytes);
 
     //If smaller than min, then put it in the min
-    if (aux < MIN_ALLOC_LOG_2)
+    if (bytesToLog < MIN_ALLOC_LOG_2)
         return 0;
 
-    aux -= MIN_ALLOC_LOG_2;
+    bytesToLog -= MIN_ALLOC_LOG_2;
 
     if (bytes && !(bytes & (bytes - 1))) //Perfect fit aux, else aux + 1
-        return aux;
+        return bytesToLog;
 
-    return aux + 1;
+    return bytesToLog + 1;
 }
 
 static int getFirstAvailableLevel(uint8_t minLevel)

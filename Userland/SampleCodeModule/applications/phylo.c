@@ -88,9 +88,11 @@ void philosopherProblem(int argc, char *argv[])
     problemRunning = 1;
     tableMutex = sOpen(MUTEX_ID, 1);
     print("Welcome to the Philosophers Problem!\n");
-    print("You start with 2 philosophers and have a maximum of 10 philosophers.\n");
+    print("You start with 2 philosophers and have a maximum of 6 philosophers.\n");
     print("You can add them with \'a\', delete them with \'d\' and exit the problem with \'q\'.\n");
     print("The state of each will be displayed as E (Eating) or . (HUNGRY)\n\n");
+
+    print("Waiting for phylos...\n\n");
 
     sleep(5);
 
@@ -106,7 +108,7 @@ void philosopherProblem(int argc, char *argv[])
         {
         case 'a':
             if (addPhilosopher() == -1)
-                print("Can\'t add another philosopher. Maximum 10 philosophers.\n");
+                print("Can\'t add another philosopher. Maximum 6 philosophers.\n");
             else
                 print("A new philosopher joined!\n");
             break;
