@@ -9,7 +9,7 @@
 #include <phylo.h>
 //Tanenbaum's based implementation
 
-#define MAX_PHILOS 6
+#define MAX_PHILOS 10
 #define BASE_PHILOS 2
 #define MUTEX_ID 999
 #define BASE_SEM_ID 1000
@@ -88,11 +88,10 @@ void philosopherProblem(int argc, char *argv[])
     problemRunning = 1;
     tableMutex = sOpen(MUTEX_ID, 1);
     print("Welcome to the Philosophers Problem!\n");
-    print("You start with 2 philosophers and have a maximum of 6 philosophers.\n");
+    print("You start with 2 philosophers and have a maximum of 10 philosophers.\n");
     print("You can add them with \'a\', delete them with \'d\' and exit the problem with \'q\'.\n");
     print("The state of each will be displayed as E (Eating) or . (HUNGRY)\n\n");
 
-    print("Waking up the philosophers...\n\n");
     sleep(5);
 
     for (int i = 0; i < BASE_PHILOS; i++)
@@ -107,7 +106,7 @@ void philosopherProblem(int argc, char *argv[])
         {
         case 'a':
             if (addPhilosopher() == -1)
-                print("Can\'t add another philosopher. Maximum 6 philosophers.\n");
+                print("Can\'t add another philosopher. Maximum 10 philosophers.\n");
             else
                 print("A new philosopher joined!\n");
             break;
@@ -161,15 +160,6 @@ int removePhilosopher()
     if (actualPhilosopherCount == BASE_PHILOS)
     {
         return -1;
-    }
-    while (1)
-    {
-        sWait(tableMutex);
-        //Last philo is going to have to wait until he is safe to leave
-        if (philos[LEFT(actualPhilosopherCount - 1)]->state == THINKING ||
-            philos[RIGHT(actualPhilosopherCount - 1)]->state == THINKING)
-            break;
-        sPost(tableMutex);
     }
 
     actualPhilosopherCount--;
