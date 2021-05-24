@@ -14,13 +14,11 @@ void testPrio()
 {
     uint64_t pids[TOTAL_PROCESSES];
     uint64_t i;
-
-    
     char buffer[3];
 
     for (i = 0; i < TOTAL_PROCESSES; i++)
     {
-        char *argv[] = {"endlessLoop",itoa(i,buffer,DECIMAL_BASE)};
+        char *argv[] = {"endlessLoop", itoa(i, buffer, DECIMAL_BASE)};
         pids[i] = createProcess(&endlessLoop, 2, argv, BG, NULL);
     }
 

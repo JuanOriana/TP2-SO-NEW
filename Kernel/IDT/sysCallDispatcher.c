@@ -49,7 +49,7 @@
 
 uint64_t sysCallDispatcher(t_registers *r)
 {
-      if (r->rax >= 0 && r->rax < SYSCALLS_QTY)
+      if (r->rax < SYSCALLS_QTY)
       {
             switch (r->rax)
             {

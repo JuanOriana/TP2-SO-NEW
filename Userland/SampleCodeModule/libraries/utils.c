@@ -352,7 +352,6 @@ void strToDouble(char *numStr, int *error, double *result)
 {
       *result = 0;
       int i = 0, k, sign = 0;
-      double commaOffset = 0;
       char integerPart[BUFFER_SIZE] = {0};
 
       if (numStr[i] == '-')
@@ -368,6 +367,7 @@ void strToDouble(char *numStr, int *error, double *result)
       *result += strToInt(integerPart);
       if (numStr[i] == '.')
       {
+             double commaOffset = 0;
             i++;
             for (; numStr[i] != 0; i++, commaOffset++)
             {

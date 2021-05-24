@@ -4,9 +4,9 @@
 
 #define MAX_BLOCKS 128
 #ifdef FREE_LIST
-#define MAX_MEMORY 96 * 1024 * 1024 //Should be around 80% of memory managed by the MM
+#define MAX_MEMORY (96 * 1024 * 1024) //Should be around 80% of memory managed by the MM
 #else
-#define MAX_MEMORY 32 * 1024 * 1024
+#define MAX_MEMORY (32 * 1024 * 1024)
 #endif
 
 typedef struct MM_rq
@@ -18,15 +18,13 @@ typedef struct MM_rq
 void testMem(int argc, char *argv[])
 {
   mm_rq mm_rqs[MAX_BLOCKS];
-  uint8_t rq;
-  uint32_t total;
 
   print("Memory test begins:\n");
 
   while (1)
   {
-    rq = 0;
-    total = 0;
+    uint8_t rq = 0;
+    uint32_t total = 0;
 
     // Request as many blocks as we can
     while (rq < MAX_BLOCKS && total < MAX_MEMORY)
