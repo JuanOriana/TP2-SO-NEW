@@ -246,7 +246,6 @@ static int runPipe(int pipeIndex, char **argv, int argc, int fg)
 {
       char *currentArgv[MAX_ARGS];
       int currentArgc = 0;
-      int fd[2];
       uint32_t pids[2];
 
       int pipe = pOpen(shellPipeId++);

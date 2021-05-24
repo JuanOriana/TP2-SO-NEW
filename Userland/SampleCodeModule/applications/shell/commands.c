@@ -204,14 +204,6 @@ void mem(int argc, char **args)
       syscall(DUMP_MM, 0, 0, 0, 0, 0, 0);
 }
 
-void loopCommand(int argc, char **args)
-{
-
-      char *argv[] = {"Loop"};
-      createProcess(&loop, 1, argv,  BG, NULL);
-      return;
-}
-
 void testPriority(int argc, char **args)
 {
       testPrio();
