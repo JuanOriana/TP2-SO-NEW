@@ -32,6 +32,7 @@ void testPrio()
     nice(pids[2], HIGH_PRIO);
 
     busyWait(3 * MAJOR_WAIT);
+    busyWait(3 * MAJOR_WAIT);
 
     print("\nBLOCKING...\n");
 
