@@ -8,12 +8,13 @@
 #define MED_PRIO 20
 #define HIGH_PRIO 40
 
-#define TOTAL_PROCESSES 3 // TODO: Long enough to see theese processes beeing run at least twice
+#define TOTAL_PROCESSES 3
 
 void testPrio()
 {
     uint64_t pids[TOTAL_PROCESSES];
     uint64_t i;
+
     char buffer[3];
 
     for (i = 0; i < TOTAL_PROCESSES; i++)
