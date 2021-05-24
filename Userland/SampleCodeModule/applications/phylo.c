@@ -146,7 +146,7 @@ int addPhilosopher()
     auxPhilo->state = THINKING;
     auxPhilo->sem = sOpen(BASE_SEM_ID + actualPhilosopherCount, 1);
     char buffer[3];
-    char *name[] = {"philosopher", itoa(actualPhilosopherCount,buffer,DECIMAL_BASE)};
+    char *name[] = {"philosopher", itoa(actualPhilosopherCount, buffer, DECIMAL_BASE)};
     auxPhilo->pid = createProcess(&philo, 2, name, BG, NULL);
     philos[actualPhilosopherCount++] = auxPhilo;
     sPost(tableMutex);
@@ -159,7 +159,16 @@ int removePhilosopher()
     {
         return -1;
     }
-    sWait(tableMutex);
+    while (1)
+    {
+        sWait(tableMutex);
+        //CHECK
+        if (philos[LEFT(actualPhilosopherCount - 1)]->state == THINKING ||
+            philos[RIGHT(actualPhilosopherCount - 1)]->state == THINKING)
+            break;
+        sPost(tableMutex);
+    }
+
     actualPhilosopherCount--;
     Philosopher *chosenPhilo = philos[actualPhilosopherCount];
     sClose(chosenPhilo->sem);
