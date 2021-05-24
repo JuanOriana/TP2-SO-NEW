@@ -4,7 +4,7 @@
 
 #define MAX_BLOCKS 128
 #ifdef FREE_LIST
-#define MAX_MEMORY 96 * 1024 * 1024 //Should be around 80% of memory managed by the MM
+#define MAX_MEMORY 96 * 1024 * 1024
 #else
 #define MAX_MEMORY 32 * 1024 * 1024
 #endif
@@ -32,7 +32,7 @@ void testMem(int argc, char *argv[])
     while (rq < MAX_BLOCKS && total < MAX_MEMORY)
     {
       mm_rqs[rq].size = GetUniform(MAX_MEMORY - total - 1) + 1;
-      mm_rqs[rq].address = (void *)mallocCust(mm_rqs[rq].size); // TODO: Port this call as required
+      mm_rqs[rq].address = (void *)mallocCust(mm_rqs[rq].size);
       if (mm_rqs[rq].address == NULL)
       {
         print("No memory!\n");
@@ -46,17 +46,17 @@ void testMem(int argc, char *argv[])
     uint32_t i;
     for (i = 0; i < rq; i++)
       if (mm_rqs[i].address != NULL)
-        memoryset(mm_rqs[i].address, i, mm_rqs[i].size); // TODO: Port this call as required
+        memoryset(mm_rqs[i].address, i, mm_rqs[i].size);
 
     // Check
     for (i = 0; i < rq; i++)
       if (mm_rqs[i].address != NULL)
         if (!memcheck(mm_rqs[i].address, i, mm_rqs[i].size))
-          printStringLn("ERROR!"); // TODO: Port this call as required
+          printStringLn("ERROR!");
 
     // Free
     for (i = 0; i < rq; i++)
       if (mm_rqs[i].address != NULL)
-        freeCust(mm_rqs[i].address); // TODO: Port this call as required
+        freeCust(mm_rqs[i].address);
   }
 }
