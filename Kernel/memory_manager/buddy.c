@@ -87,7 +87,7 @@ void freeCust(void *freePointer)
     if (freePointer == NULL)
         return;
 
-    List *listPtr = (List *)freePointer - 1;
+    List *freeNode = (List *)freePointer - 1;
 
     freeNode->free = 1;
 
