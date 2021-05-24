@@ -3,7 +3,11 @@
 #include <testMem.h>
 
 #define MAX_BLOCKS 128
-#define MAX_MEMORY 32 * 1024 * 1024 //Should be around 80% of memory managed by the MM
+#ifdef FREE_LIST
+#define MAX_MEMORY 96 * 1024 * 1024 //Should be around 80% of memory managed by the MM
+#else
+#define MAX_MEMORY 32 * 1024 * 1024
+#endif
 
 typedef struct MM_rq
 {
@@ -31,7 +35,7 @@ void testMem(int argc, char *argv[])
       mm_rqs[rq].address = (void *)mallocCust(mm_rqs[rq].size); // TODO: Port this call as required
       if (mm_rqs[rq].address == NULL)
       {
-        print("No memory!");
+        print("No memory!\n");
         return;
       }
       total += mm_rqs[rq].size;
