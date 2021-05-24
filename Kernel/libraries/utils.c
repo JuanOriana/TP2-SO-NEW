@@ -157,7 +157,7 @@ char *strtok(char *string, char *result, const char delim)
             }
             for (; currentIndex < BUFFER_SIZE && ogString[currentIndex] != 0 && ogString[currentIndex] == delim; currentIndex++)
                   ;
-            for (int i = 0; currentIndex < BUFFER_SIZE &&ogString[currentIndex] != 0 && ogString[currentIndex] != delim  ; currentIndex++, i++)
+            for (int i = 0; currentIndex < BUFFER_SIZE && ogString[currentIndex] != 0 && ogString[currentIndex] != delim; currentIndex++, i++)
             {
                   result[i] = string[currentIndex];
             }
@@ -239,20 +239,23 @@ int strlen(char *str)
       return size;
 }
 
-static void swap(char *x, char *y) {
+static void swap(char *x, char *y)
+{
       char t = *x;
       *x = *y;
       *y = t;
 }
 
-static char *reverse(char *buffer, int i, int j) {
+static char *reverse(char *buffer, int i, int j)
+{
       while (i < j)
             swap(&buffer[i++], &buffer[j--]);
 
       return buffer;
 }
 
-char *itoa(int value, char *buffer, int base) {
+char *itoa(int value, char *buffer, int base)
+{
       // invalid input
       if (base < 2 || base > 32)
             return buffer;
@@ -261,7 +264,8 @@ char *itoa(int value, char *buffer, int base) {
       int n = ABS(value);
 
       int i = 0;
-      while (n) {
+      while (n)
+      {
             int r = n % base;
 
             if (r >= 10)
@@ -282,20 +286,20 @@ char *itoa(int value, char *buffer, int base) {
       if (value < 0 && base == 10)
             buffer[i++] = '-';
 
-      buffer[i] = '\0';  // null terminate string
+      buffer[i] = '\0'; // null terminate string
 
       // reverse the string and return it
       return reverse(buffer, 0, i - 1);
 }
 
-int log2(uint32_t n) 
+int log2(uint32_t n)
 {
-      if (n == 0) 
+      if (n == 0)
       {
             return -1;
       }
       int ans = -1;
-      while (n) 
+      while (n)
       {
             ans++;
             n >>= 1;
