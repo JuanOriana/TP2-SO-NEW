@@ -12,6 +12,7 @@
 #define MAX_PHILOS 10
 #define BASE_PHILOS 2
 #define MUTEX_ID 999
+#define BASE_SEM_ID 1000
 
 typedef enum
 {
@@ -31,32 +32,27 @@ Philosopher *philos[MAX_PHILOS];
 static int actualPhilosopherCount = 0;
 static int tableMutex;
 static int problemRunning;
-static int semId = 1000;
 
 #define RIGHT(i) ((i) + 1) % (actualPhilosopherCount)                         /* number of i’s right neighbor */
 #define LEFT(i) ((i) + actualPhilosopherCount - 1) % (actualPhilosopherCount) /* number of i’s left neighbor */
 
-int getMyIdx(int pid)
-{
-
-    for (int i = 0; i < actualPhilosopherCount; i++)
-    {
-        if (philos[i]->pid == pid)
-            return i;
-    }
-    return -1;
-}
+void philo(int argc, char *argv[]);
+void takeForks(int i);
+void placeForks(int i);
+void test(int i);
+int addPhilosopher();
+int removePhilosopher();
+void printTable();
 
 void philo(int argc, char *argv[])
 {
-    int myPid = getPID();
+    int idx = strToInt(argv[1]);
     while (problemRunning)
     {
-        int idx = getMyIdx(myPid);
         takeForks(idx);
-           sleep(1);
+        sleep(1);
         placeForks(idx);
-           sleep(1);
+        sleep(1);
     }
 }
 
@@ -92,14 +88,14 @@ void philosopherProblem(int argc, char *argv[])
     problemRunning = 1;
     tableMutex = sOpen(MUTEX_ID, 1);
     print("Welcome to the Philosophers Problem!\n");
-    print("You start with 2 philosophers, and have maximum of 10 philosophers.\n");
+    print("You start with 2 philosophers and have a maximum of 10 philosophers.\n");
     print("You can add them with \'a\', delete them with \'d\' and exit the problem with \'q\'.\n");
     print("The state of each will be displayed as E (Eating) or . (HUNGRY)\n\n");
 
     for (int i = 0; i < BASE_PHILOS; i++)
         addPhilosopher();
     char *args[] = {"PrintTable"};
-    int printTablePid = createProcess(&printTable, 1, args,  BG, NULL);
+    int printTablePid = createProcess(&printTable, 1, args, BG, NULL);
     while (problemRunning)
     {
 
@@ -134,25 +130,24 @@ void philosopherProblem(int argc, char *argv[])
         freeCust(philos[i]);
     }
     actualPhilosopherCount = 0;
-    semId = 1000;
     killProcess(printTablePid);
     sClose(MUTEX_ID);
 }
 
 int addPhilosopher()
 {
-    if (actualPhilosopherCount + 1 > MAX_PHILOS)
+    if (actualPhilosopherCount == MAX_PHILOS)
         return -1;
 
     sWait(tableMutex);
     Philosopher *auxPhilo = mallocCust(sizeof(Philosopher));
     if (auxPhilo == NULL)
         return -1;
-
     auxPhilo->state = THINKING;
-    auxPhilo->sem = sOpen(semId++, 1);
-    char *name[] = {"philo"};
-    auxPhilo->pid = createProcess(&philo, 1, name,  BG, NULL);
+    auxPhilo->sem = sOpen(BASE_SEM_ID + actualPhilosopherCount, 1);
+    char buffer[3];
+    char *name[] = {"philosopher", itoa(actualPhilosopherCount,buffer,DECIMAL_BASE)};
+    auxPhilo->pid = createProcess(&philo, 2, name, BG, NULL);
     philos[actualPhilosopherCount++] = auxPhilo;
     sPost(tableMutex);
     return 0;
@@ -167,7 +162,6 @@ int removePhilosopher()
     sWait(tableMutex);
     actualPhilosopherCount--;
     Philosopher *chosenPhilo = philos[actualPhilosopherCount];
-
     sClose(chosenPhilo->sem);
     killProcess(chosenPhilo->pid);
     freeCust(chosenPhilo);
@@ -189,6 +183,5 @@ void printTable(int argc, char *argv[])
         putchar('\n');
         sPost(tableMutex);
         yield();
-        
     }
 }

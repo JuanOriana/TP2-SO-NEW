@@ -1,8 +1,6 @@
-void philo(int argc, char *argv[]);
-void takeForks(int i);
-void placeForks(int i);
-void test(int i);
-int addPhilosopher();
-int removePhilosopher();
-void printTable();
+#ifndef PHYLO_H
+#define PHYLO_H
+
 void philosopherProblem(int argc, char *argv[]);
+
+#endif
