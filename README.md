@@ -1,8 +1,8 @@
 # TP2 - OS
 
-Construccion de sistema operativo y estructura y herramientas de manejo de recursos.
+Construcción de sistema operativo y estructura y herramientas de manejo de recursos.
 
-## Installation
+## Compilación y ejecución
 
 Ingrese al directorio Toolchain y ejecute el siguiente comando:
 ```bash
