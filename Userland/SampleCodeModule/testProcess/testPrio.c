@@ -1,10 +1,8 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
-
+#include <testUtil.h>
 #include <stdint.h>
 #include <stringLib.h>
-#include <utils.h>
-#include <testUtil.h>
 
 #define LOW_PRIO 1
 #define MED_PRIO 20
@@ -17,13 +15,16 @@ void testPrio()
     uint64_t pids[TOTAL_PROCESSES];
     uint64_t i;
 
-    busyWait(3 * MAJOR_WAIT);
+    
+    char buffer[3];
 
     for (i = 0; i < TOTAL_PROCESSES; i++)
     {
-        char *argv[] = {"endlessLoop"};
-        pids[i] = createProcess(&endlessLoop, 1, argv, BG, NULL);
+        char *argv[] = {"endlessLoop",itoa(i,buffer,DECIMAL_BASE)};
+        pids[i] = createProcess(&endlessLoop, 2, argv, BG, NULL);
     }
+
+    busyWait(3 * MAJOR_WAIT);
 
     print("\nCHANGING PRIORITIES...\n");
 
