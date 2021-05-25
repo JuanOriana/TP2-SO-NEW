@@ -70,32 +70,20 @@ void keyboardHandler(uint64_t rsp)
                                     if (l_ctrl)
                                     {
                                           if (pressCodes[scanCode][0] == 'l')
-                                          {
                                                 sendKey(currentBuffer, &clearS);
-                                          }
                                           else if (pressCodes[scanCode][0] == 's')
-                                          {
                                                 updateSnapshot((uint64_t *)rsp);
-                                          }
                                           else if (pressCodes[scanCode][0] == 'c')
-                                          {
                                                 killFgProcess();
-                                          }
                                           else if (pressCodes[scanCode][0] == 'd')
-                                          {
                                                 sendKey(currentBuffer, &EOF);
-                                          }
                                     }
                                     else
                                     {
                                           if (!IS_LETTER(pressCodes[scanCode][0]))
-                                          {
                                                 sendKey(currentBuffer, &pressCodes[scanCode][specialChars]);
-                                          }
                                           else
-                                          {
                                                 sendKey(currentBuffer, &pressCodes[scanCode][ABS(capsLock - (specialChars))]);
-                                          }
                                     }
                               }
                         }

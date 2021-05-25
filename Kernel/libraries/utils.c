@@ -84,17 +84,11 @@ uint64_t strToHex(char *str, int *error)
       for (int i = 0; str[i] != 0; i++)
       {
             if (str[i] >= '0' && str[i] <= '9')
-            {
                   val = str[i] - '0';
-            }
             else if (str[i] >= 'a' && str[i] <= 'f')
-            {
                   val = str[i] - 'a' + 10;
-            }
             else if (str[i] >= 'A' && str[i] <= 'F')
-            {
                   val = str[i] - 'A' + 10;
-            }
             else
             {
                   *error = 1;
@@ -113,9 +107,7 @@ uint64_t pow(uint64_t x, uint64_t y)
             return 1;
 
       for (int i = 1; i < y; i++)
-      {
             x *= x;
-      }
 
       return x;
 }
@@ -138,42 +130,30 @@ char *strtok(char *string, char *result, const char delim)
       {
             currentIndex = 0;
             for (int i = 0; i < BUFFER_SIZE && ogString[i] != 0; i++)
-            {
                   ogString[i] = 0;
-            }
             return 0;
       }
 
       for (int i = 0; i < BUFFER_SIZE && result[i] != 0; i++)
-      {
             result[i] = 0;
-      }
 
       if (string != 0)
       {
             for (int i = 0; i < BUFFER_SIZE && string[i] != 0; i++)
-            {
                   ogString[i] = string[i];
-            }
             for (; currentIndex < BUFFER_SIZE && ogString[currentIndex] != 0 && ogString[currentIndex] == delim; currentIndex++)
                   ;
             for (int i = 0; currentIndex < BUFFER_SIZE && ogString[currentIndex] != 0 && ogString[currentIndex] != delim; currentIndex++, i++)
-            {
                   result[i] = string[currentIndex];
-            }
       }
       else
       {
             if (currentIndex == BUFFER_SIZE || ogString[currentIndex] == 0)
-            {
                   return 0;
-            }
             for (; currentIndex < BUFFER_SIZE && ogString[currentIndex] != 0 && ogString[currentIndex] == delim; currentIndex++)
                   ;
             for (int i = 0; ogString[currentIndex] != 0 && ogString[currentIndex] != delim; currentIndex++, i++)
-            {
                   result[i] = ogString[currentIndex];
-            }
       }
       return result;
 }
@@ -202,40 +182,30 @@ uint8_t stringcmp(char *str1, char *str2)
 {
       int i = 0;
       while (str1[i] != 0 && str2[i] != 0 && str1[i] == str2[i])
-      {
             i++;
-      }
       if (str1[i] == str2[i])
-      {
             return 0;
-      }
       return str1[i] < str2[i] ? -1 : 1;
 }
 
 void cleanBuffer(t_buffer *buffer)
 {
       for (int i = 0; buffer->buffer[i] != 0; i++)
-      {
             buffer->buffer[i] = 0;
-      }
       buffer->index = 0;
 }
 
 void cleanString(char *str)
 {
       for (int i = 0; str[i] != 0; i++)
-      {
             str[i] = 0;
-      }
 }
 
 int strlen(char *str)
 {
       int size = 0;
       for (int i = 0; str[i] != 0; i++)
-      {
             size++;
-      }
       return size;
 }
 
@@ -295,9 +265,7 @@ char *itoa(int value, char *buffer, int base)
 int log2(uint32_t n)
 {
       if (n == 0)
-      {
             return -1;
-      }
       int ans = -1;
       while (n)
       {

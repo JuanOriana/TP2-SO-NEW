@@ -136,9 +136,7 @@ static uint32_t newPipe(uint32_t pipeId)
     int newIdx = getFreePipe();
 
     if (newIdx == -1)
-    {
         return -1;
-    }
 
     Pipe *pipe = &pipesArray.pipes[newIdx];
 
@@ -158,20 +156,16 @@ static uint32_t newPipe(uint32_t pipeId)
 static int getPipeIdx(uint32_t pipeId)
 {
     for (int i = 0; i < PIPE_COUNT; i++)
-    {
         if (pipesArray.pipes[i].state == IN_USE && pipesArray.pipes[i].id == pipeId)
             return i;
-    }
     return -1;
 }
 
 static int getFreePipe()
 {
     for (int i = 0; i < PIPE_COUNT; i++)
-    {
         if (pipesArray.pipes[i].state == EMPTY)
             return i;
-    }
     return -1;
 }
 

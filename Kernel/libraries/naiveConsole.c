@@ -13,7 +13,6 @@ static const uint32_t height = 25;
 void ncPrint(const char *string)
 {
 	int i;
-
 	for (i = 0; string[i] != 0; i++)
 		ncPrintChar(string[i]);
 }

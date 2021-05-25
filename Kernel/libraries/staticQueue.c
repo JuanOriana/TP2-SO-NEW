@@ -55,13 +55,9 @@ void queueRemoveData(t_queue *queue, void *data)
             memcpy(data, (void *)((uint64_t)queue->queue + ((queue->front++) * queue->dataSize)), queue->dataSize);
 
             if (queue->front == queue->dim)
-            {
                   queue->front = 0;
-            }
             queue->size--;
       }
       else
-      {
             memset(data, 0, queue->dataSize);
-      }
 }

@@ -99,13 +99,9 @@ void printCharOnScreen(char c, t_colour bgColour, t_colour fontColour, int advan
             {
                   uint8_t isFont = (charMap[i] >> (CHAR_WIDTH - j - 1)) & 0x01; //-1 para no romper el decalaje, primera vez tengo q decalar 7
                   if (isFont)
-                  {
                         writePixel(x, y, fontColour);
-                  }
                   else
-                  {
                         writePixel(x, y, bgColour);
-                  }
                   x++;
             }
             x = screen.currentX + screen.margin;
@@ -113,9 +109,7 @@ void printCharOnScreen(char c, t_colour bgColour, t_colour fontColour, int advan
       }
 
       if (advance)
-      {
             screen.currentX += CHAR_WIDTH;
-      }
 }
 
 void scrollDownScreen()
@@ -130,12 +124,8 @@ void scrollDownScreen()
 void clearLineOnScreen()
 {
       for (int y = 0; y < CHAR_HEIGHT; y++)
-      {
             for (int x = 0; x < SCREEN_WIDTH; x++)
-            {
                   writePixel(x, screen.currentY + screen.margin + y, screen.defaultBGColour);
-            }
-      }
 }
 
 void removeCharFromScreen()
@@ -143,13 +133,10 @@ void removeCharFromScreen()
       if (screen.currentX == 0)
       {
             if (screen.currentY == 0)
-            {
                   return;
-            }
             screen.currentY -= CHAR_HEIGHT;
             screen.currentX = screen.width;
       }
-
       screen.currentX -= CHAR_WIDTH;
 
       printCharOnScreen(' ', BLACK, WHITE, 0); //remove char
@@ -169,12 +156,8 @@ void changeLineOnScreen()
 void clearScreen()
 {
       for (int y = 0; y < screen.height; y++)
-      {
             for (int x = 0; x < screen.width; x++)
-            {
                   writePixel(x + screen.margin, y + screen.margin, screen.defaultBGColour);
-            }
-      }
       screen.currentX = 0;
       screen.currentY = 0;
 }

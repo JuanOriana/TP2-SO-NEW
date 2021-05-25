@@ -10,38 +10,26 @@ static int scan(char const *fmt, va_list arg);
 void sys_write(char *string, uint8_t length, t_colour bgColour, t_colour fontColour)
 {
       if (length <= 0 || string == 0)
-      {
             return;
-      }
 
       for (int i = 0; i < length && string[i] != 0; i++)
       {
             if (string[i] == '\n')
-            {
                   changeLineOnScreen();
-            }
             else if (string[i] == '\b')
-            {
                   removeCharFromScreen();
-            }
             else
-            {
                   printCharOnScreen(string[i], bgColour, fontColour, 1);
-            }
       }
 }
 
 void sys_staticwrite(char *string, uint8_t length, t_colour bgColour, t_colour fontColour)
 {
       if (length <= 0 || string == 0)
-      {
             return;
-      }
 
       for (int i = 0; i < length && string[i] != 0; i++)
-      {
             printCharOnScreen(string[i], bgColour, fontColour, 0);
-      }
 }
 
 void printString(char *str)
@@ -182,8 +170,6 @@ void strcpy(char *str1, char *str2)
 { //copies str1 into str2
       int i;
       for (i = 0; str1[i] != 0; i++)
-      {
             str2[i] = str1[i];
-      }
       str2[i] = 0;
 }

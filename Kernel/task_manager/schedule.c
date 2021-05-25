@@ -81,7 +81,7 @@ typedef struct ProcessList
 static void setNewSF(void (*entryPoint)(int, char **), int argc, char **argv, void *rbp);
 static int createPCB(PCB *process, char *name, int fg, int *fd);
 static int argsCopy(char **buffer, char **argv, int argc);
-static uint64_t getnewPID();
+static uint64_t getNewPID();
 static void wrapper(void (*entryPoint)(int, char **), int argc, char **argv);
 static void exit();
 static void freeProcess(ProcessNode *process);
@@ -166,12 +166,8 @@ void *scheduler(void *oldRSP)
                   currentProcess = processDequeue();
             }
       }
-
       else
-      {
             currentProcess = idleProcess;
-      }
-
       cyclesLeft = currentProcess->pcb.priority;
       return currentProcess->pcb.rsp;
 }
@@ -192,15 +188,15 @@ int addProcess(void (*entryPoint)(int, char **), int argc, char **argv, int fg, 
             return -1;
       }
 
-      char **argvAux = mallocCust(sizeof(char *) * argc);
-      if (argvAux == 0)
+      char **argvCopy = mallocCust(sizeof(char *) * argc);
+      if (argvCopy == 0)
             return -1;
-      argsCopy(argvAux, argv, argc);
+      argsCopy(argvCopy, argv, argc);
 
       newProcess->pcb.argc = argc;
-      newProcess->pcb.argv = argvAux;
+      newProcess->pcb.argv = argvCopy;
 
-      setNewSF(entryPoint, argc, argvAux, newProcess->pcb.rbp);
+      setNewSF(entryPoint, argc, argvCopy, newProcess->pcb.rbp);
 
       newProcess->state = READY;
       processQueue(newProcess);
@@ -213,7 +209,7 @@ int addProcess(void (*entryPoint)(int, char **), int argc, char **argv, int fg, 
 static int createPCB(PCB *process, char *name, int fg, int *fd)
 {
       strcpy(name, process->name);
-      process->pid = getnewPID();
+      process->pid = getNewPID();
 
       process->ppid = currentProcess == NULL ? 0 : currentProcess->pcb.pid;
       if (fg > 1 || fg < 0)
@@ -261,7 +257,7 @@ static void setNewSF(void (*entryPoint)(int, char **), int argc, char **argv, vo
       frame->base = 0x000;
 }
 
-static uint64_t getnewPID()
+static uint64_t getNewPID()
 {
       return newPIDVal++;
 }
@@ -271,7 +267,6 @@ static void freeProcess(ProcessNode *process)
       for (int i = 0; i < process->pcb.argc; i++)
             freeCust(process->pcb.argv[i]);
       freeCust(process->pcb.argv);
-
       freeCust((void *)((char *)process->pcb.rbp - STACK_SIZE + 1));
       freeCust((void *)process);
 }
@@ -293,15 +288,11 @@ static void wrapper(void (*entryPoint)(int, char **), int argc, char **argv)
 static ProcessNode *getProcessOfPID(uint64_t pid)
 {
       if (currentProcess != NULL && currentProcess->pcb.pid == pid)
-      {
             return currentProcess;
-      }
 
       for (ProcessNode *p = processes->first; p != NULL; p = p->next)
-      {
             if (p->pcb.pid == pid)
                   return p;
-      }
 
       return NULL;
 }
@@ -334,9 +325,8 @@ static uint64_t setNewState(uint64_t pid, State newState)
 uint64_t killProcess(uint64_t pid)
 {
       if (pid <= 2)
-      {
             return -1;
-      }
+
       int aux = setNewState(pid, KILLED);
 
       if (pid == currentProcess->pcb.pid)
@@ -378,10 +368,8 @@ void printProcess(ProcessNode *process)
 {
 
       if (process != NULL)
-      {
             print("%d        %d        %x        %x        %s            %s\n", process->pcb.pid, (int)process->pcb.fg,
                   (uint64_t)process->pcb.rsp, (uint64_t)process->pcb.rbp, stateToStr(process->state), process->pcb.name);
-      }
 }
 
 void processDisplay()
@@ -445,18 +433,14 @@ int currentReadsFrom()
 int currentWritesTo()
 {
       if (currentProcess)
-      {
             return currentProcess->pcb.fd[1];
-      }
       return -1;
 }
 
 int currentProcessFg()
 {
       if (currentProcess)
-      {
             return currentProcess->pcb.fg;
-      }
       return -1;
 }
 
