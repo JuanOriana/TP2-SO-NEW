@@ -86,17 +86,11 @@ uint64_t strToHex(char *str, int *error)
       for (int i = 0; str[i] != 0; i++)
       {
             if (str[i] >= '0' && str[i] <= '9')
-            {
                   val = str[i] - '0';
-            }
             else if (str[i] >= 'a' && str[i] <= 'f')
-            {
                   val = str[i] - 'a' + 10;
-            }
             else if (str[i] >= 'A' && str[i] <= 'F')
-            {
                   val = str[i] - 'A' + 10;
-            }
             else
             {
                   *error = 1;
@@ -115,9 +109,7 @@ uint64_t pow(uint64_t x, uint64_t y)
             return 1;
       int aux = x;
       for (int i = 1; i < y; i++)
-      {
             x *= aux;
-      }
       return x;
 }
 
@@ -142,40 +134,26 @@ char *strtok(char *string, char *result, const char delim)
       {
             currentIndex = 0;
             for (int i = 0; i < BUFFER_SIZE && ogString[i] != 0; i++)
-            {
                   ogString[i] = 0;
-            }
             return 0;
       }
 
       for (int i = 0; i < BUFFER_SIZE && result[i] != 0; i++)
-      {
             result[i] = 0;
-      }
 
       if (string != 0)
-      {
             for (int i = 0; i < BUFFER_SIZE && string[i] != 0; i++)
-            {
                   ogString[i] = string[i];
-            }
-      }
       else
       {
             if (currentIndex == BUFFER_SIZE || ogString[currentIndex] == 0)
-            {
                   return 0;
-            }
             for (; currentIndex < BUFFER_SIZE && ogString[currentIndex] != 0 && ogString[currentIndex] == delim; currentIndex++)
                   ;
             if (currentIndex == BUFFER_SIZE || ogString[currentIndex] == 0)
-            {
                   return 0;
-            }
             for (int i = 0; ogString[currentIndex] != 0 && ogString[currentIndex] != delim; currentIndex++, i++)
-            {
                   result[i] = ogString[currentIndex];
-            }
       }
       return result;
 }
@@ -216,61 +194,34 @@ int64_t strToInt(char *str)
       return number;
 }
 
-// int main(int argc, const char** args) {
-//   if(argc <= 1) return 0;
-
-//   const char* input = args[1];
-//   int total = 0;
-//   int len = strlen(input);
-
-//   for(int i = len-1; i+1 > 0; i--) {
-//     int power = len - i - 1;
-//     total += pow(10, power) * intFromAscii(input[i]);
-//   }
-
-//   if(input[0] == '-') total = total * -1;
-
-//   return total;
-// }
-
 uint8_t stringcmp(char *str1, char *str2)
 {
       int i = 0;
       while (str1[i] != 0 && str2[i] != 0 && str1[i] == str2[i])
-      {
             i++;
-      }
       if (str1[i] == str2[i])
-      {
             return 0;
-      }
       return str1[i] < str2[i] ? -1 : 1;
 }
 
 void cleanBuffer(t_buffer *buffer)
 {
       for (int i = 0; i < BUFFER_SIZE; i++)
-      {
             buffer->buffer[i] = 0;
-      }
       buffer->index = 0;
 }
 
 void cleanString(char *str)
 {
       for (int i = 0; str[i] != 0; i++)
-      {
             str[i] = 0;
-      }
 }
 
 int strlen(char *str)
 {
       int size = 0;
       for (int i = 0; str[i] != 0; i++)
-      {
             size++;
-      }
       return size;
 }
 
@@ -279,14 +230,6 @@ void *memcpy(void *destination, const void *source, uint64_t length)
       /*
 	* memcpy does not support overlapping buffers, so always do it
 	* forwards. (Don't change this without adjusting memmove.)
-	*
-	* For speedy copying, optimize the common case where both pointers
-	* and the length are word-aligned, and copy word-at-a-time instead
-	* of byte-at-a-time. Otherwise, copy by bytes.
-	*
-	* The alignment logic below should be portable. We rely on
-	* the compiler to be reasonably intelligent about optimizing
-	* the divides and modulos out. Fortunately, it is.
 	*/
       uint64_t i;
 
@@ -316,34 +259,20 @@ int isNum(char *str)
 {
       int index = 0;
       if (str[index] == '.')
-      {
             return 0;
-      }
       if (str[index] == '-')
-      {
             index++;
-      }
       if (!IS_DIGIT(str[index]))
-      {
             return 0;
-      }
       for (; str[index] != 0 && str[index] != '.'; index++)
-      {
             if (!IS_DIGIT(str[index]))
-            {
                   return 0;
-            }
-      }
       if (str[index] == '.')
       {
             index++;
             for (; str[index] != 0; index++)
-            {
                   if (!IS_DIGIT(str[index]))
-                  {
                         return 0;
-                  }
-            }
       }
       return 1;
 }
@@ -361,9 +290,7 @@ void strToDouble(char *numStr, int *error, double *result)
       }
 
       for (k = 0; numStr[i] != 0 && numStr[i] != '.'; i++, k++)
-      {
             integerPart[k] = numStr[i];
-      }
       *result += strToInt(integerPart);
       if (numStr[i] == '.')
       {
@@ -377,9 +304,7 @@ void strToDouble(char *numStr, int *error, double *result)
             *result /= pow(10, commaOffset);
       }
       if (sign)
-      {
             *result *= -1;
-      }
 }
 
 // https://www.geeksforgeeks.org/convert-floating-point-number-string/

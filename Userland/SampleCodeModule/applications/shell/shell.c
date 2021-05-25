@@ -235,9 +235,7 @@ static int findPipe(int argc, char **argv)
       for (int i = 0; i < argc; i++)
       {
             if (stringcmp(argv[i], "|") == 0)
-            {
                   return i;
-            }
       }
       return -1;
 }
@@ -314,11 +312,7 @@ static int runPipeCommand(int argc, char **argv, int fg, int fdIn, int fdOut)
 static int getCommandIdx(char *name)
 {
       for (int i = 0; i < COMMANDS; i++)
-      {
             if (stringcmp(shell.commands[i].name, name) == 0)
-            {
                   return i;
-            }
-      }
       return -1;
 }

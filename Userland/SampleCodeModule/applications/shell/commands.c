@@ -40,9 +40,7 @@ void time(int argc, char **args)
       {
             printString(timeFormat[i]);
             if (i != 2)
-            {
                   putchar(':');
-            }
       }
       putchar('\n');
       putchar('\n');
@@ -188,9 +186,7 @@ static void memToString(char *buffer, uint8_t *mem, int bytes)
                   uintToBase(mem[i], buffer + i + 1, 16);
             }
             else
-            {
                   uintToBase(mem[i], buffer + i, 16);
-            }
       }
 }
 
@@ -274,9 +270,7 @@ void cat(int argc, char **args)
 
       int c;
       while ((c = getchar()) != EOF)
-      {
             putchar(c);
-      }
 }
 
 //counts the lines recieved from input
